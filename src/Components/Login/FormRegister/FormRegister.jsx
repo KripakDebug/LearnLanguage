@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, notification } from "antd";
 import { GoogleOutlined } from "@ant-design/icons";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
-function FormRegister({ onFinishFailed, login, setChangeForm, auth }) {
+function FormRegister({ login, setChangeForm, auth, openNotification }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (
@@ -22,7 +22,6 @@ function FormRegister({ onFinishFailed, login, setChangeForm, auth }) {
         remember: true,
       }}
       onFinish={onSubmit}
-      onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
       <Form.Item
@@ -83,11 +82,20 @@ function FormRegister({ onFinishFailed, login, setChangeForm, auth }) {
       </Form.Item>
     </Form>
   );
+
   function onSubmit() {
     createUserWithEmailAndPassword(auth, email, password).catch((error) => {
-      console.log(error);
+      switch (error.message) {
+        case "Firebase: The email address is already in use by another account. (auth/email-already-in-use).":
+          openNotification("Ця електрона адреса вже є в базі");
+          break;
+        case "Firebase: The email address is badly formatted. (auth/invalid-email).":
+          openNotification("Некоректна електрона адреса");
+          break;
+        default:
+          openNotification("Мінімум символів в паролі 6");
+      }
     });
   }
 }
-
 export default FormRegister;

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Checkbox, Form, Input } from "antd";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
-function FormLogin({ onFinish, onFinishFailed, setChangeForm, auth }) {
+function FormLogin({ setChangeForm, auth, openNotification }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (
@@ -21,7 +21,6 @@ function FormLogin({ onFinish, onFinishFailed, setChangeForm, auth }) {
         remember: true,
       }}
       onFinish={onSubmit}
-      onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
       <Form.Item
@@ -81,7 +80,7 @@ function FormLogin({ onFinish, onFinishFailed, setChangeForm, auth }) {
   );
   function onSubmit() {
     signInWithEmailAndPassword(auth, email, password).catch((error) => {
-      console.log(error);
+      openNotification("Неправильний пароль або пошта");
     });
   }
 }

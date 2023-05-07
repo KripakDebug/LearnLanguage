@@ -4,13 +4,14 @@ import { Context } from "../../index";
 import firebase from "firebase/compat/app";
 import FormLogin from "./FormLogin/FormLogin";
 import FormRegister from "./FormRegister/FormRegister";
+import { notification } from "antd";
 export default function Login() {
   const { auth } = useContext(Context);
-  const [changeForm, setChangeForm] = useState(false);
+  const [changeForm, setChangeForm] = useState(true);
 
   const login = async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
-    const { user } = await auth.signInWithPopup(provider);
+    await auth.signInWithPopup(provider);
   };
 
   return (
@@ -18,21 +19,27 @@ export default function Login() {
       {changeForm ? (
         <FormLogin
           auth={auth}
-          onFinishFailed={onFinishFailed}
+          openNotification={openNotification}
           setChangeForm={setChangeForm}
         />
       ) : (
         <FormRegister
           auth={auth}
+          openNotification={openNotification}
           setChangeForm={setChangeForm}
-          onFinishFailed={onFinishFailed}
           login={login}
         />
       )}
     </div>
   );
 
-  function onFinishFailed(errorInfo) {
-    return errorInfo;
+  function openNotification(error) {
+    notification.open({
+      message: "Помилка",
+      description: error,
+      onClick: () => {
+        console.log("Notification Clicked!");
+      },
+    });
   }
 }
