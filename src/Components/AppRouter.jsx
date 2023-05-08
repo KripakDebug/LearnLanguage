@@ -10,9 +10,13 @@ export default function AppRouter() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      navigate("/profile");
-    } else {
+    const currentPath = window.location.pathname;
+    const isPrivateRoute = privateRoutes.some(({ path }) =>
+      currentPath.startsWith(path)
+    );
+    if (user && !isPrivateRoute) {
+      navigate("/home");
+    } else if (!user && !currentPath.startsWith("/login")) {
       navigate("/login");
     }
   }, [user, navigate]);

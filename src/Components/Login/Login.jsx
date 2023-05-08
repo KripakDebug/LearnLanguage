@@ -32,7 +32,7 @@ export default function Login() {
             loginAnonymous={loginAnonymous}
             openNotification={openNotification}
             setChangeForm={setChangeForm}
-            login={loginWithGoogle}
+            loginWithGoogle={loginWithGoogle}
           />
         )}
       </div>

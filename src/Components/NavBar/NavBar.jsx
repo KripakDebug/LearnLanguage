@@ -6,11 +6,12 @@ import {
   HomeOutlined,
   LeftOutlined,
   RightOutlined,
-  SwitcherOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import classNames from "classnames";
 import { Context } from "../../index";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { NavLink } from "react-router-dom";
 
 function getItem(label, key, icon, children, type) {
   return {
@@ -21,13 +22,34 @@ function getItem(label, key, icon, children, type) {
     type,
   };
 }
-const items = [getItem("Profile", "5", <HomeOutlined src={"/profile"} />)];
 
 export default function NavBar() {
+  const { firebase } = useContext(Context);
+  const userPhoto = firebase.auth().currentUser;
+  const photo = userPhoto.photoURL;
+  const items = [
+    getItem(
+      <NavLink to="/home">
+        <span>Home</span>
+      </NavLink>,
+      "1",
+      <HomeOutlined />
+    ),
+    getItem(
+      <NavLink to="/profile">
+        <span>Profile</span>
+      </NavLink>,
+      "2",
+      photo === null ? (
+        <UserOutlined />
+      ) : (
+        <img className="photo-user" src={photo} alt="photo" />
+      )
+    ),
+  ];
   const { auth } = useContext(Context);
   const [user] = useAuthState(auth);
   const [collapsed, setCollapsed] = useState(false);
-
   return (
     <nav
       className={classNames(["nav", collapsed ? "collapseOn" : "collapseOff"])}

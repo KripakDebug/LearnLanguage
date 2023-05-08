@@ -5,6 +5,10 @@
   background: #001529;
   height: 100vh;
   position: relative;
+  .photo-user {
+    width: 18px;
+    border-radius: 50%;
+  }
   &__logout {
     background: none;
     color: #A6ADB4;

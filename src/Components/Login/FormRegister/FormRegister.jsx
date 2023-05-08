@@ -4,7 +4,7 @@ import { GoogleOutlined, UserOutlined } from "@ant-design/icons";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 function FormRegister({
-  login,
+  loginWithGoogle,
   setChangeForm,
   auth,
   openNotification,
@@ -78,7 +78,7 @@ function FormRegister({
       </Form.Item>
       <Form.Item>
         <div className="icons-form">
-          <GoogleOutlined onClick={login} />
+          <GoogleOutlined onClick={loginWithGoogle} />
           <UserOutlined onClick={loginAnonymous} />
         </div>
       </Form.Item>
