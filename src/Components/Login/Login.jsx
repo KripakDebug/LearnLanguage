@@ -9,32 +9,38 @@ export default function Login() {
   const { auth } = useContext(Context);
   const [changeForm, setChangeForm] = useState(true);
 
-  const login = async () => {
+  const loginWithGoogle = async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     await auth.signInWithPopup(provider);
+  };
+  const loginAnonymous = async () => {
+    await auth.signInAnonymously();
   };
 
   return (
     <div className="login">
-      {changeForm ? (
-        <FormLogin
-          auth={auth}
-          openNotification={openNotification}
-          setChangeForm={setChangeForm}
-        />
-      ) : (
-        <FormRegister
-          auth={auth}
-          openNotification={openNotification}
-          setChangeForm={setChangeForm}
-          login={login}
-        />
-      )}
+      <div className="form-auth">
+        {changeForm ? (
+          <FormLogin
+            auth={auth}
+            openNotification={openNotification}
+            setChangeForm={setChangeForm}
+          />
+        ) : (
+          <FormRegister
+            auth={auth}
+            loginAnonymous={loginAnonymous}
+            openNotification={openNotification}
+            setChangeForm={setChangeForm}
+            login={loginWithGoogle}
+          />
+        )}
+      </div>
     </div>
   );
 
   function openNotification(error) {
-    notification.open({
+    notification.error({
       message: "Помилка",
       description: error,
       onClick: () => {

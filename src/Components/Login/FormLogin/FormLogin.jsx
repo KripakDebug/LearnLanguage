@@ -23,6 +23,13 @@ function FormLogin({ setChangeForm, auth, openNotification }) {
       onFinish={onSubmit}
       autoComplete="off"
     >
+      <Button
+        className="change-form-btn"
+        type="default"
+        onClick={() => setChangeForm(false)}
+      >
+        Register
+      </Button>
       <Form.Item
         label="Email"
         name="Email"
@@ -69,11 +76,8 @@ function FormLogin({ setChangeForm, auth, openNotification }) {
           span: 16,
         }}
       >
-        <Button type="primary" htmlType="submit">
+        <Button type="default" htmlType="submit">
           Login
-        </Button>
-        <Button type="default" onClick={() => setChangeForm(false)}>
-          Register
         </Button>
       </Form.Item>
     </Form>

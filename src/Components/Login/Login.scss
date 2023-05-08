@@ -4,4 +4,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  .change-form-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+  }
+}
+.form-auth {
+  background: #001529;
+  position: relative;
+  padding: 60px 80px;
+  border-radius: 10px;
+  label {
+    color: #fff !important;
+  }
+  .icons-form {
+    text-align: center;
+    color: #fff;
+    span {
+      padding: 5px;
+      border: 2px solid #fff;
+      margin: 0px 3px;
+      border-radius: 100%;
+    }
+  }
 }

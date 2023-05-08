@@ -1,9 +1,15 @@
 import React, { useState } from "react";
-import { Button, Checkbox, Form, Input, notification } from "antd";
-import { GoogleOutlined } from "@ant-design/icons";
+import { Button, Checkbox, Form, Input } from "antd";
+import { GoogleOutlined, UserOutlined } from "@ant-design/icons";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
-function FormRegister({ login, setChangeForm, auth, openNotification }) {
+function FormRegister({
+  login,
+  setChangeForm,
+  auth,
+  openNotification,
+  loginAnonymous,
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (
@@ -24,6 +30,13 @@ function FormRegister({ login, setChangeForm, auth, openNotification }) {
       onFinish={onSubmit}
       autoComplete="off"
     >
+      <Button
+        className="change-form-btn"
+        type="default"
+        onClick={() => setChangeForm(true)}
+      >
+        Login
+      </Button>
       <Form.Item
         label="Email"
         name="Email"
@@ -52,9 +65,6 @@ function FormRegister({ login, setChangeForm, auth, openNotification }) {
           onChange={(e) => setPassword(e.target.value)}
         />
       </Form.Item>
-      <Form.Item>
-        <GoogleOutlined onClick={login} />
-      </Form.Item>
 
       <Form.Item
         name="remember"
@@ -66,18 +76,20 @@ function FormRegister({ login, setChangeForm, auth, openNotification }) {
       >
         <Checkbox>Remember me</Checkbox>
       </Form.Item>
-
+      <Form.Item>
+        <div className="icons-form">
+          <GoogleOutlined onClick={login} />
+          <UserOutlined onClick={loginAnonymous} />
+        </div>
+      </Form.Item>
       <Form.Item
         wrapperCol={{
           offset: 8,
-          span: 16,
+          span: 6,
         }}
       >
-        <Button type="primary" htmlType="submit">
+        <Button type="default" htmlType="submit">
           Register
-        </Button>
-        <Button type="default" onClick={() => setChangeForm(true)}>
-          Login
         </Button>
       </Form.Item>
     </Form>

@@ -21,10 +21,7 @@ function getItem(label, key, icon, children, type) {
     type,
   };
 }
-const items = [
-  getItem("Profile", "5", <HomeOutlined src={"/profile"} />),
-  getItem("Card", "6", <SwitcherOutlined />),
-];
+const items = [getItem("Profile", "5", <HomeOutlined src={"/profile"} />)];
 
 export default function NavBar() {
   const { auth } = useContext(Context);
