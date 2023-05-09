@@ -1,32 +1,56 @@
 .login {
   width: 100%;
+  background-color: rgb(233, 236, 236);
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  .change-form-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-
+  flex-direction: column;
+  .change-form-text {
+    font-size: 14px;
+    color: rgb(145, 145, 145);
+    text-align: center;
+    margin-top: 30px;
   }
+  .change-form-btn {
+    margin-top: 20px;
+    width: 340px;
+    display: flex;
+    text-decoration: none;
+    justify-content: center;
+    color: #A6ADB4;
+    &:hover {
+        color: #97999a;
+    }
+  }
+  .ant-btn-link {
+    color: #878a8d;
+    &:hover {
+      color: #555759;
+    }
+  }
+
+
 }
 .form-auth {
-  background: #001529;
+  background: #ffffff;
   position: relative;
-  padding: 60px 80px;
+  padding: 20px 20px 0px 20px;
   border-radius: 10px;
-  label {
-    color: #fff !important;
-  }
   .icons-form {
     text-align: center;
-    color: #fff;
-    span {
-      padding: 5px;
-      border: 2px solid #fff;
-      margin: 0px 3px;
-      border-radius: 100%;
+  }
+  button {
+    width: 100%;
+  }
+  .reset-password {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    color: #A6ADB4;
+    margin-bottom: 10px;
+    &:hover {
+      color: #777b80;
     }
   }
 }

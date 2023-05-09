@@ -14,9 +14,12 @@ export default function AppRouter() {
     const isPrivateRoute = privateRoutes.some(({ path }) =>
       currentPath.startsWith(path)
     );
+    const isPublicRoute = publicRoutes.some(({ path }) =>
+      currentPath.startsWith(path)
+    );
     if (user && !isPrivateRoute) {
       navigate("/home");
-    } else if (!user && !currentPath.startsWith("/login")) {
+    } else if (!user && !isPublicRoute) {
       navigate("/login");
     }
   }, [user, navigate]);

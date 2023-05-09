@@ -1,42 +1,31 @@
 import React, { useState } from "react";
-import { Button, Checkbox, Form, Input } from "antd";
-import { GoogleOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Form, Input } from "antd";
+import { GoogleOutlined } from "@ant-design/icons";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
-function FormRegister({
-  loginWithGoogle,
-  setChangeForm,
-  auth,
-  openNotification,
-  loginAnonymous,
-}) {
+function FormRegister({ loginWithGoogle, auth, openNotification }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (
     <Form
       name="basic"
-      labelCol={{
-        span: 8,
-      }}
-      wrapperCol={{
-        span: 16,
-      }}
       style={{
-        maxWidth: 600,
+        width: 300,
       }}
+      layout={"vertical"}
       initialValues={{
         remember: true,
       }}
       onFinish={onSubmit}
       autoComplete="off"
     >
-      <Button
-        className="change-form-btn"
-        type="default"
-        onClick={() => setChangeForm(true)}
-      >
-        Login
-      </Button>
+      <Form.Item>
+        <div className="icons-form">
+          <Button type="default" onClick={loginWithGoogle}>
+            <GoogleOutlined /> <span>Sign up with Google</span>
+          </Button>
+        </div>
+      </Form.Item>
       <Form.Item
         label="Email"
         name="Email"
@@ -65,30 +54,8 @@ function FormRegister({
           onChange={(e) => setPassword(e.target.value)}
         />
       </Form.Item>
-
-      <Form.Item
-        name="remember"
-        valuePropName="checked"
-        wrapperCol={{
-          offset: 8,
-          span: 16,
-        }}
-      >
-        <Checkbox>Remember me</Checkbox>
-      </Form.Item>
       <Form.Item>
-        <div className="icons-form">
-          <GoogleOutlined onClick={loginWithGoogle} />
-          <UserOutlined onClick={loginAnonymous} />
-        </div>
-      </Form.Item>
-      <Form.Item
-        wrapperCol={{
-          offset: 8,
-          span: 6,
-        }}
-      >
-        <Button type="default" htmlType="submit">
+        <Button type="primary" htmlType="submit">
           Register
         </Button>
       </Form.Item>
