@@ -51,7 +51,7 @@ export default function ResetPassword() {
         </Form>
       </div>
       <NavLink className="change-form-btn" to="/login">
-        Reset Password
+        Log in
       </NavLink>
     </div>
   );

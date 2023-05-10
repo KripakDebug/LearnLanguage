@@ -1,0 +1,39 @@
+.profile {
+  margin-top: 40px;
+  margin-left: 40px;
+  .title {
+    margin-bottom: 20px;
+    color: #001529;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .info-user-wrap {
+    width: 700px;
+    .user {
+      background: #001529;
+      position: relative;
+      color: #fff;
+      padding: 20px;
+      .burger {
+        position: absolute;
+        top: 10px;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 5px;
+        font-weight: bold;
+        right: 10px;
+      }
+      display: flex;
+      align-items: center;
+      .avatar {
+        border-radius: 100%;
+      }
+      .info-user {
+          margin-left: 10px;
+          .name {
+            margin-bottom: 5px;
+          }
+      }
+    }
+  }
+}
