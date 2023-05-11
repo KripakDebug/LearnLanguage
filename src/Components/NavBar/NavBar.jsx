@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Menu } from "antd";
+import { Avatar, Menu } from "antd";
 import "./NavBar.scss";
 import {
   ExportOutlined,
@@ -41,7 +41,15 @@ export default function NavBar() {
       </NavLink>,
       "2",
       photo === null ? (
-        <UserOutlined />
+        <Avatar
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          size="small"
+          icon={<UserOutlined />}
+        />
       ) : (
         <img className="photo-user" src={photo} alt="photo" />
       )

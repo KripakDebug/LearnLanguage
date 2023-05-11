@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import "./Profile.scss";
 import { Context } from "../../index";
 import moment from "moment";
-import { MoreOutlined } from "@ant-design/icons";
-import { Dropdown, Space } from "antd";
+import { MoreOutlined, UserOutlined } from "@ant-design/icons";
+import { Avatar, Dropdown, Space } from "antd";
 export default function Profile() {
   const { firebase } = useContext(Context);
   const firebaseUser = firebase.auth();
@@ -13,7 +13,6 @@ export default function Profile() {
   const daysPassed = today.diff(startDate, "days");
   const monthsPassed = today.diff(startDate, "months");
   const yearsPassed = today.diff(startDate, "years");
-
   let timePassed = daysPassed + (daysPassed === 1 ? " day ago" : " days ago");
   if (yearsPassed >= 1) {
     timePassed = yearsPassed + (yearsPassed === 1 ? " year ago" : " years ago");
@@ -34,7 +33,11 @@ export default function Profile() {
       <div className="title">Account Info</div>
       <div className="info-user-wrap">
         <div className="user">
-          <img src={user.photoURL} className="avatar" />
+          {user.photoURL === null ? (
+            <Avatar size={100} icon={<UserOutlined />} />
+          ) : (
+            <img src={user.photoURL} className="avatar" />
+          )}
           <div className="info-user">
             <div className="name">{user.displayName}</div>
             <div className="user-start">started {timePassed}</div>
