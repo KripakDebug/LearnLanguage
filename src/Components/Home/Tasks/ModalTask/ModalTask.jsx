@@ -1,7 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Form, Input, Modal, Select, Switch } from "antd";
-
+import { Context } from "../../../../index";
+import { useAuthState } from "react-firebase-hooks/auth";
+import uuid from "react-uuid";
 function ModalTask({ isModalOpen, setIsModalOpen }) {
+  const { auth, firestore } = useContext(Context);
+  const [user] = useAuthState(auth);
   const [name, setName] = useState("");
   const [flashcard, setFlashcard] = useState(false);
   const [flashcardReverse, setFlashcardReverse] = useState(false);
@@ -47,14 +51,14 @@ function ModalTask({ isModalOpen, setIsModalOpen }) {
           <ul className="list">
             <li>
               Flashcard
-              <Switch defaultChecked onChange={(e) => setFlashcard(e)} />
+              <Switch onChange={(e) => setFlashcard(e)} />
             </li>
             <li>
               Flashcard Reverse
-              <Switch defaultChecked onChange={(e) => setFlashcardReverse(e)} />
+              <Switch onChange={(e) => setFlashcardReverse(e)} />
             </li>
             <li>
-              Typing <Switch defaultChecked onChange={(e) => setTyping(e)} />
+              Typing <Switch onChange={(e) => setTyping(e)} />
             </li>
           </ul>
         </Form.Item>
@@ -63,40 +67,62 @@ function ModalTask({ isModalOpen, setIsModalOpen }) {
           <ul className="list">
             <li>
               For language learning?
-              <Switch defaultChecked onChange={(e) => setLanguageLearning(e)} />
-              <Select
-                defaultValue="English"
-                style={{
-                  width: 200,
-                }}
-                options={[
-                  {
-                    label: "",
-                    options: [
-                      {
-                        label: "Jack",
-                        value: "jack",
-                      },
-                      {
-                        label: "Lucy",
-                        value: "lucy",
-                      },
-                    ],
-                  },
-                ]}
-              />
+              <Switch onChange={(e) => setLanguageLearning(e)} />
+              {languageLearning && (
+                <Select
+                  defaultValue="English"
+                  style={{
+                    width: 200,
+                  }}
+                  options={[
+                    {
+                      options: [
+                        {
+                          label: "English",
+                          value: "English",
+                        },
+                        {
+                          label: "Korean",
+                          value: "Korean",
+                        },
+                      ],
+                    },
+                  ]}
+                />
+              )}
             </li>
             <li>
               Random Order
-              <Switch defaultChecked onChange={(e) => setRandomOrder(e)} />
+              <Switch onChange={(e) => setRandomOrder(e)} />
             </li>
           </ul>
         </Form.Item>
+        <button disabled={name === "" && true} type="submit">
+          Create
+        </button>
       </Form>
     </Modal>
   );
 
-  function onSubmit(e) {}
+  function onSubmit(e) {
+    firestore.collection("cards").add({
+      id: uuid(),
+      userId: user.uid,
+      name,
+      flashcard,
+      flashcardReverse,
+      typing,
+      languageLearning,
+      randomOrder,
+    });
+    setName("");
+    setFlashcard(false);
+    setFlashcardReverse(false);
+    setTyping(false);
+    setLanguageLearning(false);
+    setRandomOrder(false);
+    toggleModal();
+  }
   function toggleModal() {
     setIsModalOpen((prevState) => !prevState);
   }
