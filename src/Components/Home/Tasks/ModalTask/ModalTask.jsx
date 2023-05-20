@@ -105,10 +105,11 @@ function ModalTask({ isModalOpen, setIsModalOpen }) {
   );
 
   function onSubmit(e) {
-    firestore.collection("cards").add({
+    firestore.collection("decks").add({
       id: uuid(),
       userId: user.uid,
       name,
+      cards: 0,
       flashcard,
       flashcardReverse,
       typing,

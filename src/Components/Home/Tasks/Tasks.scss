@@ -1,0 +1,15 @@
+.create-task {
+  border: 2px dashed #000;
+  padding: 15px;
+  font-size: 20px;
+}
+.tasks {
+  width: 100%;
+  max-width: 1020px;
+  display: flex;
+  flex-direction: column;
+  .list-task {
+    display: flex;
+    align-items: center;
+  }
+}

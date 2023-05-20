@@ -3,33 +3,50 @@ import "./Tasks.scss";
 import { Context } from "../../../index";
 import { useAuthState } from "react-firebase-hooks/auth";
 import ModalTask from "./ModalTask/ModalTask";
-import { useCollectionData } from "react-firebase-hooks/firestore";
-import Loader from "../../Loader/Loader";
+import { Card, Col } from "antd";
+import ModalCreateCard from "./ModalCreateCard/ModalCreateCard";
 
-export default function Tasks() {
+export default function Tasks({ cards }) {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
-  const [cards, loading] = useCollectionData(firestore.collection("cards"));
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  if (loading) {
-    return <Loader />;
-  }
-
+  const [idDeck, setIdDeck] = useState(0);
+  firestore
+    .collection("decks")
+    .get()
+    .then((data) => {
+      data.docs.map((doc) => {
+        setIdDeck(doc.data().id);
+      });
+    });
   return (
     <div className="tasks">
-      {cards.map((card) => {
-        if (user.uid === card.userId) {
-          return <li>{card.name}</li>;
-        }
-      })}
-      <div className="create-task" onClick={showModal}>
-        Create New Deck
-      </div>
+      <h1>My Task</h1>
+      <ul className="list-task">
+        {cards.map((card) => {
+          if (user.uid === card.userId) {
+            return (
+              <Col span={8}>
+                <ModalCreateCard idDeck={idDeck} id={card.id} />
+                <Card
+                  key={card.id}
+                  title={card.cards + "cards"}
+                  bordered={false}
+                >
+                  {card.name}
+                </Card>
+              </Col>
+            );
+          }
+        })}
+        <li className="create-task" onClick={showModal}>
+          Create New Deck
+        </li>
+      </ul>
       <ModalTask setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} />
     </div>
   );
+  function showModal() {
+    setIsModalOpen(true);
+  }
 }
