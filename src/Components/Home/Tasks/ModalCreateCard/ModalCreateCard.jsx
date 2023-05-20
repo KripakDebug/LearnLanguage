@@ -3,17 +3,22 @@ import { Form, Input, Modal } from "antd";
 import { Context } from "../../../../index";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-export default function ModalCreateCard({ id, idDeck }) {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+export default function ModalCreateCard({
+  id,
+  idDeck,
+  isModalCreateCardOpen,
+  setIsModalCreateCardOpen,
+  cardName,
+}) {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   return (
     <div>
       <Modal
-        title="Create New Deck"
+        title={cardName}
         footer={null}
         className="modal"
-        open={isModalOpen}
+        open={isModalCreateCardOpen}
         onOk={toggleModal}
         onCancel={toggleModal}
       >
@@ -60,6 +65,6 @@ export default function ModalCreateCard({ id, idDeck }) {
   function onSubmit() {}
 
   function toggleModal() {
-    setIsModalOpen((prevState) => !prevState);
+    setIsModalCreateCardOpen((prevState) => !prevState);
   }
 }
