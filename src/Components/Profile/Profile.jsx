@@ -9,7 +9,7 @@ import Loader from "../Loader/Loader";
 export default function Profile() {
   const { firebase, firestore } = useContext(Context);
   const firebaseUser = firebase.auth();
-  const [cards, loading] = useCollectionData(firestore.collection("cards"));
+  const [cards, loading] = useCollectionData(firestore.collection("decks"));
   const user = firebaseUser.currentUser;
   const startDate = moment(user.metadata.creationTime);
   const today = moment();

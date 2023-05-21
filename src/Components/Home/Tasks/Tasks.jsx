@@ -3,7 +3,7 @@ import "./Tasks.scss";
 import { Context } from "../../../index";
 import { useAuthState } from "react-firebase-hooks/auth";
 import ModalTask from "./ModalTask/ModalTask";
-import { Card, Col } from "antd";
+import { Card, Modal } from "antd";
 import ModalCreateCard from "./ModalCreateCard/ModalCreateCard";
 
 export default function Tasks({ cards }) {
@@ -17,14 +17,15 @@ export default function Tasks({ cards }) {
   return (
     <div className="tasks">
       <h1>My Task</h1>
-      <ul className="list-task">
+      <div className="list-task">
         {cards.map((card) => {
           if (user.uid === card.userId) {
             return (
-              <>
+              <div className="task">
                 {card.id === idDeck && (
                   <ModalCreateCard
                     isModalCreateCardOpen={isModalCreateCardOpen}
+                    infoModal={info}
                     setIsModalCreateCardOpen={setIsModalCreateCardOpen}
                     idDeck={idDeck}
                     cardName={deckName}
@@ -42,17 +43,31 @@ export default function Tasks({ cards }) {
                   <h4>{card.cards + "cards"}</h4>
                   {card.name}
                 </Card>
-              </>
+              </div>
             );
           }
         })}
         <div className="create-task" onClick={showModal}>
           Create New Deck
         </div>
-      </ul>
-      <ModalTask setIsModalOpen={setIsModalOpen} isModalOpen={isModalOpen} />
+      </div>
+      {isModalOpen && (
+        <ModalTask
+          infoModal={info}
+          setIsModalOpen={setIsModalOpen}
+          isModalOpen={isModalOpen}
+        />
+      )}
     </div>
   );
+
+  function info(title, message) {
+    Modal.info({
+      title: title,
+      content: <div>{message}</div>,
+      onOk() {},
+    });
+  }
 
   function getItemFirestore(id) {
     firestore

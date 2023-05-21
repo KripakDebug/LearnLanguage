@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
-import { Form, Input, Modal, Select, Switch } from "antd";
+import { Button, Form, Input, Modal, Select, Switch } from "antd";
 import { Context } from "../../../../index";
 import { useAuthState } from "react-firebase-hooks/auth";
 import uuid from "react-uuid";
-function ModalTask({ isModalOpen, setIsModalOpen }) {
+import { InfoCircleOutlined } from "@ant-design/icons";
+function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const [name, setName] = useState("");
@@ -19,13 +20,12 @@ function ModalTask({ isModalOpen, setIsModalOpen }) {
       footer={null}
       className="modal"
       open={isModalOpen}
-      onOk={toggleModal}
       onCancel={toggleModal}
     >
       <Form
         layout={"vertical"}
         initialValues={{
-          remember: true,
+          remember: false,
         }}
         onFinish={onSubmit}
         autoComplete="off"
@@ -47,7 +47,13 @@ function ModalTask({ isModalOpen, setIsModalOpen }) {
           />
         </Form.Item>
         <Form.Item>
-          <div className="title">QUIZ TYPE</div>
+          <div className="title">
+            QUIZ TYPE
+            <InfoCircleOutlined
+              onClick={() => infoModal("Quiz Type:", <p>fdfd</p>)}
+            />
+          </div>
+
           <ul className="list">
             <li>
               Flashcard
@@ -97,14 +103,14 @@ function ModalTask({ isModalOpen, setIsModalOpen }) {
             </li>
           </ul>
         </Form.Item>
-        <button disabled={name === "" && true} type="submit">
+        <Button disabled={name === "" && true} type="default" htmlType="submit">
           Create
-        </button>
+        </Button>
       </Form>
     </Modal>
   );
 
-  function onSubmit(e) {
+  function onSubmit() {
     firestore.collection("decks").add({
       id: uuid(),
       userId: user.uid,

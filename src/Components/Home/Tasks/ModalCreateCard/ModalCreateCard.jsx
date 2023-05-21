@@ -1,27 +1,26 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Form, Input, Modal } from "antd";
 import { Context } from "../../../../index";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 export default function ModalCreateCard({
-  id,
-  idDeck,
   isModalCreateCardOpen,
   setIsModalCreateCardOpen,
+  infoModal,
   cardName,
 }) {
-  const { auth, firestore } = useContext(Context);
-  const [user] = useAuthState(auth);
+  const { firestore } = useContext(Context);
   return (
     <div>
       <Modal
-        title={cardName}
+        title="Add Card to"
         footer={null}
         className="modal"
         open={isModalCreateCardOpen}
         onOk={toggleModal}
         onCancel={toggleModal}
       >
+        <p>{cardName}</p>
         <Form
           layout={"vertical"}
           initialValues={{
@@ -31,33 +30,58 @@ export default function ModalCreateCard({
           autoComplete="off"
         >
           <Form.Item
-            label="Name"
-            name="Name"
+            label="WORD"
+            name="WORD"
             rules={[
               {
                 required: true,
-                message: "Please input name card!",
+                message: "Please input memorize!",
               },
             ]}
           >
-            <Input placeholder="Name the new deck" />
+            <Input placeholder="memorize" />
           </Form.Item>
-          <Form.Item>
-            <div className="title">QUIZ TYPE</div>
-            <ul className="list">
-              <li>Flashcard</li>
-              <li>Flashcard Reverse</li>
-              <li>Typing</li>
-            </ul>
+          <Form.Item
+            label="DEFINITION"
+            name="DEFINITION"
+            rules={[
+              {
+                required: true,
+                message: "Please input definition!",
+              },
+            ]}
+          >
+            <Input placeholder="to learn by heart, commit to memory" />
           </Form.Item>
-          <Form.Item>
-            <div className="title">ADDITIONAL</div>
-            <ul className="list">
-              <li>For language learning?</li>
-              <li>Random Order</li>
-            </ul>
+          <Form.Item
+            label="EXAMPLE (OPTIONAL)"
+            name="EXAMPLE"
+            tooltip={{
+              icon: (
+                <InfoCircleOutlined
+                  onClick={() =>
+                    infoModal(
+                      "Additional:",
+                      <p>
+                        Additional item will be shown at the last of the each
+                        card. This is a good place to provide supplement
+                        information. (e.g. example sentence of an English word)
+                      </p>
+                    )
+                  }
+                />
+              ),
+            }}
+            rules={[
+              {
+                required: true,
+                message: "Please input example!",
+              },
+            ]}
+          >
+            <Input placeholder="He memorized thousands of verses." />
           </Form.Item>
-          <button type="submit">Create</button>
+          <button type="submit">Add</button>
         </Form>
       </Modal>
     </div>
