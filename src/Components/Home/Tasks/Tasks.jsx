@@ -48,8 +48,9 @@ export default function Tasks({ cards }) {
                     <div className="card-name">{card.name}</div>
                   </div>
                   <div className="count-lesson">
+                    {card.cards.length === 0 && 0}
                     {card.cards.map((card) => {
-                      return card.learn;
+                      return card.learn.length;
                     })}
                   </div>
                 </Card>

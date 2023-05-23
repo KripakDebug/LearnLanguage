@@ -4,11 +4,7 @@ import { Context } from "../../../../index";
 import { useAuthState } from "react-firebase-hooks/auth";
 import uuid from "react-uuid";
 import { InfoCircleOutlined } from "@ant-design/icons";
-function ModalTask({
-  isModalOpen,
-  setIsModalOpen,
-  infoModal
-}) {
+function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const [name, setName] = useState("");
@@ -17,6 +13,7 @@ function ModalTask({
   const [typing, setTyping] = useState(false);
   const [languageLearning, setLanguageLearning] = useState(false);
   const [randomOrder, setRandomOrder] = useState(false);
+  const [language, setLanguage] = useState("English");
 
   return (
     <Modal
@@ -118,29 +115,34 @@ function ModalTask({
                 />
               </div>
               <Switch onChange={(e) => setLanguageLearning(e)} />
-              {languageLearning && (
-                <Select
-                  defaultValue="English"
-                  style={{
-                    width: 200,
-                  }}
-                  options={[
-                    {
-                      options: [
-                        {
-                          label: "English",
-                          value: "English",
-                        },
-                        {
-                          label: "Korean",
-                          value: "Korean",
-                        },
-                      ],
-                    },
-                  ]}
-                />
-              )}
             </li>
+            {languageLearning && (
+              <Select
+                defaultValue="English"
+                value={language}
+                onChange={(e) => {
+                  setLanguage(e);
+                }}
+                style={{
+                  width: 200,
+                  marginBottom: 20,
+                }}
+                options={[
+                  {
+                    options: [
+                      {
+                        label: "English",
+                        value: "English",
+                      },
+                      {
+                        label: "Korean",
+                        value: "Korean",
+                      },
+                    ],
+                  },
+                ]}
+              />
+            )}
             <li>
               <div>
                 Random Order
@@ -178,6 +180,7 @@ function ModalTask({
       typing,
       languageLearning,
       randomOrder,
+      language,
     });
     setName("");
     setFlashcard(false);
