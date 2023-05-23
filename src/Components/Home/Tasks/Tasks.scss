@@ -55,6 +55,12 @@ form {
     flex-wrap: wrap;
     justify-content: space-between;
     .task {
+      .ant-card {
+        transition: .3s;
+        &:hover {
+          background: #f6f6f6;
+        }
+      }
       .ant-card-body {
         display: flex;
         align-items: center;

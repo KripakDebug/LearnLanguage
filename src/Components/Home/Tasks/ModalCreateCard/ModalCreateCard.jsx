@@ -121,7 +121,7 @@ export default function ModalCreateCard({
               definition: definitionWordArray,
               example: example === [] ? null : example,
               createAt: firebase.firestore.Timestamp.fromDate(new Date()),
-              learn: [1],
+              learn: 1,
             };
 
             cardsArray.push(newCard);
