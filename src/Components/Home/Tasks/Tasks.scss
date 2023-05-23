@@ -4,19 +4,78 @@
   display: flex;
   border-radius: 8px;
   align-items: center;
+  font-weight: 500;
   height: 90px;
+  cursor: pointer;
+  span {
+    margin-right: 5px;
+  }
   justify-content: center;
+  transition: .3s ease;
+  &:hover {
+    background: #fff;
+  }
+}
+.modal {
+form {
+  display: flex;
+  flex-direction: column;
+}
+  span {
+    margin-left: 5px;
+  }
+  .list {
+      li{
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+  }
 }
 .tasks {
   width: 100%;
   max-width: 1020px;
+  h1 {
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
   display: flex;
+  .card-count {
+    color: rgb(145, 145, 145);
+    font-weight: 500;
+    font-size: 12px;
+  }
+  .card-name {
+    font-weight: 600;
+    color: rgb(43, 43, 43);
+  }
   flex-direction: column;
   .list-task {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    .task {
+      .ant-card-body {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        &::before, &::after {
+          content: none;
+        }
+        .count-lesson {
+          border-radius: 50%;
+          width: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 30px;
+          background-color: rgb(235, 235, 235);
+          color: rgb(145, 145, 145);
+        }
+      }
+    }
     > div {
+      cursor: pointer;
       margin: 3px;
       flex: 0 0 49%;
        max-width: 49%;

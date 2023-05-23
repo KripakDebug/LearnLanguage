@@ -5,6 +5,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import ModalTask from "./ModalTask/ModalTask";
 import { Card, Modal } from "antd";
 import ModalCreateCard from "./ModalCreateCard/ModalCreateCard";
+import { PlusCircleOutlined } from "@ant-design/icons";
 
 export default function Tasks({ cards }) {
   const { auth, firestore } = useContext(Context);
@@ -13,16 +14,16 @@ export default function Tasks({ cards }) {
   const [isModalCreateCardOpen, setIsModalCreateCardOpen] = useState(false);
   const [idDeck, setIdDeck] = useState(0);
   const [deckName, setDeckName] = useState("");
-
+  const [cardLessonCount, setCardLessonCount] = useState(0);
   return (
     <div className="tasks">
-      <h1>My Task</h1>
+      <h1>My Decks</h1>
       <div className="list-task">
         {cards.map((card) => {
           if (user.uid === card.userId) {
             return (
               <div className="task">
-                {card.id === idDeck && (
+                {card.id === idDeck && isModalCreateCardOpen && (
                   <ModalCreateCard
                     isModalCreateCardOpen={isModalCreateCardOpen}
                     infoModal={info}
@@ -40,20 +41,30 @@ export default function Tasks({ cards }) {
                     getItemFirestore(card.id);
                   }}
                 >
-                  <h4>{card.cards + "cards"}</h4>
-                  {card.name}
+                  <div className="info-card">
+                    <div className="card-count">
+                      {card.cards.length + " cards"}
+                    </div>
+                    <div className="card-name">{card.name}</div>
+                  </div>
+                  <div className="count-lesson">
+                    {card.cards.map((card) => {
+                      return card.learn;
+                    })}
+                  </div>
                 </Card>
               </div>
             );
           }
         })}
         <div className="create-task" onClick={showModal}>
-          Create New Deck
+          <PlusCircleOutlined /> Create New Deck
         </div>
       </div>
       {isModalOpen && (
         <ModalTask
           infoModal={info}
+          setIsModalCreateCardOpen={setIsModalCreateCardOpen}
           setIsModalOpen={setIsModalOpen}
           isModalOpen={isModalOpen}
         />
@@ -82,6 +93,7 @@ export default function Tasks({ cards }) {
         });
       });
   }
+
   function showModal() {
     setIsModalOpen(true);
   }

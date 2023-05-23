@@ -19,9 +19,10 @@ export default function Profile() {
   if (loading) {
     return <Loader />;
   }
-  const filteredCards = cards.filter((card) => {
-    return card.userId === user.uid;
-  });
+  const totalCards = cards.reduce(
+    (count, card) => count + card.cards.length,
+    0
+  );
   let timePassed = daysPassed + (daysPassed === 1 ? " day ago" : " days ago");
   if (yearsPassed >= 1) {
     timePassed = yearsPassed + (yearsPassed === 1 ? " year ago" : " years ago");
@@ -85,7 +86,7 @@ export default function Profile() {
           <div className="item-lesson"></div>
           <div className="item-lesson">
             <div>LEARNING</div>
-            <span>{filteredCards.length}</span>
+            <span>{totalCards}</span>
             <p>cards</p>
           </div>
         </div>

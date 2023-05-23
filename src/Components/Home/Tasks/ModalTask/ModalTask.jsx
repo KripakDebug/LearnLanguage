@@ -4,7 +4,11 @@ import { Context } from "../../../../index";
 import { useAuthState } from "react-firebase-hooks/auth";
 import uuid from "react-uuid";
 import { InfoCircleOutlined } from "@ant-design/icons";
-function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
+function ModalTask({
+  isModalOpen,
+  setIsModalOpen,
+  infoModal
+}) {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const [name, setName] = useState("");
@@ -50,7 +54,33 @@ function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
           <div className="title">
             QUIZ TYPE
             <InfoCircleOutlined
-              onClick={() => infoModal("Quiz Type:", <p>fdfd</p>)}
+              onClick={() =>
+                infoModal(
+                  "Quiz Type:",
+                  <div>
+                    <p>
+                      This determines the format of the quiz in the learning
+                      session. If multiple quiz types are selected, each quiz
+                      type will be selected randomly in one learning session.
+                    </p>
+                    <br />
+                    <p>
+                      - Flaschard: The text will be presented in [Front > Back >
+                      Additional] order.
+                    </p>
+                    <br />
+                    <p>
+                      - Flaschard Reverse: The text will be presented in [Back >
+                      Front > Additional] order.
+                    </p>
+                    <br />
+                    <p>
+                      - Typing: The text will be presented in [Back > Front >
+                      Additional] order, but you have to type in the Front text.
+                    </p>
+                  </div>
+                )
+              }
             />
           </div>
 
@@ -72,7 +102,21 @@ function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
           <div className="title">ADDITIONAL</div>
           <ul className="list">
             <li>
-              For language learning?
+              <div>
+                For language learning?
+                <InfoCircleOutlined
+                  onClick={() =>
+                    infoModal(
+                      "For language learning:",
+                      <p>
+                        By enabling this setting, you will have access to
+                        text-to-speech feature (plus dictionary feature for
+                        English and Spanish).
+                      </p>
+                    )
+                  }
+                />
+              </div>
               <Switch onChange={(e) => setLanguageLearning(e)} />
               {languageLearning && (
                 <Select
@@ -98,7 +142,20 @@ function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
               )}
             </li>
             <li>
-              Random Order
+              <div>
+                Random Order
+                <InfoCircleOutlined
+                  onClick={() =>
+                    infoModal(
+                      "Random Order:",
+                      <p>
+                        When you start a learning session, the cards will be
+                        shuffled and displayed in a random order.
+                      </p>
+                    )
+                  }
+                />
+              </div>
               <Switch onChange={(e) => setRandomOrder(e)} />
             </li>
           </ul>
@@ -115,7 +172,7 @@ function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
       id: uuid(),
       userId: user.uid,
       name,
-      cards: 0,
+      cards: [],
       flashcard,
       flashcardReverse,
       typing,
