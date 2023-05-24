@@ -36,8 +36,8 @@ export default function Tasks({ cards }) {
                   key={card.id}
                   bordered={false}
                   onClick={() => {
-                    setIsModalCreateCardOpen(true);
                     getItemFirestore(card.id);
+                    setIsModalCreateCardOpen(true);
                   }}
                 >
                   <div className="info-card">
