@@ -2,15 +2,15 @@ import React, { useContext, useState } from "react";
 import "./Tasks.scss";
 import { Context } from "../../../index";
 import { useAuthState } from "react-firebase-hooks/auth";
-import ModalTask from "./ModalTask/ModalTask";
-import { Card, Modal } from "antd";
-import ModalCreateCard from "./ModalCreateCard/ModalCreateCard";
+import { Card } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
+import { ModalCreateCard, ModalTask, ModalList } from "../../../utils/modals";
 
 export default function Tasks({ cards }) {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpenList, setIsModalOpenList] = useState(false);
   const [isModalCreateCardOpen, setIsModalCreateCardOpen] = useState(false);
   const [idDeck, setIdDeck] = useState(0);
   const [deckName, setDeckName] = useState("");
@@ -25,11 +25,18 @@ export default function Tasks({ cards }) {
                 {card.id === idDeck && isModalCreateCardOpen && (
                   <ModalCreateCard
                     isModalCreateCardOpen={isModalCreateCardOpen}
-                    infoModal={info}
                     setIsModalCreateCardOpen={setIsModalCreateCardOpen}
                     idDeck={idDeck}
                     cardName={deckName}
                     id={card.id}
+                  />
+                )}
+                {card.id === idDeck && isModalOpenList && (
+                  <ModalList
+                    setIsModalCreateCardOpen={setIsModalCreateCardOpen}
+                    isModalOpenList={isModalOpenList}
+                    setIsModalOpenList={setIsModalOpenList}
+                    setIsModalOpen={setIsModalOpen}
                   />
                 )}
                 <Card
@@ -37,7 +44,7 @@ export default function Tasks({ cards }) {
                   bordered={false}
                   onClick={() => {
                     getItemFirestore(card.id);
-                    setIsModalCreateCardOpen(true);
+                    setIsModalOpenList(true);
                   }}
                 >
                   <div className="info-card">
@@ -61,25 +68,18 @@ export default function Tasks({ cards }) {
         <div className="create-task" onClick={showModal}>
           <PlusCircleOutlined /> Create New Deck
         </div>
+        {isModalOpen && (
+          <ModalTask
+            setIsModalCreateCardOpen={setIsModalCreateCardOpen}
+            setIsModalOpen={setIsModalOpen}
+            isModalOpen={isModalOpen}
+            idDeck={idDeck}
+            cardName={deckName}
+          />
+        )}
       </div>
-      {isModalOpen && (
-        <ModalTask
-          infoModal={info}
-          setIsModalCreateCardOpen={setIsModalCreateCardOpen}
-          setIsModalOpen={setIsModalOpen}
-          isModalOpen={isModalOpen}
-        />
-      )}
     </div>
   );
-
-  function info(title, message) {
-    Modal.info({
-      title: title,
-      content: <div>{message}</div>,
-      onOk() {},
-    });
-  }
 
   function getItemFirestore(id) {
     firestore

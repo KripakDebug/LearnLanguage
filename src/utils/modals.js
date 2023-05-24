@@ -1,10 +1,150 @@
 import React, { useContext, useState } from "react";
+import { Context } from "../index";
 import { Button, Form, Input, Modal, Select, Switch } from "antd";
-import { Context } from "../../../../index";
-import { useAuthState } from "react-firebase-hooks/auth";
+import {
+  FormOutlined,
+  InfoCircleOutlined,
+  PlusOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import uuid from "react-uuid";
-import { InfoCircleOutlined } from "@ant-design/icons";
-function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
+import { useAuthState } from "react-firebase-hooks/auth";
+
+export function ModalCreateCard({
+  isModalCreateCardOpen,
+  setIsModalCreateCardOpen,
+  idDeck,
+  cardName,
+}) {
+  const { firestore, firebase } = useContext(Context);
+  const [wordCard, setWordCard] = useState([]);
+  const [definition, setDefinition] = useState([]);
+  const [example, setExample] = useState([]);
+  return (
+    <div>
+      <Modal
+        footer={null}
+        className="modal"
+        open={isModalCreateCardOpen}
+        onCancel={toggleModal}
+      >
+        <h2>Add card to {cardName}</h2>
+        <Form
+          layout={"vertical"}
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={onSubmit}
+          autoComplete="off"
+        >
+          <Form.Item
+            label="WORD"
+            name="WORD"
+            rules={[
+              {
+                required: true,
+                message: "Please input memorize!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="memorize"
+              onChange={(e) => setWordCard(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="DEFINITION"
+            name="DEFINITION"
+            rules={[
+              {
+                required: true,
+                message: "Please input definition!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="to learn by heart, commit to memory"
+              onChange={(e) => setDefinition(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="EXAMPLE (OPTIONAL)"
+            name="EXAMPLE"
+            tooltip={{
+              icon: (
+                <InfoCircleOutlined
+                  onClick={() =>
+                    info(
+                      "Additional:",
+                      <p>
+                        Additional item will be shown at the last of the each
+                        card. This is a good place to provide supplement
+                        information. (e.g. example sentence of an English word)
+                      </p>
+                    )
+                  }
+                />
+              ),
+            }}
+          >
+            <Input
+              placeholder="He memorized thousands of verses."
+              onChange={(e) => setExample(e.target.value)}
+            />
+          </Form.Item>
+          <Button type="default" htmlType="submit">
+            Add
+          </Button>
+        </Form>
+      </Modal>
+    </div>
+  );
+  function onSubmit() {
+    firestore
+      .collection("decks")
+      .get()
+      .then((data) => {
+        data.docs.map((doc) => {
+          if (idDeck === doc.data().id) {
+            const docRef = firestore.collection("decks").doc(doc.id);
+            const cardsArray = doc.data().cards || [];
+            function getWordArray(str) {
+              const words = str.split(" ");
+              const wordArray = words.map((word) =>
+                word.trim().replace(/,$/, "")
+              );
+              return wordArray;
+            }
+
+            const wordCardArray = getWordArray(wordCard);
+            const definitionWordArray = getWordArray(definition);
+
+            const newCard = {
+              idCard: uuid(),
+              wordCard: wordCardArray,
+              definition: definitionWordArray,
+              example: example === [] ? null : example,
+              createAt: firebase.firestore.Timestamp.fromDate(new Date()),
+              learn: 1,
+            };
+
+            cardsArray.push(newCard);
+
+            docRef.update({
+              cards: cardsArray,
+            });
+          }
+        });
+      });
+    toggleModal();
+  }
+
+  function toggleModal() {
+    setIsModalCreateCardOpen((prevState) => !prevState);
+  }
+}
+
+export function ModalTask({ isModalOpen, setIsModalOpen, idDeck, cardName }) {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const [name, setName] = useState("");
@@ -14,7 +154,6 @@ function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
   const [languageLearning, setLanguageLearning] = useState(false);
   const [randomOrder, setRandomOrder] = useState(false);
   const [language, setLanguage] = useState("English");
-
   return (
     <Modal
       title="Create New Deck"
@@ -52,7 +191,7 @@ function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
             QUIZ TYPE
             <InfoCircleOutlined
               onClick={() =>
-                infoModal(
+                info(
                   "Quiz Type:",
                   <div>
                     <p>
@@ -103,7 +242,7 @@ function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
                 For language learning?
                 <InfoCircleOutlined
                   onClick={() =>
-                    infoModal(
+                    info(
                       "For language learning:",
                       <p>
                         By enabling this setting, you will have access to
@@ -148,7 +287,7 @@ function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
                 Random Order
                 <InfoCircleOutlined
                   onClick={() =>
-                    infoModal(
+                    info(
                       "Random Order:",
                       <p>
                         When you start a learning session, the cards will be
@@ -195,4 +334,63 @@ function ModalTask({ isModalOpen, setIsModalOpen, infoModal }) {
   }
 }
 
-export default ModalTask;
+export function ModalList({
+  isModalOpenList,
+  setIsModalOpenList,
+  setIsModalCreateCardOpen,
+  setIsModalOpen,
+}) {
+  return (
+    <Modal
+      footer={null}
+      closable={null}
+      className="modal"
+      open={isModalOpenList}
+      onCancel={toggleModal}
+    >
+      <ul className="modal-list">
+        <li>
+          <button
+            onClick={() => {
+              toggleModal();
+              setIsModalCreateCardOpen(true);
+            }}
+          >
+            <PlusOutlined /> Add Card
+          </button>
+        </li>
+        <li>
+          <button
+            onClick={() => {
+              toggleModal();
+            }}
+          >
+            <UnorderedListOutlined /> Card List
+          </button>
+        </li>
+        <li>
+          <button
+            onClick={() => {
+              toggleModal();
+              setIsModalOpen(true);
+            }}
+          >
+            <FormOutlined /> Edit Deck
+          </button>
+        </li>
+      </ul>
+    </Modal>
+  );
+
+  function toggleModal() {
+    setIsModalOpenList((prevState) => !prevState);
+  }
+}
+
+function info(title, message) {
+  Modal.info({
+    title: title,
+    content: <div>{message}</div>,
+    onOk() {},
+  });
+}
