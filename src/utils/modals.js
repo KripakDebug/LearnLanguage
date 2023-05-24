@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../index";
 import { Button, Form, Input, Modal, Select, Switch } from "antd";
 import {
@@ -144,7 +144,7 @@ export function ModalCreateCard({
   }
 }
 
-export function ModalTask({ isModalOpen, setIsModalOpen, idDeck, cardName }) {
+export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const [name, setName] = useState("");
@@ -154,6 +154,19 @@ export function ModalTask({ isModalOpen, setIsModalOpen, idDeck, cardName }) {
   const [languageLearning, setLanguageLearning] = useState(false);
   const [randomOrder, setRandomOrder] = useState(false);
   const [language, setLanguage] = useState("English");
+  const [deckObj, setDeckObj] = useState({
+    ...deck,
+  });
+
+  useEffect(() => {
+    setName(deckObj.nameDeck);
+    setFlashcard(deckObj.flashcardDeck);
+    setFlashcardReverse(deckObj.flashcardReverseDeck);
+    setTyping(deckObj.typingDeck);
+    setLanguageLearning(deckObj.languageLearningDeck);
+    setLanguage(deckObj.languageDeck);
+  }, [deckObj]);
+
   return (
     <Modal
       title="Create New Deck"
@@ -181,8 +194,8 @@ export function ModalTask({ isModalOpen, setIsModalOpen, idDeck, cardName }) {
           ]}
         >
           <Input
-            placeholder="Name the new deck"
             value={name}
+            placeholder="Name the new deck"
             onChange={(e) => setName(e.target.value)}
           />
         </Form.Item>
@@ -223,14 +236,17 @@ export function ModalTask({ isModalOpen, setIsModalOpen, idDeck, cardName }) {
           <ul className="list">
             <li>
               Flashcard
-              <Switch onChange={(e) => setFlashcard(e)} />
+              <Switch checked={flashcard} onChange={(e) => setFlashcard(e)} />
             </li>
             <li>
               Flashcard Reverse
-              <Switch onChange={(e) => setFlashcardReverse(e)} />
+              <Switch
+                checked={flashcardReverse}
+                onChange={(e) => setFlashcardReverse(e)}
+              />
             </li>
             <li>
-              Typing <Switch onChange={(e) => setTyping(e)} />
+              Typing <Switch checked={typing} onChange={(e) => setTyping(e)} />
             </li>
           </ul>
         </Form.Item>
@@ -253,7 +269,10 @@ export function ModalTask({ isModalOpen, setIsModalOpen, idDeck, cardName }) {
                   }
                 />
               </div>
-              <Switch onChange={(e) => setLanguageLearning(e)} />
+              <Switch
+                checked={languageLearning}
+                onChange={(e) => setLanguageLearning(e)}
+              />
             </li>
             {languageLearning && (
               <Select
@@ -297,7 +316,10 @@ export function ModalTask({ isModalOpen, setIsModalOpen, idDeck, cardName }) {
                   }
                 />
               </div>
-              <Switch onChange={(e) => setRandomOrder(e)} />
+              <Switch
+                checked={randomOrder}
+                onChange={(e) => setRandomOrder(e)}
+              />
             </li>
           </ul>
         </Form.Item>
@@ -312,14 +334,14 @@ export function ModalTask({ isModalOpen, setIsModalOpen, idDeck, cardName }) {
     firestore.collection("decks").add({
       id: uuid(),
       userId: user.uid,
-      name,
+      nameDeck: name,
       cards: [],
-      flashcard,
-      flashcardReverse,
-      typing,
-      languageLearning,
-      randomOrder,
-      language,
+      flashcardDeck: flashcard,
+      flashcardReverseDeck: flashcardReverse,
+      typingDeck: typing,
+      languageLearningDeck: languageLearning,
+      randomOrderDeck: randomOrder,
+      languageDeck: language,
     });
     setName("");
     setFlashcard(false);
@@ -327,9 +349,11 @@ export function ModalTask({ isModalOpen, setIsModalOpen, idDeck, cardName }) {
     setTyping(false);
     setLanguageLearning(false);
     setRandomOrder(false);
+    setDeck(null);
     toggleModal();
   }
   function toggleModal() {
+    setDeck(null);
     setIsModalOpen((prevState) => !prevState);
   }
 }

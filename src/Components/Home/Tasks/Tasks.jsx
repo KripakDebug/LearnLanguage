@@ -14,6 +14,7 @@ export default function Tasks({ cards }) {
   const [isModalCreateCardOpen, setIsModalCreateCardOpen] = useState(false);
   const [idDeck, setIdDeck] = useState(0);
   const [deckName, setDeckName] = useState("");
+  const [deck, setDeck] = useState(null);
   return (
     <div className="tasks">
       <h1>My Decks</h1>
@@ -51,7 +52,7 @@ export default function Tasks({ cards }) {
                     <div className="card-count">
                       {card.cards.length + " cards"}
                     </div>
-                    <div className="card-name">{card.name}</div>
+                    <div className="card-name">{card.nameDeck}</div>
                   </div>
                   <div className="count-lesson">
                     {card.cards.length === 0
@@ -70,11 +71,10 @@ export default function Tasks({ cards }) {
         </div>
         {isModalOpen && (
           <ModalTask
-            setIsModalCreateCardOpen={setIsModalCreateCardOpen}
+            setDeck={setDeck}
             setIsModalOpen={setIsModalOpen}
             isModalOpen={isModalOpen}
-            idDeck={idDeck}
-            cardName={deckName}
+            deck={deck}
           />
         )}
       </div>
@@ -89,6 +89,7 @@ export default function Tasks({ cards }) {
         data.docs.map((doc) => {
           if (id === doc.data().id) {
             setIdDeck(doc.data().id);
+            setDeck(doc.data());
             setDeckName(doc.data().name);
           }
         });
