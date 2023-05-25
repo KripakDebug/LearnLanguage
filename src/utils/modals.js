@@ -3,6 +3,7 @@ import { Context } from "../index";
 import { Button, Form, Input, Modal, Select, Switch } from "antd";
 import {
   DeleteOutlined,
+  ExclamationCircleFilled,
   FormOutlined,
   InfoCircleOutlined,
   PlusOutlined,
@@ -10,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import uuid from "react-uuid";
 import { useAuthState } from "react-firebase-hooks/auth";
+const { confirm } = Modal;
 
 export function ModalCreateCard({
   isModalCreateCardOpen,
@@ -161,7 +163,7 @@ export function ModalTask({
     randomOrderDeck,
     languageDeck,
   } = deck || {};
-  const { auth, firestore, firebase } = useContext(Context);
+  const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const [name, setName] = useState(nameDeck || "");
   const [isFlashcard, setIsFlashcard] = useState(!!flashcardDeck);
@@ -339,7 +341,7 @@ export function ModalTask({
         <div className="modal-btns">
           {deck !== null ? (
             <div className="modal-list-btn">
-              <Button type="link" onClick={deleteDeck}>
+              <Button type="link" onClick={showDeleteConfirm}>
                 <DeleteOutlined /> Delete deck
               </Button>
               <Button type="default" htmlType="submit">
@@ -360,6 +362,23 @@ export function ModalTask({
       </Form>
     </Modal>
   );
+
+  function showDeleteConfirm() {
+    confirm({
+      title: "Are you sure delete this deck?",
+      icon: <ExclamationCircleFilled />,
+      content: "",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        deleteDeck();
+      },
+      onCancel() {
+        toggleModal();
+      },
+    });
+  }
 
   function deleteDeck() {
     firestore
