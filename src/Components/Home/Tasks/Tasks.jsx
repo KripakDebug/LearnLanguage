@@ -29,7 +29,6 @@ export default function Tasks({ cards }) {
                     setIsModalCreateCardOpen={setIsModalCreateCardOpen}
                     idDeck={idDeck}
                     cardName={deckName}
-                    id={card.id}
                   />
                 )}
                 {card.id === idDeck && isModalOpenList && (
@@ -74,6 +73,7 @@ export default function Tasks({ cards }) {
             setDeck={setDeck}
             setIsModalOpen={setIsModalOpen}
             isModalOpen={isModalOpen}
+            idDeck={idDeck}
             deck={deck}
           />
         )}
@@ -90,7 +90,7 @@ export default function Tasks({ cards }) {
           if (id === doc.data().id) {
             setIdDeck(doc.data().id);
             setDeck(doc.data());
-            setDeckName(doc.data().name);
+            setDeckName(doc.data().nameDeck);
           }
         });
       });

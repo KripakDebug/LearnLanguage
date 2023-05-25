@@ -17,6 +17,17 @@
   }
 }
 .modal {
+  .modal-btns {
+    display: grid;
+  }
+  .btn-create-deck {
+    justify-content: end;
+  }
+  .modal-list-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
   .modal-list {
     list-style: none;
     width: 100%;

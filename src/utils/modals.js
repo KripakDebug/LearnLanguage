@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Context } from "../index";
 import { Button, Form, Input, Modal, Select, Switch } from "antd";
 import {
+  DeleteOutlined,
   FormOutlined,
   InfoCircleOutlined,
   PlusOutlined,
@@ -144,7 +145,13 @@ export function ModalCreateCard({
   }
 }
 
-export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
+export function ModalTask({
+  isModalOpen,
+  setIsModalOpen,
+  deck,
+  setDeck,
+  idDeck,
+}) {
   const {
     nameDeck,
     flashcardDeck,
@@ -154,7 +161,7 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
     randomOrderDeck,
     languageDeck,
   } = deck || {};
-  const { auth, firestore } = useContext(Context);
+  const { auth, firestore, firebase } = useContext(Context);
   const [user] = useAuthState(auth);
   const [name, setName] = useState(nameDeck || "");
   const [isFlashcard, setIsFlashcard] = useState(!!flashcardDeck);
@@ -180,6 +187,7 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
         layout={"vertical"}
         initialValues={{
           remember: false,
+          Name: name,
         }}
         onFinish={onSubmit}
         autoComplete="off"
@@ -328,26 +336,82 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
             </li>
           </ul>
         </Form.Item>
-        <Button disabled={name === "" && true} type="default" htmlType="submit">
-          Create
-        </Button>
+        <div className="modal-btns">
+          {deck !== null ? (
+            <div className="modal-list-btn">
+              <Button type="link" onClick={deleteDeck}>
+                <DeleteOutlined /> Delete deck
+              </Button>
+              <Button type="default" htmlType="submit">
+                Save
+              </Button>
+            </div>
+          ) : (
+            <Button
+              disabled={name === "" && true}
+              type="default"
+              className="btn-create-deck"
+              htmlType="submit"
+            >
+              Create
+            </Button>
+          )}
+        </div>
       </Form>
     </Modal>
   );
 
+  function deleteDeck() {
+    firestore
+      .collection("decks")
+      .get()
+      .then((data) => {
+        data.docs.map((doc) => {
+          if (idDeck === doc.data().id) {
+            const docRef = firestore.collection("decks").doc(doc.id);
+            docRef.delete();
+          }
+        });
+      });
+    toggleModal();
+  }
+
   function onSubmit() {
-    firestore.collection("decks").add({
-      id: uuid(),
-      userId: user.uid,
-      nameDeck: name,
-      cards: [],
-      flashcardDeck: isFlashcard,
-      flashcardReverseDeck: isFlashcardReverse,
-      typingDeck: isTyping,
-      languageLearningDeck: isLanguageLearning,
-      randomOrderDeck: isRandomOrder,
-      languageDeck: isLanguage,
-    });
+    if (deck !== null) {
+      firestore
+        .collection("decks")
+        .get()
+        .then((data) => {
+          data.docs.map((doc) => {
+            if (idDeck === doc.data().id) {
+              const docRef = firestore.collection("decks").doc(doc.id);
+
+              docRef.update({
+                nameDeck: name,
+                flashcardDeck: isFlashcard,
+                flashcardReverseDeck: isFlashcardReverse,
+                typingDeck: isTyping,
+                languageLearningDeck: isLanguageLearning,
+                randomOrderDeck: isRandomOrder,
+                languageDeck: isLanguage,
+              });
+            }
+          });
+        });
+    } else {
+      firestore.collection("decks").add({
+        id: uuid(),
+        userId: user.uid,
+        nameDeck: name,
+        cards: [],
+        flashcardDeck: isFlashcard,
+        flashcardReverseDeck: isFlashcardReverse,
+        typingDeck: isTyping,
+        languageLearningDeck: isLanguageLearning,
+        randomOrderDeck: isRandomOrder,
+        languageDeck: isLanguage,
+      });
+    }
     setName("");
     setIsFlashcard(false);
     setIsFlashcardReverse(false);
