@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Context } from "../index";
 import { Button, Form, Input, Modal, Select, Switch } from "antd";
 import {
@@ -145,27 +145,28 @@ export function ModalCreateCard({
 }
 
 export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
+  const {
+    nameDeck,
+    flashcardDeck,
+    flashcardReverseDeck,
+    typingDeck,
+    languageLearningDeck,
+    randomOrderDeck,
+    languageDeck,
+  } = deck || {};
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
-  const [name, setName] = useState("");
-  const [flashcard, setFlashcard] = useState(false);
-  const [flashcardReverse, setFlashcardReverse] = useState(false);
-  const [typing, setTyping] = useState(false);
-  const [languageLearning, setLanguageLearning] = useState(false);
-  const [randomOrder, setRandomOrder] = useState(false);
-  const [language, setLanguage] = useState("English");
-  const [deckObj, setDeckObj] = useState({
-    ...deck,
-  });
-
-  useEffect(() => {
-    setName(deckObj.nameDeck);
-    setFlashcard(deckObj.flashcardDeck);
-    setFlashcardReverse(deckObj.flashcardReverseDeck);
-    setTyping(deckObj.typingDeck);
-    setLanguageLearning(deckObj.languageLearningDeck);
-    setLanguage(deckObj.languageDeck);
-  }, [deckObj]);
+  const [name, setName] = useState(nameDeck || "");
+  const [flashcard, setFlashcard] = useState(flashcardDeck || false);
+  const [flashcardReverse, setFlashcardReverse] = useState(
+    flashcardReverseDeck || false
+  );
+  const [typing, setTyping] = useState(typingDeck || false);
+  const [languageLearning, setLanguageLearning] = useState(
+    languageLearningDeck || false
+  );
+  const [randomOrder, setRandomOrder] = useState(randomOrderDeck || false);
+  const [language, setLanguage] = useState(languageDeck || "English");
 
   return (
     <Modal
@@ -194,7 +195,7 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
           ]}
         >
           <Input
-            value={name}
+            defaultValue={name}
             placeholder="Name the new deck"
             onChange={(e) => setName(e.target.value)}
           />
