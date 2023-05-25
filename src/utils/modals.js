@@ -161,12 +161,13 @@ export function ModalTask({
     typingDeck,
     languageLearningDeck,
     randomOrderDeck,
+    textSpeechDeck,
     languageDeck,
   } = deck || {};
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const [name, setName] = useState(nameDeck || "");
-  const [isFlashcard, setIsFlashcard] = useState(!!flashcardDeck);
+  const [isFlashcard, setIsFlashcard] = useState(flashcardDeck || true);
   const [isFlashcardReverse, setIsFlashcardReverse] = useState(
     !!flashcardReverseDeck
   );
@@ -176,6 +177,7 @@ export function ModalTask({
   );
   const [isRandomOrder, setIsRandomOrder] = useState(!!randomOrderDeck);
   const [isLanguage, setIsLanguage] = useState(languageDeck || "English");
+  const [isTextSpeech, setIsTextSpeech] = useState(!!textSpeechDeck);
 
   return (
     <Modal
@@ -249,19 +251,40 @@ export function ModalTask({
               Flashcard
               <Switch
                 checked={isFlashcard}
-                onChange={(e) => setIsFlashcard(e)}
+                onChange={(e) => {
+                  if (isFlashcardReverse === false && isTyping === false) {
+                    setIsFlashcard(true);
+                  } else {
+                    setIsFlashcard(e);
+                  }
+                }}
               />
             </li>
             <li>
               Flashcard Reverse
               <Switch
                 checked={isFlashcardReverse}
-                onChange={(e) => setIsFlashcardReverse(e)}
+                onChange={(e) => {
+                  if (isFlashcard === false && isTyping === false) {
+                    setIsFlashcardReverse(true);
+                  } else {
+                    setIsFlashcardReverse(e);
+                  }
+                }}
               />
             </li>
             <li>
-              Typing{" "}
-              <Switch checked={isTyping} onChange={(e) => setIsTyping(e)} />
+              Typing
+              <Switch
+                checked={isTyping}
+                onChange={(e) => {
+                  if (isFlashcard === false && isFlashcardReverse === false) {
+                    setIsTyping(true);
+                  } else {
+                    setIsTyping(e);
+                  }
+                }}
+              />
             </li>
           </ul>
         </Form.Item>
@@ -290,31 +313,40 @@ export function ModalTask({
               />
             </li>
             {isLanguageLearning && (
-              <Select
-                defaultValue="English"
-                value={isLanguage}
-                onChange={(e) => {
-                  setIsLanguage(e);
-                }}
-                style={{
-                  width: 200,
-                  marginBottom: 20,
-                }}
-                options={[
-                  {
-                    options: [
-                      {
-                        label: "English",
-                        value: "English",
-                      },
-                      {
-                        label: "Korean",
-                        value: "Korean",
-                      },
-                    ],
-                  },
-                ]}
-              />
+              <div>
+                <Select
+                  defaultValue="English"
+                  value={isLanguage}
+                  onChange={(e) => {
+                    setIsLanguage(e);
+                  }}
+                  style={{
+                    width: 200,
+                    marginBottom: 20,
+                  }}
+                  options={[
+                    {
+                      options: [
+                        {
+                          label: "English",
+                          value: "English",
+                        },
+                        {
+                          label: "Korean",
+                          value: "Korean",
+                        },
+                      ],
+                    },
+                  ]}
+                />
+                <li>
+                  Text-to-speech:
+                  <Switch
+                    checked={isTextSpeech}
+                    onChange={(e) => setIsTextSpeech(e)}
+                  />
+                </li>
+              </div>
             )}
             <li>
               <div>
@@ -413,6 +445,7 @@ export function ModalTask({
                 languageLearningDeck: isLanguageLearning,
                 randomOrderDeck: isRandomOrder,
                 languageDeck: isLanguage,
+                textSpeechDeck: isTextSpeech,
               });
             }
           });
@@ -429,6 +462,7 @@ export function ModalTask({
         languageLearningDeck: isLanguageLearning,
         randomOrderDeck: isRandomOrder,
         languageDeck: isLanguage,
+        textSpeechDeck: isTextSpeech,
       });
     }
     setName("");
@@ -437,6 +471,7 @@ export function ModalTask({
     setIsTyping(false);
     setIsLanguageLearning(false);
     setIsRandomOrder(false);
+    setIsTextSpeech(false);
     setDeck(null);
     toggleModal();
   }
