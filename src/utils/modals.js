@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import uuid from "react-uuid";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { NavLink } from "react-router-dom";
 const { confirm } = Modal;
 
 export function ModalCreateCard({
@@ -486,7 +487,10 @@ export function ModalList({
   setIsModalOpenList,
   setIsModalCreateCardOpen,
   setIsModalOpen,
+  setDeck,
+  deck,
 }) {
+  const { cards } = deck;
   return (
     <Modal
       footer={null}
@@ -506,15 +510,26 @@ export function ModalList({
             <PlusOutlined /> Add Card
           </button>
         </li>
-        <li>
-          <button
-            onClick={() => {
-              toggleModal();
-            }}
-          >
-            <UnorderedListOutlined /> Card List
-          </button>
-        </li>
+        {cards.length ? (
+          <li>
+            <button
+              onClick={() => {
+                toggleModal();
+              }}
+            >
+              <NavLink
+                to="/home/listCard"
+                onClick={() => {
+                  toggleModal();
+                }}
+              >
+                <UnorderedListOutlined /> Card List
+              </NavLink>
+            </button>
+          </li>
+        ) : (
+          ""
+        )}
         <li>
           <button
             onClick={() => {
@@ -530,6 +545,7 @@ export function ModalList({
   );
 
   function toggleModal() {
+    setDeck(null);
     setIsModalOpenList((prevState) => !prevState);
   }
 }

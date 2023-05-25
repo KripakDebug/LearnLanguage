@@ -37,6 +37,8 @@ export default function Tasks({ cards }) {
                     isModalOpenList={isModalOpenList}
                     setIsModalOpenList={setIsModalOpenList}
                     setIsModalOpen={setIsModalOpen}
+                    setDeck={setDeck}
+                    deck={deck}
                   />
                 )}
                 <Card
@@ -44,7 +46,6 @@ export default function Tasks({ cards }) {
                   bordered={false}
                   onClick={() => {
                     getItemFirestore(card.id);
-                    setIsModalOpenList(true);
                   }}
                 >
                   <div className="info-card">
@@ -91,6 +92,7 @@ export default function Tasks({ cards }) {
             setIdDeck(doc.data().id);
             setDeck(doc.data());
             setDeckName(doc.data().nameDeck);
+            setIsModalOpenList(true);
           }
         });
       });
