@@ -157,16 +157,16 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
   const { auth, firestore } = useContext(Context);
   const [user] = useAuthState(auth);
   const [name, setName] = useState(nameDeck || "");
-  const [flashcard, setFlashcard] = useState(flashcardDeck || false);
-  const [flashcardReverse, setFlashcardReverse] = useState(
-    flashcardReverseDeck || false
+  const [isFlashcard, setIsFlashcard] = useState(!!flashcardDeck);
+  const [isFlashcardReverse, setIsFlashcardReverse] = useState(
+    !!flashcardReverseDeck
   );
-  const [typing, setTyping] = useState(typingDeck || false);
-  const [languageLearning, setLanguageLearning] = useState(
-    languageLearningDeck || false
+  const [isTyping, setIsTyping] = useState(!!typingDeck);
+  const [isLanguageLearning, setIsLanguageLearning] = useState(
+    !!languageLearningDeck
   );
-  const [randomOrder, setRandomOrder] = useState(randomOrderDeck || false);
-  const [language, setLanguage] = useState(languageDeck || "English");
+  const [isRandomOrder, setIsRandomOrder] = useState(!!randomOrderDeck);
+  const [isLanguage, setIsLanguage] = useState(languageDeck || "English");
 
   return (
     <Modal
@@ -237,17 +237,21 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
           <ul className="list">
             <li>
               Flashcard
-              <Switch checked={flashcard} onChange={(e) => setFlashcard(e)} />
+              <Switch
+                checked={isFlashcard}
+                onChange={(e) => setIsFlashcard(e)}
+              />
             </li>
             <li>
               Flashcard Reverse
               <Switch
-                checked={flashcardReverse}
-                onChange={(e) => setFlashcardReverse(e)}
+                checked={isFlashcardReverse}
+                onChange={(e) => setIsFlashcardReverse(e)}
               />
             </li>
             <li>
-              Typing <Switch checked={typing} onChange={(e) => setTyping(e)} />
+              Typing{" "}
+              <Switch checked={isTyping} onChange={(e) => setIsTyping(e)} />
             </li>
           </ul>
         </Form.Item>
@@ -271,16 +275,16 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
                 />
               </div>
               <Switch
-                checked={languageLearning}
-                onChange={(e) => setLanguageLearning(e)}
+                checked={isLanguageLearning}
+                onChange={(e) => setIsLanguageLearning(e)}
               />
             </li>
-            {languageLearning && (
+            {isLanguageLearning && (
               <Select
                 defaultValue="English"
-                value={language}
+                value={isLanguage}
                 onChange={(e) => {
-                  setLanguage(e);
+                  setIsLanguage(e);
                 }}
                 style={{
                   width: 200,
@@ -318,8 +322,8 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
                 />
               </div>
               <Switch
-                checked={randomOrder}
-                onChange={(e) => setRandomOrder(e)}
+                checked={isRandomOrder}
+                onChange={(e) => setIsRandomOrder(e)}
               />
             </li>
           </ul>
@@ -337,19 +341,19 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
       userId: user.uid,
       nameDeck: name,
       cards: [],
-      flashcardDeck: flashcard,
-      flashcardReverseDeck: flashcardReverse,
-      typingDeck: typing,
-      languageLearningDeck: languageLearning,
-      randomOrderDeck: randomOrder,
-      languageDeck: language,
+      flashcardDeck: isFlashcard,
+      flashcardReverseDeck: isFlashcardReverse,
+      typingDeck: isTyping,
+      languageLearningDeck: isLanguageLearning,
+      randomOrderDeck: isRandomOrder,
+      languageDeck: isLanguage,
     });
     setName("");
-    setFlashcard(false);
-    setFlashcardReverse(false);
-    setTyping(false);
-    setLanguageLearning(false);
-    setRandomOrder(false);
+    setIsFlashcard(false);
+    setIsFlashcardReverse(false);
+    setIsTyping(false);
+    setIsLanguageLearning(false);
+    setIsRandomOrder(false);
     setDeck(null);
     toggleModal();
   }
