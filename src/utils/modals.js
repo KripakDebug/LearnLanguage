@@ -615,7 +615,7 @@ export function ModalListChangeCard({
       .then((data) => {
         data.docs.map((doc) => {
           const cards = doc.data().cards;
-          const updatedCards = cards.filter((item) => item.idCard !== itemId);
+          const updatedCards = cards.filter((item) => item.idCard === itemId);
           doc.ref.update({ cards: updatedCards });
         });
       });
