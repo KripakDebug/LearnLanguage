@@ -1,7 +1,8 @@
 import React, { useContext, useState } from "react";
-import { Avatar, Menu } from "antd";
+import { Avatar, Menu, Modal } from "antd";
 import "./NavBar.scss";
 import {
+  ExclamationCircleFilled,
   ExportOutlined,
   HomeOutlined,
   LeftOutlined,
@@ -84,13 +85,28 @@ export default function NavBar() {
       />
       <button
         className={classNames(["nav__logout", { "collapsed-btn": collapsed }])}
-        onClick={() => auth.signOut()}
+        onClick={logoutConfirm}
       >
         <ExportOutlined />
         {collapsed ? "" : <span className="text">Logout</span>}
       </button>
     </nav>
   );
+
+  function logoutConfirm() {
+    Modal.confirm({
+      title: "Are you sure logout?",
+      icon: <ExclamationCircleFilled />,
+      content: "",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        auth.signOut();
+      },
+      onCancel() {},
+    });
+  }
 
   function toggleCollapsed() {
     setCollapsed(!collapsed);

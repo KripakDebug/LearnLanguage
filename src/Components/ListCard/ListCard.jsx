@@ -14,6 +14,7 @@ export default function ListCard() {
   const [cards, setCards] = useState(null);
   const [isModalOpenListChangeCard, setIsModalOpenListChangeCard] =
     useState(false);
+
   useEffect(() => {
     firestore
       .collection("decks")
@@ -29,6 +30,7 @@ export default function ListCard() {
   if (loading) {
     return <Loader />;
   }
+
   return (
     <div className="list-card">
       <div className="path">
