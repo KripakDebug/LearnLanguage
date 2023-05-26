@@ -25,7 +25,7 @@ export default function ListCard() {
           }
         });
       });
-  }, []);
+  }, [firestore, idDeck, cards]);
   if (loading) {
     return <Loader />;
   }
@@ -63,6 +63,7 @@ export default function ListCard() {
                 <ModalListChangeCard
                   isModalOpenListChangeCard={isModalOpenListChangeCard}
                   setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
+                  itemId={item.idCard}
                 />
               )}
               <div className="card-word">

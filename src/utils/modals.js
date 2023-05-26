@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../index";
 import { Button, Form, Input, Modal, Select, Switch } from "antd";
 import {
@@ -487,7 +487,6 @@ export function ModalList({
   setIsModalOpenList,
   setIsModalCreateCardOpen,
   setIsModalOpen,
-  setDeck,
   idDeck,
   deck,
 }) {
@@ -534,8 +533,8 @@ export function ModalList({
         <li>
           <button
             onClick={() => {
-              toggleModal();
               setIsModalOpen(true);
+              toggleModal();
             }}
           >
             <FormOutlined /> Edit Deck
@@ -546,7 +545,6 @@ export function ModalList({
   );
 
   function toggleModal() {
-    setDeck(null);
     setIsModalOpenList((prevState) => !prevState);
   }
 }
@@ -554,7 +552,24 @@ export function ModalList({
 export function ModalListChangeCard({
   isModalOpenListChangeCard,
   setIsModalOpenListChangeCard,
+  itemId,
 }) {
+  const { auth, firestore } = useContext(Context);
+  const [idCard, setIdCard] = useState(null);
+  const [user] = useAuthState(auth);
+
+  useEffect(() => {
+    firestore
+      .collection("decks")
+      .get()
+      .then((data) => {
+        data.docs.map((doc) => {
+          doc.data().cards.map((item) => {
+            setIdCard(item.idCard);
+          });
+        });
+      });
+  }, []);
   return (
     <Modal
       footer={null}
@@ -570,13 +585,43 @@ export function ModalListChangeCard({
           </button>
         </li>
         <li>
-          <button>
+          <button onClick={showDeleteConfirm}>
             <FormOutlined /> Delete
           </button>
         </li>
       </ul>
     </Modal>
   );
+  function showDeleteConfirm() {
+    confirm({
+      title: "Are you sure delete this card?",
+      icon: <ExclamationCircleFilled />,
+      content: "",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        deleteCard();
+      },
+      onCancel() {
+        toggleModal();
+      },
+    });
+  }
+  function deleteCard() {
+    firestore
+      .collection("decks")
+      .get()
+      .then((data) => {
+        data.docs.map((doc) => {
+          const cards = doc.data().cards;
+          const updatedCards = cards.filter((item) => item.idCard !== itemId);
+          doc.ref.update({ cards: updatedCards });
+        });
+      });
+
+    toggleModal();
+  }
   function toggleModal() {
     setIsModalOpenListChangeCard((prevState) => !prevState);
   }

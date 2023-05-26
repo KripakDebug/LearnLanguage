@@ -37,7 +37,6 @@ export default function Tasks({ cards }) {
                     isModalOpenList={isModalOpenList}
                     setIsModalOpenList={setIsModalOpenList}
                     setIsModalOpen={setIsModalOpen}
-                    setDeck={setDeck}
                     idDeck={idDeck}
                     deck={deck}
                   />
