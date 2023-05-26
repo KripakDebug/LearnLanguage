@@ -38,6 +38,7 @@ export default function Tasks({ cards }) {
                     setIsModalOpenList={setIsModalOpenList}
                     setIsModalOpen={setIsModalOpen}
                     setDeck={setDeck}
+                    idDeck={idDeck}
                     deck={deck}
                   />
                 )}

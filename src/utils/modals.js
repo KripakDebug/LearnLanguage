@@ -488,6 +488,7 @@ export function ModalList({
   setIsModalCreateCardOpen,
   setIsModalOpen,
   setDeck,
+  idDeck,
   deck,
 }) {
   const { cards } = deck;
@@ -518,7 +519,7 @@ export function ModalList({
               }}
             >
               <NavLink
-                to="/home/listCard"
+                to={`/home/card-list/${idDeck}`}
                 onClick={() => {
                   toggleModal();
                 }}
@@ -547,6 +548,37 @@ export function ModalList({
   function toggleModal() {
     setDeck(null);
     setIsModalOpenList((prevState) => !prevState);
+  }
+}
+
+export function ModalListChangeCard({
+  isModalOpenListChangeCard,
+  setIsModalOpenListChangeCard,
+}) {
+  return (
+    <Modal
+      footer={null}
+      closable={null}
+      className="modal"
+      open={isModalOpenListChangeCard}
+      onCancel={toggleModal}
+    >
+      <ul className="modal-list">
+        <li>
+          <button>
+            <PlusOutlined /> Edit
+          </button>
+        </li>
+        <li>
+          <button>
+            <FormOutlined /> Delete
+          </button>
+        </li>
+      </ul>
+    </Modal>
+  );
+  function toggleModal() {
+    setIsModalOpenListChangeCard((prevState) => !prevState);
   }
 }
 
