@@ -1,14 +1,14 @@
 import "./App.scss";
-import NavBar from "./Components/NavBar/NavBar";
+import NavBar from "./components/NavBar/NavBar";
 import { BrowserRouter } from "react-router-dom";
-import AppRouter from "./Components/AppRouter";
+import AppRouter from "./components/AppRouter";
 import { useContext } from "react";
-import { Context } from "./index";
+import { informationWithFirebase } from "./index";
 import { useAuthState } from "react-firebase-hooks/auth";
-import Loader from "./Components/Loader/Loader";
+import Loader from "./components/Loader/Loader";
 
 function App() {
-  const { auth } = useContext(Context);
+  const { auth } = useContext(informationWithFirebase);
   const [user, loading] = useAuthState(auth);
   if (loading) {
     return <Loader />;

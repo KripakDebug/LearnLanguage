@@ -1,13 +1,19 @@
 import React, { useContext } from "react";
 import "./Profile.scss";
-import { Context } from "../../index";
+import { informationWithFirebase } from "../../index";
 import moment from "moment";
-import { MoreOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Dropdown, Space } from "antd";
+import {
+  ExclamationCircleFilled,
+  MoreOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { Avatar, Dropdown, Modal, Space } from "antd";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import Loader from "../Loader/Loader";
+import LoaderComponent from "../../components/LoaderComponent/LoaderComponent";
+import { openNotificationError } from "../../utils/notificationHelpers";
+
 export default function Profile() {
-  const { firebase, firestore } = useContext(Context);
+  const { firebase, firestore } = useContext(informationWithFirebase);
   const firebaseUser = firebase.auth();
   const [cards, loading] = useCollectionData(firestore.collection("decks"));
   const user = firebaseUser.currentUser;
@@ -17,7 +23,7 @@ export default function Profile() {
   const monthsPassed = today.diff(startDate, "months");
   const yearsPassed = today.diff(startDate, "years");
   if (loading) {
-    return <Loader />;
+    return <LoaderComponent />;
   }
   const totalCards = cards.reduce(
     (count, card) => count + card.cards.length,
@@ -33,7 +39,7 @@ export default function Profile() {
 
   const items = [
     {
-      label: <div onClick={deleteAccount}>Delete Account</div>,
+      label: <div onClick={showDeleteConfirm}>Delete Account</div>,
       key: "0",
     },
   ];
@@ -94,14 +100,23 @@ export default function Profile() {
     </div>
   );
 
+  function showDeleteConfirm() {
+    Modal.confirm({
+      title: "Are you sure delete Account?",
+      icon: <ExclamationCircleFilled />,
+      content: "",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        deleteAccount();
+      },
+      onCancel() {},
+    });
+  }
   function deleteAccount() {
-    firebaseUser.currentUser
-      .delete()
-      .then(() => {
-        console.log("Акаунт успішно видалено");
-      })
-      .catch((error) => {
-        console.error("Помилка видалення акаунту:", error);
-      });
+    firebaseUser.currentUser.delete().catch((error) => {
+      openNotificationError("Перезайдіть в аккаунт");
+    });
   }
 }

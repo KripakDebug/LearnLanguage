@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
 import "./Login.scss";
-import { Context } from "../../index";
+import { informationWithFirebase } from "../../index";
 import firebase from "firebase/compat/app";
-import FormLogin from "./FormLogin/FormLogin";
-import FormRegister from "./FormRegister/FormRegister";
-import { openNotificationError } from "./../../utils/notificationHelpers";
+import FormLogin from "../../components/FormLogin/FormLogin";
+import FormRegister from "../../components/FormRegister/FormRegister";
+import { openNotificationError } from "../../utils/notificationHelpers";
 import { Button } from "antd";
 export default function Login() {
-  const { auth } = useContext(Context);
+  const { auth } = useContext(informationWithFirebase);
   const [changeForm, setChangeForm] = useState(true);
 
   const loginWithGoogle = async () => {

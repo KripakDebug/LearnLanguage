@@ -5,11 +5,11 @@ import {
   PROFILE_ROUTE,
   RESET_PASSWORD_ROUTE,
 } from "./utils/domenPath";
-import Login from "./Components/Login/Login";
-import Profile from "./Components/Profile/Profile";
-import Home from "./Components/Home/Home";
-import ResetPassword from "./Components/Login/FormLogin/ResetPassword/ResetPassword";
-import ListCard from "./Components/ListCard/ListCard";
+import Login from "./page/Login/Login";
+import Profile from "./page/Profile/Profile";
+import Home from "./page/Home/Home";
+import ResetPassword from "./components/ResetPassword/ResetPassword";
+import ListCard from "./components/ListCard/ListCard";
 
 export const publicRoutes = [
   {

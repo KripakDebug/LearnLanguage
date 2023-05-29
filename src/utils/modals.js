@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Context } from "../index";
+import { informationWithFirebase } from "../index";
 import { Button, Form, Input, Modal, Select, Switch } from "antd";
 import {
   DeleteOutlined,
@@ -17,10 +17,9 @@ const { confirm } = Modal;
 export function ModalCreateCard({
   isModalCreateCardOpen,
   setIsModalCreateCardOpen,
-  idDeck,
-  cardName,
+  deck,
 }) {
-  const { firestore, firebase } = useContext(Context);
+  const { firestore, firebase } = useContext(informationWithFirebase);
   const [wordCard, setWordCard] = useState([]);
   const [definition, setDefinition] = useState([]);
   const [example, setExample] = useState([]);
@@ -32,15 +31,8 @@ export function ModalCreateCard({
         open={isModalCreateCardOpen}
         onCancel={toggleModal}
       >
-        <h2>Add card to {cardName}</h2>
-        <Form
-          layout={"vertical"}
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={onSubmit}
-          autoComplete="off"
-        >
+        <h2>Add card to {deck.nameDeck}</h2>
+        <Form layout={"vertical"} onFinish={onSubmit} autoComplete="off">
           <Form.Item
             label="WORD"
             name="WORD"
@@ -109,7 +101,7 @@ export function ModalCreateCard({
       .get()
       .then((data) => {
         data.docs.map((doc) => {
-          if (idDeck === doc.data().id) {
+          if (deck.id === doc.data().id) {
             const docRef = firestore.collection("decks").doc(doc.id);
             const cardsArray = doc.data().cards || [];
             function getWordArray(str) {
@@ -148,13 +140,7 @@ export function ModalCreateCard({
   }
 }
 
-export function ModalTask({
-  isModalOpen,
-  setIsModalOpen,
-  deck,
-  setDeck,
-  idDeck,
-}) {
+export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
   const {
     nameDeck,
     flashcardDeck,
@@ -165,7 +151,7 @@ export function ModalTask({
     textSpeechDeck,
     languageDeck,
   } = deck || {};
-  const { auth, firestore } = useContext(Context);
+  const { auth, firestore } = useContext(informationWithFirebase);
   const [user] = useAuthState(auth);
   const [name, setName] = useState(nameDeck || "");
   const [isFlashcard, setIsFlashcard] = useState(flashcardDeck || true);
@@ -191,7 +177,6 @@ export function ModalTask({
       <Form
         layout={"vertical"}
         initialValues={{
-          remember: false,
           Name: name,
         }}
         onFinish={onSubmit}
@@ -419,7 +404,7 @@ export function ModalTask({
       .get()
       .then((data) => {
         data.docs.map((doc) => {
-          if (idDeck === doc.data().id) {
+          if (deck.id === doc.data().id) {
             const docRef = firestore.collection("decks").doc(doc.id);
             docRef.delete();
           }
@@ -435,7 +420,7 @@ export function ModalTask({
         .get()
         .then((data) => {
           data.docs.map((doc) => {
-            if (idDeck === doc.data().id) {
+            if (deck.id === doc.data().id) {
               const docRef = firestore.collection("decks").doc(doc.id);
 
               docRef.update({
@@ -487,7 +472,6 @@ export function ModalList({
   setIsModalOpenList,
   setIsModalCreateCardOpen,
   setIsModalOpen,
-  idDeck,
   deck,
 }) {
   const { cards } = deck;
@@ -518,7 +502,7 @@ export function ModalList({
               }}
             >
               <NavLink
-                to={`/home/card-list/${idDeck}`}
+                to={`/home/card-list/${deck.id}`}
                 onClick={() => {
                   toggleModal();
                 }}
@@ -554,9 +538,8 @@ export function ModalListChangeCard({
   setIsModalOpenListChangeCard,
   itemId,
 }) {
-  const { auth, firestore } = useContext(Context);
+  const { auth, firestore } = useContext(informationWithFirebase);
   const [idCard, setIdCard] = useState(null);
-  const [user] = useAuthState(auth);
 
   useEffect(() => {
     firestore

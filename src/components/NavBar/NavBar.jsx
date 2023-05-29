@@ -10,8 +10,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import classNames from "classnames";
-import { Context } from "../../index";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { informationWithFirebase } from "../../index";
 import { NavLink } from "react-router-dom";
 
 function getItem(label, key, icon, children, type) {
@@ -25,7 +24,7 @@ function getItem(label, key, icon, children, type) {
 }
 
 export default function NavBar() {
-  const { firebase } = useContext(Context);
+  const { firebase, auth } = useContext(informationWithFirebase);
   const userPhoto = firebase.auth().currentUser;
   const photo = userPhoto.photoURL;
   const items = [
@@ -56,8 +55,6 @@ export default function NavBar() {
       )
     ),
   ];
-  const { auth } = useContext(Context);
-  const [user] = useAuthState(auth);
   const [collapsed, setCollapsed] = useState(false);
   return (
     <nav

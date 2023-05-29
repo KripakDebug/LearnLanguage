@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import { Context } from "../../index";
+import { informationWithFirebase } from "../../index";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import "./ListCard.scss";
 import Loader from "../Loader/Loader";
@@ -9,7 +9,7 @@ import { ModalListChangeCard } from "../../utils/modals";
 
 export default function ListCard() {
   const { idDeck } = useParams();
-  const { auth, firestore } = useContext(Context);
+  const { auth, firestore } = useContext(informationWithFirebase);
   const [deck, loading] = useCollectionData(firestore.collection("decks"));
   const [cards, setCards] = useState(null);
   const [isModalOpenListChangeCard, setIsModalOpenListChangeCard] =

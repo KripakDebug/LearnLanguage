@@ -2,10 +2,10 @@ import React, { useContext, useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { privateRoutes, publicRoutes } from "../routes";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Context } from "../index";
+import { informationWithFirebase } from "../index";
 
 export default function AppRouter() {
-  const { auth } = useContext(Context);
+  const { auth } = useContext(informationWithFirebase);
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
 

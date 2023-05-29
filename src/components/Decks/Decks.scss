@@ -80,14 +80,16 @@ form {
       }
   }
 }
-.tasks {
+.decks-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   width: 100%;
   max-width: 1020px;
   h1 {
     margin-bottom: 20px;
     font-size: 20px;
   }
-  display: flex;
   .card-count {
     color: rgb(145, 145, 145);
     font-weight: 500;
@@ -97,12 +99,7 @@ form {
     font-weight: 600;
     color: rgb(43, 43, 43);
   }
-  flex-direction: column;
-  .list-task {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    .task {
+    .deck {
       .ant-card {
         transition: .3s;
         &:hover {
@@ -133,6 +130,5 @@ form {
       margin: 3px;
       flex: 0 0 49%;
        max-width: 49%;
-}
 }
 }

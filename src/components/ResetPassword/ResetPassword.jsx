@@ -1,15 +1,15 @@
 import React, { useContext, useState } from "react";
 import { Button, Form, Input } from "antd";
-import { Context } from "../../../../index";
+import { informationWithFirebase } from "../../index";
 import { sendPasswordResetEmail } from "firebase/auth";
 import {
   openNotification,
   openNotificationError,
-} from "../../../../utils/notificationHelpers";
+} from "../../utils/notificationHelpers";
 import { NavLink } from "react-router-dom";
 
 export default function ResetPassword() {
-  const { auth } = useContext(Context);
+  const { auth } = useContext(informationWithFirebase);
   const [email, setEmail] = useState("");
   return (
     <div className="login">
