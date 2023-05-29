@@ -98,38 +98,37 @@ export function ModalCreateCard({
   function onSubmit() {
     firestore
       .collection("decks")
+      .where("id", "==", deck.id)
       .get()
       .then((data) => {
         data.docs.map((doc) => {
-          if (deck.id === doc.data().id) {
-            const docRef = firestore.collection("decks").doc(doc.id);
-            const cardsArray = doc.data().cards || [];
-            function getWordArray(str) {
-              const words = str.split(" ");
-              const wordArray = words.map((word) =>
-                word.trim().replace(/,$/, "")
-              );
-              return wordArray;
-            }
-
-            const wordCardArray = getWordArray(wordCard);
-            const definitionWordArray = getWordArray(definition);
-
-            const newCard = {
-              idCard: uuid(),
-              wordCard: wordCardArray,
-              definition: definitionWordArray,
-              example: example === [] ? null : example,
-              createAt: firebase.firestore.Timestamp.fromDate(new Date()),
-              learn: 1,
-            };
-
-            cardsArray.push(newCard);
-
-            docRef.update({
-              cards: cardsArray,
-            });
+          const docRef = firestore.collection("decks").doc(doc.id);
+          const cardsArray = doc.data().cards || [];
+          function getWordArray(str) {
+            const words = str.split(" ");
+            const wordArray = words.map((word) =>
+              word.trim().replace(/,$/, "")
+            );
+            return wordArray;
           }
+
+          const wordCardArray = getWordArray(wordCard);
+          const definitionWordArray = getWordArray(definition);
+
+          const newCard = {
+            idCard: uuid(),
+            wordCard: wordCardArray,
+            definition: definitionWordArray,
+            example: example === [] ? null : example,
+            createAt: firebase.firestore.Timestamp.fromDate(new Date()),
+            learn: 1,
+          };
+
+          cardsArray.push(newCard);
+
+          docRef.update({
+            cards: cardsArray,
+          });
         });
       });
     toggleModal();
@@ -401,13 +400,12 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
   function deleteDeck() {
     firestore
       .collection("decks")
+      .where("id", "==", deck.id)
       .get()
       .then((data) => {
-        data.docs.map((doc) => {
-          if (deck.id === doc.data().id) {
-            const docRef = firestore.collection("decks").doc(doc.id);
-            docRef.delete();
-          }
+        data.docs.forEach((doc) => {
+          const docRef = firestore.collection("decks").doc(doc.id);
+          docRef.delete();
         });
       });
     toggleModal();
@@ -417,23 +415,21 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
     if (deck !== null) {
       firestore
         .collection("decks")
+        .where("id", "==", deck.id)
         .get()
         .then((data) => {
-          data.docs.map((doc) => {
-            if (deck.id === doc.data().id) {
-              const docRef = firestore.collection("decks").doc(doc.id);
-
-              docRef.update({
-                nameDeck: name,
-                flashcardDeck: isFlashcard,
-                flashcardReverseDeck: isFlashcardReverse,
-                typingDeck: isTyping,
-                languageLearningDeck: isLanguageLearning,
-                randomOrderDeck: isRandomOrder,
-                languageDeck: isLanguage,
-                textSpeechDeck: isTextSpeech,
-              });
-            }
+          data.docs.forEach((doc) => {
+            const docRef = firestore.collection("decks").doc(doc.id);
+            docRef.update({
+              nameDeck: name,
+              flashcardDeck: isFlashcard,
+              flashcardReverseDeck: isFlashcardReverse,
+              typingDeck: isTyping,
+              languageLearningDeck: isLanguageLearning,
+              randomOrderDeck: isRandomOrder,
+              languageDeck: isLanguage,
+              textSpeechDeck: isTextSpeech,
+            });
           });
         });
     } else {
@@ -536,23 +532,9 @@ export function ModalList({
 export function ModalListChangeCard({
   isModalOpenListChangeCard,
   setIsModalOpenListChangeCard,
-  itemId,
+  cardId,
 }) {
   const { auth, firestore } = useContext(informationWithFirebase);
-  const [idCard, setIdCard] = useState(null);
-
-  useEffect(() => {
-    firestore
-      .collection("decks")
-      .get()
-      .then((data) => {
-        data.docs.map((doc) => {
-          doc.data().cards.map((item) => {
-            setIdCard(item.idCard);
-          });
-        });
-      });
-  }, []);
   return (
     <Modal
       footer={null}
@@ -598,11 +580,10 @@ export function ModalListChangeCard({
       .then((data) => {
         data.docs.map((doc) => {
           const cards = doc.data().cards;
-          const updatedCards = cards.filter((item) => item.idCard === itemId);
+          const updatedCards = cards.filter((item) => item.idCard !== cardId);
           doc.ref.update({ cards: updatedCards });
         });
       });
-
     toggleModal();
   }
   function toggleModal() {

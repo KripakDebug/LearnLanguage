@@ -11,6 +11,7 @@ export default function ListCard() {
   const { idDeck } = useParams();
   const { auth, firestore } = useContext(informationWithFirebase);
   const [deck, loading] = useCollectionData(firestore.collection("decks"));
+  const [cardId, setCardId] = useState(0);
   const [cards, setCards] = useState(null);
   const [isModalOpenListChangeCard, setIsModalOpenListChangeCard] =
     useState(false);
@@ -54,20 +55,16 @@ export default function ListCard() {
             <li className="card">
               <div
                 className="burger-card"
-                onClick={() => setIsModalOpenListChangeCard(true)}
+                onClick={() => {
+                  setCardId(item.idCard);
+                  setIsModalOpenListChangeCard(true);
+                }}
               >
                 <div className="icon-check">
                   <CheckOutlined style={{ color: "#fff" }} />
                 </div>
                 <CaretDownOutlined />
               </div>
-              {isModalOpenListChangeCard && (
-                <ModalListChangeCard
-                  isModalOpenListChangeCard={isModalOpenListChangeCard}
-                  setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
-                  itemId={item.idCard}
-                />
-              )}
               <div className="card-word">
                 <div className="word">
                   {item.wordCard.map((item) => {
@@ -83,6 +80,13 @@ export default function ListCard() {
             </li>
           );
         })}
+        {isModalOpenListChangeCard && (
+          <ModalListChangeCard
+            isModalOpenListChangeCard={isModalOpenListChangeCard}
+            setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
+            cardId={cardId}
+          />
+        )}
       </ul>
     </div>
   );
