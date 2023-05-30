@@ -526,16 +526,10 @@ export function ModalListChangeCard({
   cardId,
   cards,
   menuShowForRadio,
+  setMenuShowforRadio,
 }) {
   const { auth, firestore } = useContext(informationWithFirebase);
-  const [nameCard, setNameCard] = useState("");
-  useEffect(() => {
-    cards.cards.map((item) => {
-      if (item.idCard === cardId) {
-        setNameCard(item.wordCard);
-      }
-    });
-  }, []);
+
   return (
     <Modal
       footer={null}
@@ -563,7 +557,20 @@ export function ModalListChangeCard({
     confirm({
       title: "Do you want to delete following cards?",
       icon: <ExclamationCircleFilled />,
-      content: <b>{nameCard}</b>,
+      content: (
+        <ul>
+          {cards.cards.map((item) => {
+            if (item.idCard === cardId) {
+              return <li>{item.wordCard}</li>;
+            }
+            if (menuShowForRadio) {
+              if (item.active) {
+                return <li>{item.wordCard}</li>;
+              }
+            }
+          })}
+        </ul>
+      ),
       okText: "Yes",
       okType: "danger",
       cancelText: "No",
@@ -595,6 +602,7 @@ export function ModalListChangeCard({
     toggleModal();
   }
   function toggleModal() {
+    setMenuShowforRadio(false);
     setIsModalOpenListChangeCard((prevState) => !prevState);
   }
 }
