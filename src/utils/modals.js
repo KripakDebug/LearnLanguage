@@ -525,6 +525,7 @@ export function ModalListChangeCard({
   setIsModalOpenListChangeCard,
   cardId,
   cards,
+  menuShowForRadio,
 }) {
   const { auth, firestore } = useContext(informationWithFirebase);
   const [nameCard, setNameCard] = useState("");
@@ -546,12 +547,13 @@ export function ModalListChangeCard({
       <ul className="modal-list">
         <li>
           <button>
-            <PlusOutlined /> Edit
+            <FormOutlined /> Edit
           </button>
         </li>
         <li>
           <button onClick={showDeleteConfirm}>
-            <FormOutlined /> Delete
+            <DeleteOutlined />
+            Delete
           </button>
         </li>
       </ul>
@@ -580,10 +582,16 @@ export function ModalListChangeCard({
       .then((data) => {
         data.docs.map((doc) => {
           const cards = doc.data().cards;
-          const updatedCards = cards.filter((item) => item.idCard !== cardId);
+          const updatedCards = cards.filter((item) => {
+            if (menuShowForRadio) {
+              return item.active !== true;
+            }
+            return item.idCard !== cardId;
+          });
           doc.ref.update({ cards: updatedCards });
         });
       });
+
     toggleModal();
   }
   function toggleModal() {

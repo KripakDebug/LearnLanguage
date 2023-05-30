@@ -8,7 +8,6 @@ import { ModalListChangeCard } from "../../utils/modals";
 import { Radio } from "antd";
 import LoaderComponent from "../LoaderComponent/LoaderComponent";
 
-const cardIdActiveCard = [];
 export default function ListCard() {
   const { idDeck } = useParams();
   const { auth, firestore } = useContext(informationWithFirebase);
@@ -16,8 +15,7 @@ export default function ListCard() {
   const [cardId, setCardId] = useState(0);
   const [cards, setCards] = useState(null);
   const [checkedAll, setCheckedAll] = useState(false);
-  const [checkedItem, setCheckedItem] = useState(false);
-
+  const [menuShowForRadio, setMenuShowForRadio] = useState(false);
   const [isModalOpenListChangeCard, setIsModalOpenListChangeCard] =
     useState(false);
 
@@ -56,7 +54,7 @@ export default function ListCard() {
             >
               <CheckOutlined style={{ color: "#fff" }} />
             </Radio.Button>
-            <div className="show-modal">
+            <div className="show-modal" onClick={showModal}>
               <CaretDownOutlined />
             </div>
           </div>
@@ -72,7 +70,6 @@ export default function ListCard() {
                   checked={item.active}
                   onClick={() => {
                     setFireStoreActiveMode(item.idCard);
-                    setCheckedItem(item.active);
                   }}
                   className="icon-check"
                 >
@@ -101,6 +98,8 @@ export default function ListCard() {
             setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
             cardId={cardId}
             cards={cards}
+            setMenuShowforRadio={setMenuShowForRadio}
+            menuShowForRadio={menuShowForRadio}
           />
         )}
       </ul>
@@ -131,6 +130,23 @@ export default function ListCard() {
             return item;
           });
           doc.ref.update({ cards: updatedCards });
+        });
+      });
+  }
+
+  function showModal() {
+    firestore
+      .collection("decks")
+      .get()
+      .then((data) => {
+        data.docs.map((doc) => {
+          const cards = doc.data().cards;
+          cards.map((item) => {
+            if (item.active) {
+              setMenuShowForRadio(true);
+              setIsModalOpenListChangeCard(true);
+            }
+          });
         });
       });
   }
