@@ -98,7 +98,7 @@ export default function ListCard() {
             setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
             cardId={cardId}
             cards={cards}
-            setMenuShowforRadio={setMenuShowForRadio}
+            setMenuShowForRadio={setMenuShowForRadio}
             menuShowForRadio={menuShowForRadio}
           />
         )}

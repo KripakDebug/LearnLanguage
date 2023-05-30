@@ -526,7 +526,7 @@ export function ModalListChangeCard({
   cardId,
   cards,
   menuShowForRadio,
-  setMenuShowforRadio,
+  setMenuShowForRadio,
 }) {
   const { auth, firestore } = useContext(informationWithFirebase);
 
@@ -602,7 +602,7 @@ export function ModalListChangeCard({
     toggleModal();
   }
   function toggleModal() {
-    setMenuShowforRadio(false);
+    setMenuShowForRadio(false);
     setIsModalOpenListChangeCard((prevState) => !prevState);
   }
 }
