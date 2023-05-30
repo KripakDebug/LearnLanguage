@@ -28,7 +28,7 @@
     .icon-check {
       cursor: pointer;
       border-radius: 8px;
-      z-index: 3;
+      z-index: 5;
       width: 24px;
       height: 24px;
       display: inline-flex;
@@ -37,6 +37,17 @@
       -webkit-box-align: center;
       align-items: center;
       background-color: rgb(212, 212, 212);
+    }
+    .ant-radio-button-wrapper {
+      border: none;
+    }
+    .ant-radio-button-wrapper-checked {
+      border: none;
+    }
+    .ant-radio-button-checked {
+      background-color: #66d6cb;
+      border-radius: 8px;
+      border: none;
     }
     .burger-card {
       display: inline-flex;
@@ -55,6 +66,16 @@
       flex-direction: row;
       transition: .3s ease;
       width: 60px;
+      .show-modal {
+        display: flex;
+        position: absolute;
+        height: 100%;
+        width:100%;
+        margin-left: -10px;
+        align-items: center;
+        justify-content: end;
+
+      }
       &:hover:before {
         content: '';
         position: absolute;

@@ -20,9 +20,9 @@ export function ModalCreateCard({
   deck,
 }) {
   const { firestore, firebase } = useContext(informationWithFirebase);
-  const [wordCard, setWordCard] = useState([]);
-  const [definition, setDefinition] = useState([]);
-  const [example, setExample] = useState([]);
+  const [wordCard, setWordCard] = useState("");
+  const [definition, setDefinition] = useState("");
+  const [example, setExample] = useState("");
   return (
     <div>
       <Modal
@@ -104,24 +104,15 @@ export function ModalCreateCard({
         data.docs.map((doc) => {
           const docRef = firestore.collection("decks").doc(doc.id);
           const cardsArray = doc.data().cards || [];
-          function getWordArray(str) {
-            const words = str.split(" ");
-            const wordArray = words.map((word) =>
-              word.trim().replace(/,$/, "")
-            );
-            return wordArray;
-          }
-
-          const wordCardArray = getWordArray(wordCard);
-          const definitionWordArray = getWordArray(definition);
 
           const newCard = {
             idCard: uuid(),
-            wordCard: wordCardArray,
-            definition: definitionWordArray,
-            example: example === [] ? null : example,
+            wordCard: wordCard,
+            definition: definition,
+            example: example === "" ? "" : example,
             createAt: firebase.firestore.Timestamp.fromDate(new Date()),
             learn: 1,
+            active: false,
           };
 
           cardsArray.push(newCard);
@@ -533,8 +524,17 @@ export function ModalListChangeCard({
   isModalOpenListChangeCard,
   setIsModalOpenListChangeCard,
   cardId,
+  cards,
 }) {
   const { auth, firestore } = useContext(informationWithFirebase);
+  const [nameCard, setNameCard] = useState("");
+  useEffect(() => {
+    cards.cards.map((item) => {
+      if (item.idCard === cardId) {
+        setNameCard(item.wordCard);
+      }
+    });
+  }, []);
   return (
     <Modal
       footer={null}
@@ -559,9 +559,9 @@ export function ModalListChangeCard({
   );
   function showDeleteConfirm() {
     confirm({
-      title: "Are you sure delete this card?",
+      title: "Do you want to delete following cards?",
       icon: <ExclamationCircleFilled />,
-      content: "",
+      content: <b>{nameCard}</b>,
       okText: "Yes",
       okType: "danger",
       cancelText: "No",

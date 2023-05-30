@@ -3,16 +3,21 @@ import { NavLink, useParams } from "react-router-dom";
 import { informationWithFirebase } from "../../index";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import "./ListCard.scss";
-import Loader from "../Loader/Loader";
 import { CaretDownOutlined, CheckOutlined } from "@ant-design/icons";
 import { ModalListChangeCard } from "../../utils/modals";
+import { Radio } from "antd";
+import LoaderComponent from "../LoaderComponent/LoaderComponent";
 
+const cardIdActiveCard = [];
 export default function ListCard() {
   const { idDeck } = useParams();
   const { auth, firestore } = useContext(informationWithFirebase);
   const [deck, loading] = useCollectionData(firestore.collection("decks"));
   const [cardId, setCardId] = useState(0);
   const [cards, setCards] = useState(null);
+  const [checkedAll, setCheckedAll] = useState(false);
+  const [checkedItem, setCheckedItem] = useState(false);
+
   const [isModalOpenListChangeCard, setIsModalOpenListChangeCard] =
     useState(false);
 
@@ -27,9 +32,9 @@ export default function ListCard() {
           }
         });
       });
-  }, [firestore, idDeck, cards]);
+  }, [cards, firestore, idDeck]);
   if (loading) {
-    return <Loader />;
+    return <LoaderComponent />;
   }
 
   return (
@@ -41,10 +46,19 @@ export default function ListCard() {
       <ul className="table-card">
         <li className="card">
           <div className="burger-card">
-            <div className="icon-check">
+            <Radio.Button
+              checked={checkedAll}
+              onClick={() => {
+                setCheckedAll((prevState) => !prevState);
+                setFireStoreActiveMode(null, !checkedAll);
+              }}
+              className="icon-check"
+            >
               <CheckOutlined style={{ color: "#fff" }} />
+            </Radio.Button>
+            <div className="show-modal">
+              <CaretDownOutlined />
             </div>
-            <CaretDownOutlined />
           </div>
           <div>Front</div>
           <div>Interval Days</div>
@@ -53,29 +67,30 @@ export default function ListCard() {
         {cards.cards.map((item) => {
           return (
             <li className="card">
-              <div
-                className="burger-card"
-                onClick={() => {
-                  setCardId(item.idCard);
-                  setIsModalOpenListChangeCard(true);
-                }}
-              >
-                <div className="icon-check">
+              <div className="burger-card">
+                <Radio.Button
+                  checked={item.active}
+                  onClick={() => {
+                    setFireStoreActiveMode(item.idCard);
+                    setCheckedItem(item.active);
+                  }}
+                  className="icon-check"
+                >
                   <CheckOutlined style={{ color: "#fff" }} />
+                </Radio.Button>
+                <div
+                  className="show-modal"
+                  onClick={() => {
+                    setCardId(item.idCard);
+                    setIsModalOpenListChangeCard(true);
+                  }}
+                >
+                  <CaretDownOutlined />
                 </div>
-                <CaretDownOutlined />
               </div>
               <div className="card-word">
-                <div className="word">
-                  {item.wordCard.map((item) => {
-                    return <div>{item}</div>;
-                  })}
-                </div>
-                <div className="definition">
-                  {item.definition.map((item) => {
-                    return <div>{item}</div>;
-                  })}
-                </div>
+                <div className="word">{item.wordCard}</div>
+                <div className="definition">{item.definition}</div>
               </div>
             </li>
           );
@@ -85,9 +100,38 @@ export default function ListCard() {
             isModalOpenListChangeCard={isModalOpenListChangeCard}
             setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
             cardId={cardId}
+            cards={cards}
           />
         )}
       </ul>
     </div>
   );
+
+  function setFireStoreActiveMode(id = null, boolCheckAll) {
+    firestore
+      .collection("decks")
+      .get()
+      .then((data) => {
+        data.docs.map((doc) => {
+          const cards = doc.data().cards;
+          const updatedCards = cards.map((item) => {
+            if (id !== null) {
+              if (item.idCard === id) {
+                return {
+                  ...item,
+                  active: !item.active,
+                };
+              }
+            } else {
+              return {
+                ...item,
+                active: boolCheckAll,
+              };
+            }
+            return item;
+          });
+          doc.ref.update({ cards: updatedCards });
+        });
+      });
+  }
 }
