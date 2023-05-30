@@ -22,15 +22,14 @@ export default function ListCard() {
   useEffect(() => {
     firestore
       .collection("decks")
+      .where("id", "==", idDeck)
       .get()
       .then((data) => {
         data.docs.map((doc) => {
-          if (idDeck === doc.data().id) {
-            setCards(doc.data());
-          }
+          setCards(doc.data());
         });
       });
-  }, [cards, firestore, idDeck]);
+  }, [isModalOpenListChangeCard, checkedAll]);
   if (loading) {
     return <LoaderComponent />;
   }
@@ -64,7 +63,7 @@ export default function ListCard() {
         </li>
         {cards.cards.map((item) => {
           return (
-            <li className="card">
+            <li key={item.idCard} className="card">
               <div className="burger-card">
                 <Radio.Button
                   checked={item.active}
@@ -98,6 +97,8 @@ export default function ListCard() {
             setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
             cardId={cardId}
             cards={cards}
+            deck={deck}
+            setCards={setCards}
             setMenuShowForRadio={setMenuShowForRadio}
             menuShowForRadio={menuShowForRadio}
           />

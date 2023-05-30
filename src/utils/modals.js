@@ -527,9 +527,11 @@ export function ModalListChangeCard({
   cards,
   menuShowForRadio,
   setMenuShowForRadio,
+  setCards,
+  deck,
 }) {
   const { auth, firestore } = useContext(informationWithFirebase);
-
+  const [isShowModalChangeCard, setIsShowModalChangeCard] = useState(false);
   return (
     <Modal
       footer={null}
@@ -540,10 +542,20 @@ export function ModalListChangeCard({
     >
       <ul className="modal-list">
         <li>
-          <button>
+          <button onClick={() => setIsShowModalChangeCard(true)}>
             <FormOutlined /> {menuShowForRadio ? "Change Deck" : "Edit"}
           </button>
         </li>
+        {isShowModalChangeCard && (
+          <ModalChangeCard
+            setIsShowModalChangeCard={setIsShowModalChangeCard}
+            isShowModalChangeCard={isShowModalChangeCard}
+            cards={cards.cards.find((item) => item.idCard === cardId)}
+            deck={deck}
+            setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
+            cardId={cardId}
+          />
+        )}
         <li>
           <button onClick={showDeleteConfirm}>
             <DeleteOutlined />
@@ -596,6 +608,7 @@ export function ModalListChangeCard({
             return item.idCard !== cardId;
           });
           doc.ref.update({ cards: updatedCards });
+          setCards(doc.data());
         });
       });
 
@@ -604,6 +617,130 @@ export function ModalListChangeCard({
   function toggleModal() {
     setMenuShowForRadio(false);
     setIsModalOpenListChangeCard((prevState) => !prevState);
+  }
+}
+
+export function ModalChangeCard({
+  setIsShowModalChangeCard,
+  cards,
+  deck,
+  cardId,
+  setIsModalOpenListChangeCard,
+  isShowModalChangeCard,
+}) {
+  const { wordCard, definition, example } = cards || {};
+  const { firestore, firebase } = useContext(informationWithFirebase);
+  const [word, setWord] = useState(wordCard);
+  const [definitionCard, setDefinitionCard] = useState(definition);
+  const [exampleCard, setExampleCard] = useState(example);
+  return (
+    <div>
+      <Modal
+        footer={null}
+        className="modal"
+        open={isShowModalChangeCard}
+        onCancel={toggleModal}
+      >
+        <Form
+          layout={"vertical"}
+          onFinish={onSubmit}
+          autoComplete="off"
+          initialValues={{
+            WORD: word,
+            DEFINITION: definitionCard,
+            EXAMPLE: exampleCard,
+          }}
+        >
+          <Form.Item
+            label="WORD"
+            name="WORD"
+            rules={[
+              {
+                required: true,
+                message: "Please input memorize!",
+              },
+            ]}
+          >
+            <Input
+              defaultValue={wordCard}
+              placeholder="memorize"
+              onChange={(e) => setWord(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="DEFINITION"
+            name="DEFINITION"
+            rules={[
+              {
+                required: true,
+                message: "Please input definition!",
+              },
+            ]}
+          >
+            <Input
+              placeholder="to learn by heart, commit to memory"
+              onChange={(e) => setDefinitionCard(e.target.value)}
+            />
+          </Form.Item>
+          <Form.Item
+            label="EXAMPLE (OPTIONAL)"
+            name="EXAMPLE"
+            tooltip={{
+              icon: (
+                <InfoCircleOutlined
+                  onClick={() =>
+                    info(
+                      "Additional:",
+                      <p>
+                        Additional item will be shown at the last of the each
+                        card. This is a good place to provide supplement
+                        information. (e.g. example sentence of an English word)
+                      </p>
+                    )
+                  }
+                />
+              ),
+            }}
+          >
+            <Input
+              placeholder="He memorized thousands of verses."
+              onChange={(e) => setExampleCard(e.target.value)}
+            />
+          </Form.Item>
+          <Button type="default" htmlType="submit">
+            Change
+          </Button>
+        </Form>
+      </Modal>
+    </div>
+  );
+  function onSubmit() {
+    firestore
+      .collection("decks")
+      .get()
+      .then((data) => {
+        data.docs.map((doc) => {
+          const cards = doc.data().cards;
+          const updatedCards = cards.map((item) => {
+            if (item.idCard === cardId) {
+              return {
+                ...item,
+                wordCard: word,
+                definition: definitionCard,
+                example: exampleCard,
+              };
+            }
+            return item;
+          });
+          doc.ref.update({ cards: updatedCards });
+        });
+      });
+    toggleModal();
+  }
+
+  function toggleModal() {
+    setIsShowModalChangeCard((prevState) => !prevState);
+    setIsModalOpenListChangeCard(false);
   }
 }
 
