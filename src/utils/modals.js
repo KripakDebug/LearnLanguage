@@ -541,13 +541,13 @@ export function ModalListChangeCard({
       <ul className="modal-list">
         <li>
           <button>
-            <FormOutlined /> Edit
+            <FormOutlined /> {menuShowForRadio ? "Change Deck" : "Edit"}
           </button>
         </li>
         <li>
           <button onClick={showDeleteConfirm}>
             <DeleteOutlined />
-            Delete
+            Delete {menuShowForRadio && "Cards"}
           </button>
         </li>
       </ul>
