@@ -29,7 +29,7 @@ export default function ListCard() {
           setCards(doc.data());
         });
       });
-  }, [isModalOpenListChangeCard, checkedAll]);
+  }, [isModalOpenListChangeCard, checkedAll, firestore, idDeck, cardId]);
   if (loading) {
     return <LoaderComponent />;
   }
@@ -69,6 +69,7 @@ export default function ListCard() {
                   checked={item.active}
                   onClick={() => {
                     setFireStoreActiveMode(item.idCard);
+                    setCardId((prevState) => prevState + 1);
                   }}
                   className="icon-check"
                 >

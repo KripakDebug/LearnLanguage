@@ -633,6 +633,34 @@ export function ModalChangeCard({
   const [word, setWord] = useState(wordCard);
   const [definitionCard, setDefinitionCard] = useState(definition);
   const [exampleCard, setExampleCard] = useState(example);
+  const [deckName, setDeckName] = useState("");
+  const [listDeckNames, setListDeckNames] = useState([]);
+  const [previousDeckName, setPreviousDeckName] = useState("");
+
+  useEffect(() => {
+    const filteredDeckNames = [];
+
+    deck.forEach((item) => {
+      const options = [];
+
+      item.cards.forEach((itemCard) => {
+        if (itemCard.idCard === cardId) {
+          setDeckName(item.nameDeck);
+        }
+      });
+      options.push({
+        label: item.nameDeck,
+        value: item.nameDeck,
+      });
+
+      if (options.length > 0) {
+        filteredDeckNames.push({ options });
+      }
+    });
+
+    setListDeckNames(filteredDeckNames);
+  }, [cardId, deck]);
+
   return (
     <div>
       <Modal
@@ -651,6 +679,18 @@ export function ModalChangeCard({
             EXAMPLE: exampleCard,
           }}
         >
+          <Select
+            defaultValue="English"
+            value={deckName}
+            onChange={(e) => {
+              handleDeckNameChange(e);
+            }}
+            style={{
+              width: 200,
+              marginBottom: 20,
+            }}
+            options={listDeckNames}
+          />
           <Form.Item
             label="WORD"
             name="WORD"
@@ -714,25 +754,46 @@ export function ModalChangeCard({
       </Modal>
     </div>
   );
+
+  function handleDeckNameChange(newDeckName) {
+    setPreviousDeckName(deckName);
+    setDeckName(newDeckName);
+  }
   function onSubmit() {
     firestore
       .collection("decks")
       .get()
       .then((data) => {
         data.docs.map((doc) => {
-          const cards = doc.data().cards;
-          const updatedCards = cards.map((item) => {
-            if (item.idCard === cardId) {
-              return {
-                ...item,
-                wordCard: word,
-                definition: definitionCard,
-                example: exampleCard,
-              };
-            }
-            return item;
-          });
-          doc.ref.update({ cards: updatedCards });
+          if (doc.data().nameDeck === deckName) {
+            const cards = doc.data().cards;
+            const updatedCards = cards.map((item) => {
+              if (item.idCard === cardId) {
+                return {
+                  ...item,
+                  wordCard: word,
+                  definition: definitionCard,
+                  example: exampleCard,
+                };
+              }
+              return item;
+            });
+            doc.ref.update({ cards: updatedCards });
+          } else {
+            const cards = doc.data().cards;
+            const updatedCards = cards.filter((item) => item.idCard !== cardId);
+            doc.ref.update({ cards: updatedCards });
+            deck.map((dec) => {
+              if (dec.nameDeck === deckName) {
+                dec.cards.push({
+                  idCard: cardId,
+                  wordCard: word,
+                  definition: definitionCard,
+                  example: exampleCard,
+                });
+              }
+            });
+          }
         });
       });
     toggleModal();
@@ -741,6 +802,7 @@ export function ModalChangeCard({
   function toggleModal() {
     setIsShowModalChangeCard((prevState) => !prevState);
     setIsModalOpenListChangeCard(false);
+    setListDeckNames(null);
   }
 }
 
