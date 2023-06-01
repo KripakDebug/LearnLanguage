@@ -781,16 +781,22 @@ export function ModalChangeCard({
             doc.ref.update({ cards: updatedCards });
           } else {
             const cards = doc.data().cards;
-            const updatedCards = cards.filter((item) => item.idCard !== cardId);
-            doc.ref.update({ cards: updatedCards });
+            const updatedCardsСurrentDeck = cards.filter(
+              (item) => item.idCard !== cardId
+            );
+            doc.ref.update({ cards: updatedCardsСurrentDeck });
             deck.map((dec) => {
               if (dec.nameDeck === deckName) {
-                dec.cards.push({
-                  idCard: cardId,
-                  wordCard: word,
-                  definition: definitionCard,
-                  example: exampleCard,
+                const updatedCards = cards.map((item) => {
+                  return {
+                    ...item,
+                    wordCard: word,
+                    definition: definitionCard,
+                    example: exampleCard,
+                  };
                 });
+
+                doc.ref.update({ cards: updatedCards });
               }
             });
           }
