@@ -18,6 +18,7 @@ export function ModalCreateCard({
   isModalCreateCardOpen,
   setIsModalCreateCardOpen,
   deck,
+  setIsModalOpenList,
 }) {
   const { firestore, firebase } = useContext(informationWithFirebase);
   const [wordCard, setWordCard] = useState("");
@@ -126,6 +127,7 @@ export function ModalCreateCard({
   }
 
   function toggleModal() {
+    setIsModalOpenList(false);
     setIsModalCreateCardOpen((prevState) => !prevState);
   }
 }
@@ -475,7 +477,6 @@ export function ModalList({
         <li>
           <button
             onClick={() => {
-              toggleModal();
               setIsModalCreateCardOpen(true);
             }}
           >
