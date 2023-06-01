@@ -460,6 +460,7 @@ export function ModalList({
   setIsModalCreateCardOpen,
   setIsModalOpen,
   deck,
+  setDeck,
 }) {
   const { cards } = deck;
   return (
@@ -505,7 +506,7 @@ export function ModalList({
           <button
             onClick={() => {
               setIsModalOpen(true);
-              toggleModal();
+              setIsModalOpenList(false);
             }}
           >
             <FormOutlined /> Edit Deck
@@ -516,6 +517,7 @@ export function ModalList({
   );
 
   function toggleModal() {
+    setDeck(null);
     setIsModalOpenList((prevState) => !prevState);
   }
 }
@@ -636,7 +638,7 @@ export function ModalChangeCard({
   const [deckName, setDeckName] = useState("");
   const [listDeckNames, setListDeckNames] = useState([]);
   const [previousDeckName, setPreviousDeckName] = useState("");
-
+  const [card, setCard] = useState(null);
   useEffect(() => {
     const filteredDeckNames = [];
 
@@ -645,6 +647,7 @@ export function ModalChangeCard({
 
       item.cards.forEach((itemCard) => {
         if (itemCard.idCard === cardId) {
+          setCard(itemCard);
           setDeckName(item.nameDeck);
         }
       });
@@ -785,20 +788,6 @@ export function ModalChangeCard({
               (item) => item.idCard !== cardId
             );
             doc.ref.update({ cards: updatedCardsСurrentDeck });
-            deck.map((dec) => {
-              if (dec.nameDeck === deckName) {
-                const updatedCards = cards.map((item) => {
-                  return {
-                    ...item,
-                    wordCard: word,
-                    definition: definitionCard,
-                    example: exampleCard,
-                  };
-                });
-
-                doc.ref.update({ cards: updatedCards });
-              }
-            });
           }
         });
       });

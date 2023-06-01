@@ -31,6 +31,7 @@ export default function Decks() {
               setIsModalOpenList={setIsModalOpenList}
               isModalOpenList={isModalOpenList}
               deck={deck}
+              setDeck={setDeck}
               setIsModalCreateCardOpen={setIsModalCreateCardOpen}
               setIsModalOpen={setIsModalOpen}
               getItemFirestore={getItemFirestore}

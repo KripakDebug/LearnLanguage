@@ -11,6 +11,7 @@ export default function Deck({
   setIsModalOpenList,
   setIsModalOpen,
   getItemFirestore,
+  setDeck,
   idDeck,
 }) {
   return (
@@ -24,6 +25,7 @@ export default function Deck({
       )}
       {card.id === idDeck && isModalOpenList && (
         <ModalList
+          setDeck={setDeck}
           setIsModalCreateCardOpen={setIsModalCreateCardOpen}
           isModalOpenList={isModalOpenList}
           setIsModalOpenList={setIsModalOpenList}
