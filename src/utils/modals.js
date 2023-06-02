@@ -19,6 +19,7 @@ export function ModalCreateCard({
   setIsModalCreateCardOpen,
   deck,
   setIsModalOpenList,
+  setDeck,
 }) {
   const { firestore, firebase } = useContext(informationWithFirebase);
   const [wordCard, setWordCard] = useState("");
@@ -128,6 +129,7 @@ export function ModalCreateCard({
 
   function toggleModal() {
     setIsModalOpenList(false);
+    setDeck(null);
     setIsModalCreateCardOpen((prevState) => !prevState);
   }
 }
@@ -785,10 +787,18 @@ export function ModalChangeCard({
             doc.ref.update({ cards: updatedCards });
           } else {
             const cards = doc.data().cards;
-            const updatedCardsСurrentDeck = cards.filter(
+            const updatedCardsCurrentDeck = cards.filter(
               (item) => item.idCard !== cardId
             );
-            doc.ref.update({ cards: updatedCardsСurrentDeck });
+            doc.ref.update({ cards: updatedCardsCurrentDeck });
+
+            const deckRef = data.docs.find(
+              (doc) => doc.data().nameDeck === deckName
+            ).ref;
+
+            deckRef.update({
+              cards: firebase.firestore.FieldValue.arrayUnion(card),
+            });
           }
         });
       });

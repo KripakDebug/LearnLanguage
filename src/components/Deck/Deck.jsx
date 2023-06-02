@@ -22,6 +22,7 @@ export default function Deck({
           setIsModalCreateCardOpen={setIsModalCreateCardOpen}
           deck={deck}
           setIsModalOpenList={setIsModalOpenList}
+          setDeck={setDeck}
         />
       )}
       {card.id === idDeck && isModalOpenList && (
