@@ -493,7 +493,7 @@ export function ModalList({
               }}
             >
               <NavLink
-                to={`/home/card-list/${deck.id}`}
+                to={`/home/card-list/${deck.userId}/${deck.id}`}
                 onClick={() => {
                   toggleModal();
                 }}
@@ -534,8 +534,9 @@ export function ModalListChangeCard({
   setMenuShowForRadio,
   setCards,
   deck,
+  userId,
 }) {
-  const { auth, firestore } = useContext(informationWithFirebase);
+  const { firestore } = useContext(informationWithFirebase);
   const [isShowModalChangeCard, setIsShowModalChangeCard] = useState(false);
   return (
     <Modal
@@ -556,6 +557,7 @@ export function ModalListChangeCard({
             setIsShowModalChangeCard={setIsShowModalChangeCard}
             isShowModalChangeCard={isShowModalChangeCard}
             cards={cards.cards.find((item) => item.idCard === cardId)}
+            userId={userId}
             deck={deck}
             setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
             cardId={cardId}
@@ -632,6 +634,7 @@ export function ModalChangeCard({
   cardId,
   setIsModalOpenListChangeCard,
   isShowModalChangeCard,
+  userId,
 }) {
   const { wordCard, definition, example } = cards || {};
   const { firestore, firebase } = useContext(informationWithFirebase);
@@ -646,21 +649,23 @@ export function ModalChangeCard({
     const filteredDeckNames = [];
 
     deck.forEach((item) => {
-      const options = [];
+      if (item.userId === userId) {
+        const options = [];
 
-      item.cards.forEach((itemCard) => {
-        if (itemCard.idCard === cardId) {
-          setCard(itemCard);
-          setDeckName(item.nameDeck);
+        item.cards.forEach((itemCard) => {
+          if (itemCard.idCard === cardId) {
+            setCard(itemCard);
+            setDeckName(item.nameDeck);
+          }
+        });
+        options.push({
+          label: item.nameDeck,
+          value: item.nameDeck,
+        });
+
+        if (options.length > 0) {
+          filteredDeckNames.push({ options });
         }
-      });
-      options.push({
-        label: item.nameDeck,
-        value: item.nameDeck,
-      });
-
-      if (options.length > 0) {
-        filteredDeckNames.push({ options });
       }
     });
 
@@ -686,7 +691,6 @@ export function ModalChangeCard({
           }}
         >
           <Select
-            defaultValue="English"
             value={deckName}
             onChange={(e) => {
               handleDeckNameChange(e);
@@ -766,12 +770,13 @@ export function ModalChangeCard({
     setDeckName(newDeckName);
   }
   function onSubmit() {
-    firestore
-      .collection("decks")
-      .get()
-      .then((data) => {
-        data.docs.map((doc) => {
-          if (doc.data().nameDeck === deckName) {
+    if (!previousDeckName) {
+      firestore
+        .collection("decks")
+        .where("nameDeck", "==", deckName)
+        .get()
+        .then((data) => {
+          data.docs.map((doc) => {
             const cards = doc.data().cards;
             const updatedCards = cards.map((item) => {
               if (item.idCard === cardId) {
@@ -785,23 +790,29 @@ export function ModalChangeCard({
               return item;
             });
             doc.ref.update({ cards: updatedCards });
-          } else {
+          });
+        });
+    } else {
+      firestore
+        .collection("decks")
+        .get()
+        .then((data) => {
+          data.docs.map((doc) => {
             const cards = doc.data().cards;
+            const deck = data.docs.find(
+              (doc) => doc.data().nameDeck === previousDeckName
+            );
             const updatedCardsCurrentDeck = cards.filter(
               (item) => item.idCard !== cardId
             );
-            doc.ref.update({ cards: updatedCardsCurrentDeck });
+            deck.ref.update({ cards: updatedCardsCurrentDeck });
 
-            const deckRef = data.docs.find(
-              (doc) => doc.data().nameDeck === deckName
-            ).ref;
-
-            deckRef.update({
+            doc.ref.update({
               cards: firebase.firestore.FieldValue.arrayUnion(card),
             });
-          }
+          });
         });
-      });
+    }
     toggleModal();
   }
 

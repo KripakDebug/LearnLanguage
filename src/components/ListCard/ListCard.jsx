@@ -9,8 +9,8 @@ import { Radio } from "antd";
 import LoaderComponent from "../LoaderComponent/LoaderComponent";
 
 export default function ListCard() {
-  const { idDeck } = useParams();
-  const { auth, firestore } = useContext(informationWithFirebase);
+  const { userId, idDeck } = useParams();
+  const { firestore } = useContext(informationWithFirebase);
   const [deck, loading] = useCollectionData(firestore.collection("decks"));
   const [cardId, setCardId] = useState(0);
   const [cards, setCards] = useState(null);
@@ -47,7 +47,7 @@ export default function ListCard() {
               checked={checkedAll}
               onClick={() => {
                 setCheckedAll((prevState) => !prevState);
-                setFireStoreActiveMode(null, !checkedAll);
+                // setFireStoreActiveMode(null, !checkedAll);
               }}
               className="icon-check"
             >
@@ -68,7 +68,7 @@ export default function ListCard() {
                 <Radio.Button
                   checked={item.active}
                   onClick={() => {
-                    setFireStoreActiveMode(item.idCard);
+                    // setFireStoreActiveMode(item.idCard);
                     setCardId((prevState) => prevState + 1);
                   }}
                   className="icon-check"
@@ -99,6 +99,7 @@ export default function ListCard() {
             cardId={cardId}
             cards={cards}
             deck={deck}
+            userId={userId}
             setCards={setCards}
             setMenuShowForRadio={setMenuShowForRadio}
             menuShowForRadio={menuShowForRadio}
@@ -108,33 +109,33 @@ export default function ListCard() {
     </div>
   );
 
-  function setFireStoreActiveMode(id = null, boolCheckAll) {
-    firestore
-      .collection("decks")
-      .get()
-      .then((data) => {
-        data.docs.map((doc) => {
-          const cards = doc.data().cards;
-          const updatedCards = cards.map((item) => {
-            if (id !== null) {
-              if (item.idCard === id) {
-                return {
-                  ...item,
-                  active: !item.active,
-                };
-              }
-            } else {
-              return {
-                ...item,
-                active: boolCheckAll,
-              };
-            }
-            return item;
-          });
-          doc.ref.update({ cards: updatedCards });
-        });
-      });
-  }
+  // function setFireStoreActiveMode(id = null, boolCheckAll) {
+  //   firestore
+  //     .collection("decks")
+  //     .get()
+  //     .then((data) => {
+  //       data.docs.map((doc) => {
+  //         const cards = doc.data().cards;
+  //         const updatedCards = cards.map((item) => {
+  //           if (id !== null) {
+  //             if (item.idCard === id) {
+  //               return {
+  //                 ...item,
+  //                 active: !item.active,
+  //               };
+  //             }
+  //           } else {
+  //             return {
+  //               ...item,
+  //               active: boolCheckAll,
+  //             };
+  //           }
+  //           return item;
+  //         });
+  //         doc.ref.update({ cards: updatedCards });
+  //       });
+  //     });
+  // }
 
   function showModal() {
     firestore

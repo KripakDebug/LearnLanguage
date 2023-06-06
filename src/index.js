@@ -6,7 +6,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
-const app = firebase.initializeApp({
+firebase.initializeApp({
   apiKey: "AIzaSyCM3Qkwp6uMYLrzA3i36Lw2YOVOHJq16Ok",
   authDomain: "learnlanguage-a7037.firebaseapp.com",
   projectId: "learnlanguage-a7037",
