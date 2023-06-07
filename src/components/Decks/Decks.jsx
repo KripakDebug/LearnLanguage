@@ -60,13 +60,12 @@ export default function Decks() {
       .collection("decks")
       .get()
       .then((data) => {
-        data.docs.map((doc) => {
-          if (id === doc.data().id) {
-            setDeck(doc.data());
-            setIdDeck(doc.data().id);
-            setIsModalOpenList(true);
-          }
-        });
+        const deck = data.docs.find((doc) => id === doc.data().id);
+        if (deck) {
+          setDeck(deck.data());
+          setIdDeck(deck.data().id);
+          setIsModalOpenList(true);
+        }
       });
   }
 

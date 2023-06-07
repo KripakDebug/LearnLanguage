@@ -670,7 +670,7 @@ export function ModalChangeCard({
     });
 
     setListDeckNames(filteredDeckNames);
-  }, [cardId, deck]);
+  }, [cardId, deck, userId]);
 
   return (
     <div>
@@ -797,19 +797,18 @@ export function ModalChangeCard({
         .collection("decks")
         .get()
         .then((data) => {
-          data.docs.map((doc) => {
-            const cards = doc.data().cards;
-            const deck = data.docs.find(
-              (doc) => doc.data().nameDeck === previousDeckName
-            );
-            const updatedCardsCurrentDeck = cards.filter(
-              (item) => item.idCard !== cardId
-            );
-            deck.ref.update({ cards: updatedCardsCurrentDeck });
-
-            doc.ref.update({
-              cards: firebase.firestore.FieldValue.arrayUnion(card),
-            });
+          data.docs.find((doc) => {
+            if (doc.data().nameDeck === previousDeckName) {
+              const cards = doc.data().cards;
+              const updatedCardsCurrentDeck = cards.filter(
+                (item) => item.idCard !== cardId
+              );
+              doc.ref.update({ cards: updatedCardsCurrentDeck });
+            } else if (doc.data().nameDeck === deckName) {
+              doc.ref.update({
+                cards: firebase.firestore.FieldValue.arrayUnion(card),
+              });
+            }
           });
         });
     }

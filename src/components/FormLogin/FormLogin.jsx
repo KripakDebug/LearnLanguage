@@ -68,7 +68,7 @@ function FormLogin({ auth, openNotification, loginWithGoogle }) {
     </>
   );
   function onSubmit() {
-    signInWithEmailAndPassword(auth, email, password).catch((error) => {
+    signInWithEmailAndPassword(auth, email, password).catch(() => {
       openNotification("Неправильний пароль або пошта");
     });
   }

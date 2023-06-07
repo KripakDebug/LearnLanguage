@@ -115,7 +115,7 @@ export default function Profile() {
     });
   }
   function deleteAccount() {
-    firebaseUser.currentUser.delete().catch((error) => {
+    firebaseUser.currentUser.delete().catch(() => {
       openNotificationError("Перезайдіть в аккаунт");
     });
   }

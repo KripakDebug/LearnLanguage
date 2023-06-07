@@ -61,10 +61,10 @@ export default function ResetPassword() {
 
   function sendMessageToEmail() {
     sendPasswordResetEmail(auth, email)
-      .then((res) => {
+      .then(() => {
         openNotification("We sent password instructions to your email\n");
       })
-      .catch((err) => {
+      .catch(() => {
         openNotificationError("Wrong email");
       });
   }
