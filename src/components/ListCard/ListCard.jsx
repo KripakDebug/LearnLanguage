@@ -114,7 +114,7 @@ export default function ListCard() {
       .collection("decks")
       .get()
       .then((data) => {
-        data.docs.map((doc) => {
+        data.docs.forEach((doc) => {
           const cards = doc.data().cards;
           const updatedCards = cards.map((item) => {
             if (id !== null) {
