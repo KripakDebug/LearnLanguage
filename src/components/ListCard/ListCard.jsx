@@ -16,6 +16,7 @@ export default function ListCard() {
   const [cards, setCards] = useState(null);
   const [checkedAll, setCheckedAll] = useState(false);
   const [menuShowForRadio, setMenuShowForRadio] = useState(false);
+  const [cardIdActive, setCardIdActive] = useState([]);
   const [isModalOpenListChangeCard, setIsModalOpenListChangeCard] =
     useState(false);
 
@@ -26,7 +27,18 @@ export default function ListCard() {
       .get()
       .then((data) => {
         data.docs.map((doc) => {
-          return setCards(doc.data());
+          setCards(doc.data());
+          const cards = doc.data().cards;
+          if (checkedAll === true) {
+            cards.map((item) => {
+              return setCardIdActive((prevState) => [
+                ...prevState,
+                item.idCard,
+              ]);
+            });
+          } else {
+            return setCardIdActive([]);
+          }
         });
       });
   }, [isModalOpenListChangeCard, checkedAll, firestore, idDeck, cardId]);
@@ -47,7 +59,6 @@ export default function ListCard() {
               checked={checkedAll}
               onClick={() => {
                 setCheckedAll((prevState) => !prevState);
-                setFireStoreActiveMode(null, !checkedAll);
               }}
               className="icon-check"
             >
@@ -66,7 +77,7 @@ export default function ListCard() {
             <li key={item.idCard} className="card">
               <div className="burger-card">
                 <Radio.Button
-                  checked={item.active}
+                  checked={cardIdActive.includes(item.idCard)}
                   onClick={() => {
                     setFireStoreActiveMode(item.idCard);
                     setCardId((prevState) => prevState + 1);
@@ -109,34 +120,14 @@ export default function ListCard() {
     </div>
   );
 
-  function setFireStoreActiveMode(id = null, boolCheckAll) {
-    firestore
-      .collection("decks")
-      .get()
-      .then((data) => {
-        data.docs.forEach((doc) => {
-          const cards = doc.data().cards;
-          const updatedCards = cards.map((item) => {
-            if (id !== null) {
-              if (item.idCard === id) {
-                return {
-                  ...item,
-                  active: !item.active,
-                };
-              }
-            } else {
-              return {
-                ...item,
-                active: boolCheckAll,
-              };
-            }
-            return item;
-          });
-          doc.ref.update({ cards: updatedCards });
-        });
-      });
+  function setFireStoreActiveMode(itemId) {
+    const isActive = cardIdActive.includes(itemId);
+    if (isActive) {
+      setCardIdActive((prevState) => prevState.filter((id) => id !== itemId));
+    } else {
+      setCardIdActive((prevState) => [...prevState, itemId]);
+    }
   }
-
   function showModal() {
     firestore
       .collection("decks")
