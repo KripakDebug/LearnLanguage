@@ -21,6 +21,12 @@ export default function ListCard() {
     useState(false);
 
   useEffect(() => {
+    if (!cardIdActive.length) {
+      setCheckedAll(false);
+    }
+  }, [cardIdActive.length]);
+
+  useEffect(() => {
     firestore
       .collection("decks")
       .where("id", "==", idDeck)
@@ -28,20 +34,9 @@ export default function ListCard() {
       .then((data) => {
         data.docs.map((doc) => {
           setCards(doc.data());
-          const cards = doc.data().cards;
-          if (checkedAll === true) {
-            cards.map((item) => {
-              return setCardIdActive((prevState) => [
-                ...prevState,
-                item.idCard,
-              ]);
-            });
-          } else {
-            return setCardIdActive([]);
-          }
         });
       });
-  }, [isModalOpenListChangeCard, checkedAll, firestore, idDeck, cardId]);
+  }, [isModalOpenListChangeCard, firestore, idDeck, cardId]);
   if (loading) {
     return <LoaderComponent />;
   }
@@ -57,9 +52,7 @@ export default function ListCard() {
           <div className="burger-card">
             <Radio.Button
               checked={checkedAll}
-              onClick={() => {
-                setCheckedAll((prevState) => !prevState);
-              }}
+              onClick={checkAllCards}
               className="icon-check"
             >
               <CheckOutlined style={{ color: "#fff" }} />
@@ -119,7 +112,17 @@ export default function ListCard() {
       </ul>
     </div>
   );
-
+  function checkAllCards() {
+    setCheckedAll((prevState) => !prevState);
+    if (checkedAll) {
+      setCardIdActive([]);
+      return;
+    } else {
+      cards.cards.forEach((item) => {
+        setCardIdActive((prevState) => [...prevState, item.idCard]);
+      });
+    }
+  }
   function setFireStoreActiveMode(itemId) {
     const isActive = cardIdActive.includes(itemId);
     if (isActive) {
