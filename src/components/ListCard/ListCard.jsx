@@ -132,20 +132,9 @@ export default function ListCard() {
     }
   }
   function showModal() {
-    firestore
-      .collection("decks")
-      .where("id", "==", idDeck)
-      .get()
-      .then((data) => {
-        data.docs.forEach((doc) => {
-          const cards = doc.data().cards;
-          cards.forEach((item) => {
-            if (item.active) {
-              setMenuShowForRadio(true);
-              setIsModalOpenListChangeCard(true);
-            }
-          });
-        });
-      });
+    if (cardIdActive.length) {
+      setMenuShowForRadio(true);
+      setIsModalOpenListChangeCard(true);
+    }
   }
 }
