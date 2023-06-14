@@ -579,18 +579,17 @@ export function ModalListChangeCard({
       icon: <ExclamationCircleFilled />,
       content: (
         <ul>
-          {cards.cards.map((item) => {
-            if (item.idCard === cardId) {
-              return <li>{item.wordCard}</li>;
-            }
-            if (menuShowForRadio) {
-              listCardId.map((card) => {
-                if (card === item.idCard) {
-                  return <li>{item.wordCard}</li>;
-                }
-              });
-            }
-          })}
+          {
+            cards.cards
+                .filter(card => card.idCard === cardId)
+                .map(card => <li>{card.wordCard}</li>)
+          }
+
+          {
+              menuShowForRadio && cards.cards
+                  .filter(card => listCardId.includes(card.idCard))
+                  .map(card => <li>{card.wordCard}</li>)
+          }
         </ul>
       ),
       okText: "Yes",
@@ -604,24 +603,20 @@ export function ModalListChangeCard({
       },
     });
   }
-  function deleteCard() {
-    firestore
-        .collection("decks")
-        .where('id', '==', idDeck)
-        .get()
-        .then((data) => {
-          data.docs.forEach((doc) => {
-            const cards = doc.data().cards;
-            const updatedCards =
-                menuShowForRadio ? cards.filter(card => !listCardId.includes(card.idCard))
-                    : cards.filter((card) => card.idCard !== cardId)
+  async function deleteCard() {
+    const querySnapshot = await firestore.collection("decks").where('id', '==', idDeck).get();
 
-            doc.ref.update({ cards: updatedCards }).then(_ => {
-              const _data = doc.data();
-              setCards({..._data, cards: updatedCards});
-            })
-          });
-        });
+    for (const doc of querySnapshot) {
+      const cards = doc.data().cards;
+      const updatedCards = menuShowForRadio
+          ? cards.filter(card => !listCardId.includes(card.idCard))
+          : cards.filter(card => card.idCard !== cardId);
+
+      await doc.ref.update({ cards: updatedCards });
+      const _data = doc.data();
+
+      setCards({ ..._data, cards: updatedCards });
+    }
 
     toggleModal();
   }
