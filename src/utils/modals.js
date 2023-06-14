@@ -114,7 +114,6 @@ export function ModalCreateCard({
             example: example === "" ? "" : example,
             createAt: firebase.firestore.Timestamp.fromDate(new Date()),
             learn: 1,
-            active: false,
           };
 
           cardsArray.push(newCard);
@@ -533,6 +532,7 @@ export function ModalListChangeCard({
   menuShowForRadio,
   setMenuShowForRadio,
   setCards,
+  listCardId,
   deck,
   userId,
 }) {
@@ -583,9 +583,11 @@ export function ModalListChangeCard({
               return <li>{item.wordCard}</li>;
             }
             if (menuShowForRadio) {
-              if (item.active) {
-                return <li>{item.wordCard}</li>;
-              }
+              listCardId.map((card) => {
+                if (card === item.idCard) {
+                  return <li>{item.wordCard}</li>;
+                }
+              });
             }
           })}
         </ul>
@@ -606,11 +608,15 @@ export function ModalListChangeCard({
       .collection("decks")
       .get()
       .then((data) => {
-        data.docs.map((doc) => {
+        data.docs.forEach((doc) => {
           const cards = doc.data().cards;
           const updatedCards = cards.filter((item) => {
             if (menuShowForRadio) {
-              return item.active !== true;
+              listCardId.map((card) => {
+                if (card === item.idCard) {
+                  return item.idCard !== card;
+                }
+              });
             }
             return item.idCard !== cardId;
           });
@@ -626,7 +632,6 @@ export function ModalListChangeCard({
     setIsModalOpenListChangeCard((prevState) => !prevState);
   }
 }
-
 export function ModalChangeCard({
   setIsShowModalChangeCard,
   cards,

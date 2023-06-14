@@ -16,15 +16,15 @@ export default function ListCard() {
   const [cards, setCards] = useState(null);
   const [checkedAll, setCheckedAll] = useState(false);
   const [menuShowForRadio, setMenuShowForRadio] = useState(false);
-  const [cardIdActive, setCardIdActive] = useState([]);
+  const [listCardId, setListCardId] = useState([]);
   const [isModalOpenListChangeCard, setIsModalOpenListChangeCard] =
     useState(false);
 
   useEffect(() => {
-    if (!cardIdActive.length) {
+    if (!listCardId.length) {
       setCheckedAll(false);
     }
-  }, [cardIdActive.length]);
+  }, [listCardId.length]);
 
   useEffect(() => {
     firestore
@@ -32,7 +32,7 @@ export default function ListCard() {
       .where("id", "==", idDeck)
       .get()
       .then((data) => {
-        data.docs.map((doc) => {
+        data.docs.forEach((doc) => {
           setCards(doc.data());
         });
       });
@@ -70,7 +70,7 @@ export default function ListCard() {
             <li key={item.idCard} className="card">
               <div className="burger-card">
                 <Radio.Button
-                  checked={cardIdActive.includes(item.idCard)}
+                  checked={listCardId.includes(item.idCard)}
                   onClick={() => {
                     setFireStoreActiveMode(item.idCard);
                     setCardId((prevState) => prevState + 1);
@@ -102,6 +102,7 @@ export default function ListCard() {
             setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
             cardId={cardId}
             cards={cards}
+            listCardId={listCardId}
             deck={deck}
             userId={userId}
             setCards={setCards}
@@ -115,24 +116,24 @@ export default function ListCard() {
   function checkAllCards() {
     setCheckedAll((prevState) => !prevState);
     if (checkedAll) {
-      setCardIdActive([]);
+      setListCardId([]);
       return;
     } else {
       cards.cards.forEach((item) => {
-        setCardIdActive((prevState) => [...prevState, item.idCard]);
+        setListCardId((prevState) => [...prevState, item.idCard]);
       });
     }
   }
   function setFireStoreActiveMode(itemId) {
-    const isActive = cardIdActive.includes(itemId);
+    const isActive = listCardId.includes(itemId);
     if (isActive) {
-      setCardIdActive((prevState) => prevState.filter((id) => id !== itemId));
+      setListCardId((prevState) => prevState.filter((id) => id !== itemId));
     } else {
-      setCardIdActive((prevState) => [...prevState, itemId]);
+      setListCardId((prevState) => [...prevState, itemId]);
     }
   }
   function showModal() {
-    if (cardIdActive.length) {
+    if (listCardId.length) {
       setMenuShowForRadio(true);
       setIsModalOpenListChangeCard(true);
     }
