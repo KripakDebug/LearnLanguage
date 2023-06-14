@@ -108,6 +108,7 @@ export default function ListCard() {
             setCards={setCards}
             setMenuShowForRadio={setMenuShowForRadio}
             menuShowForRadio={menuShowForRadio}
+            idDeck={idDeck}
           />
         )}
       </ul>

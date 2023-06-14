@@ -535,6 +535,7 @@ export function ModalListChangeCard({
   listCardId,
   deck,
   userId,
+    idDeck,
 }) {
   const { firestore } = useContext(informationWithFirebase);
   const [isShowModalChangeCard, setIsShowModalChangeCard] = useState(false);
@@ -605,25 +606,22 @@ export function ModalListChangeCard({
   }
   function deleteCard() {
     firestore
-      .collection("decks")
-      .get()
-      .then((data) => {
-        data.docs.forEach((doc) => {
-          const cards = doc.data().cards;
-          const updatedCards = cards.filter((item) => {
-            if (menuShowForRadio) {
-              listCardId.map((card) => {
-                if (card === item.idCard) {
-                  return item.idCard !== card;
-                }
-              });
-            }
-            return item.idCard !== cardId;
+        .collection("decks")
+        .where('id', '==', idDeck)
+        .get()
+        .then((data) => {
+          data.docs.forEach((doc) => {
+            const cards = doc.data().cards;
+            const updatedCards =
+                menuShowForRadio ? cards.filter(card => !listCardId.includes(card.idCard))
+                    : cards.filter((card) => card.idCard !== cardId)
+
+            doc.ref.update({ cards: updatedCards }).then(_ => {
+              const _data = doc.data();
+              setCards({..._data, cards: updatedCards});
+            })
           });
-          doc.ref.update({ cards: updatedCards });
-          setCards(doc.data());
         });
-      });
 
     toggleModal();
   }
