@@ -660,13 +660,13 @@ export function ModalListDeck({
   const { firestore, firebase } = useContext(informationWithFirebase);
   const [cardList, setCardList] = useState();
   useEffect(() => {
-    let matchingCards;
+    const matchingCards = [];
 
     deck.forEach((item) => {
       if (item.userId === userId) {
         item.cards.forEach((itemCard) => {
           if (listCardId.includes(itemCard.idCard)) {
-            matchingCards = itemCard;
+            matchingCards.push(itemCard);
           }
         });
       }
@@ -712,8 +712,10 @@ export function ModalListDeck({
             doc.ref.update({ cards: updatedCardsCurrentDeck });
             setCards(updatedCardsCurrentDeck);
           } else if (doc.data().nameDeck === deckName) {
-            doc.ref.update({
-              cards: firebase.firestore.FieldValue.arrayUnion(cardList),
+            cardList.forEach((element) => {
+              doc.ref.update({
+                cards: firebase.firestore.FieldValue.arrayUnion(element),
+              });
             });
           }
         });
