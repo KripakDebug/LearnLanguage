@@ -534,11 +534,13 @@ export function ModalListChangeCard({
   setCards,
   listCardId,
   deck,
+  nameDeck,
   userId,
   idDeck,
 }) {
   const { firestore } = useContext(informationWithFirebase);
   const [isShowModalChangeCard, setIsShowModalChangeCard] = useState(false);
+  const [isModalListDecks, setIsModalListDecks] = useState(false);
   return (
     <Modal
       footer={null}
@@ -549,7 +551,13 @@ export function ModalListChangeCard({
     >
       <ul className="modal-list">
         <li>
-          <button onClick={() => setIsShowModalChangeCard(true)}>
+          <button
+            onClick={() => {
+              isSomeCheckedCards
+                ? setIsModalListDecks(true)
+                : setIsShowModalChangeCard(true);
+            }}
+          >
             <FormOutlined /> {isSomeCheckedCards ? "Change Deck" : "Edit"}
           </button>
         </li>
@@ -562,6 +570,19 @@ export function ModalListChangeCard({
             deck={deck}
             setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
             cardId={cardId}
+          />
+        )}
+        {isModalListDecks && (
+          <ModalListDeck
+            deck={deck}
+            userId={userId}
+            listCardId={listCardId}
+            nameDeck={nameDeck}
+            idDeck={idDeck}
+            isModalListDecks={isModalListDecks}
+            setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
+            setCards={setCards}
+            setIsModalListDecks={setIsModalListDecks}
           />
         )}
         <li>
@@ -626,6 +647,85 @@ export function ModalListChangeCard({
     setIsModalOpenListChangeCard((prevState) => !prevState);
   }
 }
+export function ModalListDeck({
+  listCardId,
+  deck,
+  userId,
+  setCards,
+  setIsModalOpenListChangeCard,
+  nameDeck,
+  isModalListDecks,
+  setIsModalListDecks,
+}) {
+  const { firestore, firebase } = useContext(informationWithFirebase);
+  const [cardList, setCardList] = useState();
+  useEffect(() => {
+    let matchingCards;
+
+    deck.forEach((item) => {
+      if (item.userId === userId) {
+        item.cards.forEach((itemCard) => {
+          if (listCardId.includes(itemCard.idCard)) {
+            matchingCards = itemCard;
+          }
+        });
+      }
+    });
+
+    setCardList(matchingCards);
+  }, [deck, listCardId, userId]);
+  return (
+    <Modal
+      footer={null}
+      closable={null}
+      className="modal"
+      open={isModalListDecks}
+      onCancel={toggleModal}
+    >
+      <ul className="modal-list">
+        {deck.map((doc) => {
+          if (doc.userId === userId) {
+            return (
+              <li>
+                <button onClick={(e) => changeDeckCards(e.target.innerText)}>
+                  {doc.nameDeck}
+                </button>
+              </li>
+            );
+          }
+        })}
+      </ul>
+    </Modal>
+  );
+
+  function changeDeckCards(deckName) {
+    firestore
+      .collection("decks")
+      .get()
+      .then((data) => {
+        data.docs.find((doc) => {
+          if (doc.data().nameDeck === nameDeck) {
+            const cards = doc.data().cards;
+            const updatedCardsCurrentDeck = cards.filter(
+              (card) => !listCardId.includes(card.idCard)
+            );
+            doc.ref.update({ cards: updatedCardsCurrentDeck });
+            setCards(updatedCardsCurrentDeck);
+          } else if (doc.data().nameDeck === deckName) {
+            doc.ref.update({
+              cards: firebase.firestore.FieldValue.arrayUnion(cardList),
+            });
+          }
+        });
+      });
+    toggleModal();
+  }
+  function toggleModal() {
+    setIsModalOpenListChangeCard(false);
+    setIsModalListDecks((prevState) => !prevState);
+  }
+}
+
 export function ModalChangeCard({
   setIsShowModalChangeCard,
   cards,

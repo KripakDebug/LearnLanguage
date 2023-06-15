@@ -104,6 +104,7 @@ export default function ListCard() {
             setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
             cardId={cardId}
             cards={cards}
+            nameDeck={nameDeck}
             listCardId={listCardId}
             deck={deck}
             userId={userId}
