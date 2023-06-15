@@ -699,27 +699,32 @@ export function ModalListDeck({
   );
 
   function changeDeckCards(deckName) {
-    firestore
-      .collection("decks")
-      .get()
-      .then((data) => {
-        data.docs.find((doc) => {
-          if (doc.data().nameDeck === nameDeck) {
-            const cards = doc.data().cards;
-            const updatedCardsCurrentDeck = cards.filter(
-              (card) => !listCardId.includes(card.idCard)
-            );
-            doc.ref.update({ cards: updatedCardsCurrentDeck });
-            setCards(updatedCardsCurrentDeck);
-          } else if (doc.data().nameDeck === deckName) {
-            cardList.forEach((element) => {
-              doc.ref.update({
-                cards: firebase.firestore.FieldValue.arrayUnion(element),
+    if (deckName === nameDeck) {
+      setIsModalOpenListChangeCard(false);
+      return;
+    } else {
+      firestore
+        .collection("decks")
+        .get()
+        .then((data) => {
+          data.docs.find((doc) => {
+            if (doc.data().nameDeck === nameDeck) {
+              const cards = doc.data().cards;
+              const updatedCardsCurrentDeck = cards.filter(
+                (card) => !listCardId.includes(card.idCard)
+              );
+              doc.ref.update({ cards: updatedCardsCurrentDeck });
+              setCards(updatedCardsCurrentDeck);
+            } else if (doc.data().nameDeck === deckName) {
+              cardList.forEach((element) => {
+                doc.ref.update({
+                  cards: firebase.firestore.FieldValue.arrayUnion(element),
+                });
               });
-            });
-          }
+            }
+          });
         });
-      });
+    }
     toggleModal();
   }
   function toggleModal() {
