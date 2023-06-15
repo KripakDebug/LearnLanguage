@@ -529,8 +529,8 @@ export function ModalListChangeCard({
   setIsModalOpenListChangeCard,
   cardId,
   cards,
-  menuShowForRadio,
-  setMenuShowForRadio,
+  setIsSomeCheckedCards,
+  isSomeCheckedCards,
   setCards,
   listCardId,
   deck,
@@ -550,14 +550,14 @@ export function ModalListChangeCard({
       <ul className="modal-list">
         <li>
           <button onClick={() => setIsShowModalChangeCard(true)}>
-            <FormOutlined /> {menuShowForRadio ? "Change Deck" : "Edit"}
+            <FormOutlined /> {isSomeCheckedCards ? "Change Deck" : "Edit"}
           </button>
         </li>
         {isShowModalChangeCard && (
           <ModalChangeCard
             setIsShowModalChangeCard={setIsShowModalChangeCard}
             isShowModalChangeCard={isShowModalChangeCard}
-            cards={cards.cards.find((item) => item.idCard === cardId)}
+            cards={cards.find((item) => item.idCard === cardId)}
             userId={userId}
             deck={deck}
             setIsModalOpenListChangeCard={setIsModalOpenListChangeCard}
@@ -567,7 +567,7 @@ export function ModalListChangeCard({
         <li>
           <button onClick={showDeleteConfirm}>
             <DeleteOutlined />
-            Delete {menuShowForRadio && "Cards"}
+            Delete {isSomeCheckedCards && "Cards"}
           </button>
         </li>
       </ul>
@@ -579,14 +579,12 @@ export function ModalListChangeCard({
       icon: <ExclamationCircleFilled />,
       content: (
         <ul>
-          {cards.cards
-            .filter((card) => card.idCard === cardId)
-            .map((card) => (
-              <li>{card.wordCard}</li>
-            ))}
-
-          {menuShowForRadio &&
-            cards.cards
+          {!isSomeCheckedCards &&
+            cards
+              .filter((card) => card.idCard === cardId)
+              .map((card) => <li>{card.wordCard}</li>)}
+          {isSomeCheckedCards &&
+            cards
               .filter((card) => listCardId.includes(card.idCard))
               .map((card) => <li>{card.wordCard}</li>)}
         </ul>
@@ -610,13 +608,12 @@ export function ModalListChangeCard({
       .then((data) => {
         data.docs.forEach((doc) => {
           const cards = doc.data().cards;
-          const updatedCards = menuShowForRadio
+          const updatedCards = isSomeCheckedCards
             ? cards.filter((card) => !listCardId.includes(card.idCard))
             : cards.filter((card) => card.idCard !== cardId);
 
           doc.ref.update({ cards: updatedCards }).then((_) => {
-            const _data = doc.data();
-            setCards({ ..._data, cards: updatedCards });
+            setCards(updatedCards);
           });
         });
       });
@@ -625,7 +622,7 @@ export function ModalListChangeCard({
   }
 
   function toggleModal() {
-    setMenuShowForRadio(false);
+    setIsSomeCheckedCards(false);
     setIsModalOpenListChangeCard((prevState) => !prevState);
   }
 }

@@ -14,8 +14,9 @@ export default function ListCard() {
   const [deck, loading] = useCollectionData(firestore.collection("decks"));
   const [cardId, setCardId] = useState(0);
   const [cards, setCards] = useState(null);
+  const [nameDeck, setNameDeck] = useState("");
   const [checkedAll, setCheckedAll] = useState(false);
-  const [menuShowForRadio, setMenuShowForRadio] = useState(false);
+  const [isSomeCheckedCards, setIsSomeCheckedCards] = useState(false);
   const [listCardId, setListCardId] = useState([]);
   const [isModalOpenListChangeCard, setIsModalOpenListChangeCard] =
     useState(false);
@@ -33,7 +34,8 @@ export default function ListCard() {
       .get()
       .then((data) => {
         data.docs.forEach((doc) => {
-          setCards(doc.data());
+          setCards(doc.data().cards);
+          setNameDeck(doc.data().nameDeck);
         });
       });
   }, [isModalOpenListChangeCard, firestore, idDeck, cardId]);
@@ -44,7 +46,7 @@ export default function ListCard() {
   return (
     <div className="list-card">
       <div className="path">
-        <NavLink to="/home">Home</NavLink> / {cards.nameDeck}
+        <NavLink to="/home">Home</NavLink> / {nameDeck}
       </div>
 
       <ul className="table-card">
@@ -65,7 +67,7 @@ export default function ListCard() {
           <div>Interval Days</div>
           <div>Level</div>
         </li>
-        {cards.cards.map((item) => {
+        {cards.map((item) => {
           return (
             <li key={item.idCard} className="card">
               <div className="burger-card">
@@ -106,8 +108,8 @@ export default function ListCard() {
             deck={deck}
             userId={userId}
             setCards={setCards}
-            setMenuShowForRadio={setMenuShowForRadio}
-            menuShowForRadio={menuShowForRadio}
+            setIsSomeCheckedCards={setIsSomeCheckedCards}
+            isSomeCheckedCards={isSomeCheckedCards}
             idDeck={idDeck}
           />
         )}
@@ -120,7 +122,7 @@ export default function ListCard() {
       setListCardId([]);
       return;
     } else {
-      cards.cards.forEach((item) => {
+      cards.forEach((item) => {
         setListCardId((prevState) => [...prevState, item.idCard]);
       });
     }
@@ -135,7 +137,7 @@ export default function ListCard() {
   }
   function showModal() {
     if (listCardId.length) {
-      setMenuShowForRadio(true);
+      setIsSomeCheckedCards(true);
       setIsModalOpenListChangeCard(true);
     }
   }
