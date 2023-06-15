@@ -535,7 +535,7 @@ export function ModalListChangeCard({
   listCardId,
   deck,
   userId,
-    idDeck,
+  idDeck,
 }) {
   const { firestore } = useContext(informationWithFirebase);
   const [isShowModalChangeCard, setIsShowModalChangeCard] = useState(false);
@@ -579,17 +579,16 @@ export function ModalListChangeCard({
       icon: <ExclamationCircleFilled />,
       content: (
         <ul>
-          {
-            cards.cards
-                .filter(card => card.idCard === cardId)
-                .map(card => <li>{card.wordCard}</li>)
-          }
+          {cards.cards
+            .filter((card) => card.idCard === cardId)
+            .map((card) => (
+              <li>{card.wordCard}</li>
+            ))}
 
-          {
-              menuShowForRadio && cards.cards
-                  .filter(card => listCardId.includes(card.idCard))
-                  .map(card => <li>{card.wordCard}</li>)
-          }
+          {menuShowForRadio &&
+            cards.cards
+              .filter((card) => listCardId.includes(card.idCard))
+              .map((card) => <li>{card.wordCard}</li>)}
         </ul>
       ),
       okText: "Yes",
@@ -603,23 +602,28 @@ export function ModalListChangeCard({
       },
     });
   }
-  async function deleteCard() {
-    const querySnapshot = await firestore.collection("decks").where('id', '==', idDeck).get();
+  function deleteCard() {
+    firestore
+      .collection("decks")
+      .where("id", "==", idDeck)
+      .get()
+      .then((data) => {
+        data.docs.forEach((doc) => {
+          const cards = doc.data().cards;
+          const updatedCards = menuShowForRadio
+            ? cards.filter((card) => !listCardId.includes(card.idCard))
+            : cards.filter((card) => card.idCard !== cardId);
 
-    for (const doc of querySnapshot) {
-      const cards = doc.data().cards;
-      const updatedCards = menuShowForRadio
-          ? cards.filter(card => !listCardId.includes(card.idCard))
-          : cards.filter(card => card.idCard !== cardId);
-
-      await doc.ref.update({ cards: updatedCards });
-      const _data = doc.data();
-
-      setCards({ ..._data, cards: updatedCards });
-    }
+          doc.ref.update({ cards: updatedCards }).then((_) => {
+            const _data = doc.data();
+            setCards({ ..._data, cards: updatedCards });
+          });
+        });
+      });
 
     toggleModal();
   }
+
   function toggleModal() {
     setMenuShowForRadio(false);
     setIsModalOpenListChangeCard((prevState) => !prevState);
