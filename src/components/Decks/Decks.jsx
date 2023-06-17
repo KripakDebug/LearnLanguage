@@ -10,7 +10,7 @@ import Deck from "../Deck/Deck";
 
 export default function Decks() {
   const { auth, firestore } = useContext(informationWithFirebase);
-  const [cards, loading] = useCollectionData(firestore.collection("decks"));
+  const [decks, loading] = useCollectionData(firestore.collection("decks"));
   const [user] = useAuthState(auth);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenList, setIsModalOpenList] = useState(false);
@@ -22,37 +22,40 @@ export default function Decks() {
   }
 
   return (
-    <div className="decks-list">
-      {cards.map((card) => {
-        if (user.uid === card.userId) {
-          return (
-            <Deck
-              setIsModalOpenList={setIsModalOpenList}
-              isModalOpenList={isModalOpenList}
-              deck={deck}
-              setDeck={setDeck}
-              setIsModalCreateCardOpen={setIsModalCreateCardOpen}
-              setIsModalOpen={setIsModalOpen}
-              getItemFirestore={getItemFirestore}
-              isModalCreateCardOpen={isModalCreateCardOpen}
-              card={card}
-              idDeck={idDeck}
-            />
-          );
-        }
-      })}
-      <div className="create-task" onClick={showModal}>
-        <PlusCircleOutlined /> Create New Deck
+    <>
+      <button className="learn-card">Learn All</button>
+      <div className="decks-list">
+        {decks.map((card) => {
+          if (user.uid === card.userId) {
+            return (
+              <Deck
+                setIsModalOpenList={setIsModalOpenList}
+                isModalOpenList={isModalOpenList}
+                deck={deck}
+                setDeck={setDeck}
+                setIsModalCreateCardOpen={setIsModalCreateCardOpen}
+                setIsModalOpen={setIsModalOpen}
+                getItemFirestore={getItemFirestore}
+                isModalCreateCardOpen={isModalCreateCardOpen}
+                card={card}
+                idDeck={idDeck}
+              />
+            );
+          }
+        })}
+        <div className="create-task" onClick={showModal}>
+          <PlusCircleOutlined /> Create New Deck
+        </div>
+        {isModalOpen && (
+          <ModalTask
+            setDeck={setDeck}
+            setIsModalOpen={setIsModalOpen}
+            isModalOpen={isModalOpen}
+            deck={deck}
+          />
+        )}
       </div>
-      {isModalOpen && (
-        <ModalTask
-          setDeck={setDeck}
-          setIsModalOpen={setIsModalOpen}
-          isModalOpen={isModalOpen}
-          deck={deck}
-        />
-      )}
-    </div>
+    </>
   );
 
   function getItemFirestore(id) {

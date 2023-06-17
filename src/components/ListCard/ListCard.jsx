@@ -95,6 +95,30 @@ export default function ListCard() {
                 <div className="word">{item.wordCard}</div>
                 <div className="definition">{item.definition}</div>
               </div>
+              <div className="card-interval">
+                <div className="interval">
+                  {!!item.estIntervalDays && item.estIntervalDays}
+                </div>
+              </div>
+              <div className="card-level">
+                <div className="level">
+                  <div
+                    className={item.estIntervalDays >= 1 && "level-color"}
+                  ></div>
+                  <div
+                    className={item.estIntervalDays > 14 && "level-color"}
+                  ></div>
+                  <div
+                    className={item.estIntervalDays > 60 && "level-color"}
+                  ></div>
+                </div>
+                <div className="text-level">
+                  {(item.estIntervalDays < 1 && "new") ||
+                    (item.estIntervalDays <= 14 && "Low") ||
+                    (item.estIntervalDays <= 60 && "Mid") ||
+                    (item.estIntervalDays > 60 && "High")}
+                </div>
+              </div>
             </li>
           );
         })}
