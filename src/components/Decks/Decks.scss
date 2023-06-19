@@ -80,6 +80,40 @@ form {
       }
   }
 }
+
+.learn-card {
+  cursor: pointer;
+  border-radius: 6px;
+  position: relative;
+  background-color: rgb(54, 204, 190);
+  border: none;
+  font-size: 14px;
+  padding: 10px 0px;
+  letter-spacing: 0.05em;
+  height: 120px;
+  width: 120px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    background-color: rgba(64, 231, 214, 0.79);
+  }
+  svg {
+    font-size: 50px;
+    margin-bottom: 10px;
+  }
+}
+.learn-card.active {
+  background-color: rgb(45, 169, 157);
+  &:hover {
+    background-color: rgba(45, 169, 157, 0.74);
+  }
+}
 .decks-list {
   display: flex;
   flex-wrap: wrap;
@@ -100,6 +134,7 @@ form {
     color: rgb(43, 43, 43);
   }
     .deck {
+
       .ant-card {
         transition: .3s;
         &:hover {
@@ -122,6 +157,9 @@ form {
           height: 30px;
           background-color: rgb(235, 235, 235);
           color: rgb(145, 145, 145);
+        }
+       .active {
+          background: #E8D387;
         }
       }
     }

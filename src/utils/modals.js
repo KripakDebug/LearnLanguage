@@ -7,6 +7,7 @@ import {
   FormOutlined,
   InfoCircleOutlined,
   PlusOutlined,
+  RocketOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
 import uuid from "react-uuid";
@@ -116,7 +117,7 @@ export function ModalCreateCard({
             lastTested: null,
             nextTest: null,
             testCnt: 0,
-            estIntervalDays: 0,
+            estIntervalDays: null,
             failCnt: 0,
           };
 
@@ -470,6 +471,10 @@ export function ModalList({
   setDeck,
 }) {
   const { cards } = deck;
+  const cardsEstIntervalDays = cards.find((item) => {
+    return item.estIntervalDays === null || item.estIntervalDays > 0;
+  });
+
   return (
     <Modal
       footer={null}
@@ -479,6 +484,13 @@ export function ModalList({
       onCancel={toggleModal}
     >
       <ul className="modal-list">
+        {cardsEstIntervalDays && (
+          <li>
+            <button>
+              <RocketOutlined /> Start Learning
+            </button>
+          </li>
+        )}
         <li>
           <button
             onClick={() => {

@@ -12,6 +12,7 @@ export default function Deck({
   setIsModalOpen,
   getItemFirestore,
   setDeck,
+  setEstLearningDaysForCards,
   idDeck,
 }) {
   return (
@@ -46,13 +47,16 @@ export default function Deck({
           <div className="card-count">{card.cards.length + " cards"}</div>
           <div className="card-name">{card.nameDeck}</div>
         </div>
-        <div className="count-lesson">
-          {card.cards.length === 0
-            ? 0
-            : card.cards.reduce((total, card) => {
-                return card.learn === 1 ? total + 1 : total;
-              }, 0)}
-        </div>
+        {card.cards.length === 0 ? (
+          <div className="count-lesson">0</div>
+        ) : (
+          <div className="count-lesson active">
+            {card.cards.reduce((total, card) => {
+              setEstLearningDaysForCards(card.estIntervalDays);
+              return card.estIntervalDays === null ? total + 1 : total;
+            }, 0)}
+          </div>
+        )}
       </Card>
     </div>
   );
