@@ -944,6 +944,43 @@ export function ModalChangeCard({
   }
 }
 
+export function ListManyCardsLearn({
+  isModalListCardsLearn,
+  setIsModalListCardsLearn,
+}) {
+  return (
+    <Modal
+      footer={null}
+      closable={null}
+      className="modal"
+      title="How many cards to learn?"
+      open={isModalListCardsLearn}
+      onCancel={toggleModalListCardsLearn}
+    >
+      <ul className="modal-list">
+        <li>
+          <button>5</button>
+        </li>
+        <li>
+          <button>10</button>
+        </li>
+        <li>
+          <button>15</button>
+        </li>
+        <li>
+          <button>All</button>
+        </li>
+        <li>
+          <button>Custom</button>
+        </li>
+      </ul>
+    </Modal>
+  );
+  function toggleModalListCardsLearn() {
+    setIsModalListCardsLearn((prevState) => !prevState);
+  }
+}
+
 function info(title, message) {
   Modal.info({
     title: title,
