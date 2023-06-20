@@ -468,6 +468,7 @@ export function ModalList({
   setIsModalCreateCardOpen,
   setIsModalOpen,
   deck,
+  setIsModalListCardsLearn,
   setDeck,
 }) {
   const { cards } = deck;
@@ -486,7 +487,12 @@ export function ModalList({
       <ul className="modal-list">
         {cardsEstIntervalDays && (
           <li>
-            <button>
+            <button
+              onClick={() => {
+                toggleModal();
+                setIsModalListCardsLearn(true);
+              }}
+            >
               <RocketOutlined /> Start Learning
             </button>
           </li>
@@ -958,20 +964,20 @@ export function ListManyCardsLearn({
       onCancel={toggleModalListCardsLearn}
     >
       <ul className="modal-list">
-        <li>
+        <li className="list-item">
           <button>5</button>
         </li>
-        <li>
+        <li className="list-item">
           <button>10</button>
         </li>
-        <li>
+        <li className="list-item">
           <button>15</button>
         </li>
-        <li>
+        <li className="list-item">
           <button>All</button>
         </li>
-        <li>
-          <button>Custom</button>
+        <li className="list-item">
+          <button>Custom...</button>
         </li>
       </ul>
     </Modal>

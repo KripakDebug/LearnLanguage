@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { ModalCreateCard, ModalList } from "../../utils/modals";
 import { Card } from "antd";
+import { informationWithFirebase } from "../../index";
 
 export default function Deck({
   card,
@@ -10,11 +11,13 @@ export default function Deck({
   setIsModalCreateCardOpen,
   setIsModalOpenList,
   setIsModalOpen,
-  getItemFirestore,
+  setIdDeck,
+  setIsModalListCardsLearn,
   setDeck,
   setEstLearningDaysForCards,
   idDeck,
 }) {
+  const { firestore } = useContext(informationWithFirebase);
   return (
     <div className="deck">
       {card.id === idDeck && isModalCreateCardOpen && (
@@ -28,6 +31,7 @@ export default function Deck({
       )}
       {card.id === idDeck && isModalOpenList && (
         <ModalList
+          setIsModalListCardsLearn={setIsModalListCardsLearn}
           setDeck={setDeck}
           setIsModalCreateCardOpen={setIsModalCreateCardOpen}
           isModalOpenList={isModalOpenList}
@@ -60,4 +64,17 @@ export default function Deck({
       </Card>
     </div>
   );
+  function getItemFirestore(id) {
+    firestore
+      .collection("decks")
+      .get()
+      .then((data) => {
+        const deck = data.docs.find((doc) => id === doc.data().id);
+        if (deck) {
+          setDeck(deck.data());
+          setIdDeck(deck.data().id);
+          setIsModalOpenList(true);
+        }
+      });
+  }
 }

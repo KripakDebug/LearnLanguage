@@ -45,14 +45,15 @@ export default function Decks() {
           if (user.uid === card.userId) {
             return (
               <Deck
+                setIsModalListCardsLearn={setIsModalListCardsLearn}
                 setEstLearningDaysForCards={setEstLearningDaysForCards}
                 setIsModalOpenList={setIsModalOpenList}
                 isModalOpenList={isModalOpenList}
                 deck={deck}
+                setIdDeck={setIdDeck}
                 setDeck={setDeck}
                 setIsModalCreateCardOpen={setIsModalCreateCardOpen}
                 setIsModalOpen={setIsModalOpen}
-                getItemFirestore={getItemFirestore}
                 isModalCreateCardOpen={isModalCreateCardOpen}
                 card={card}
                 idDeck={idDeck}
@@ -74,20 +75,6 @@ export default function Decks() {
       </div>
     </>
   );
-
-  function getItemFirestore(id) {
-    firestore
-      .collection("decks")
-      .get()
-      .then((data) => {
-        const deck = data.docs.find((doc) => id === doc.data().id);
-        if (deck) {
-          setDeck(deck.data());
-          setIdDeck(deck.data().id);
-          setIsModalOpenList(true);
-        }
-      });
-  }
 
   function showModal() {
     setIsModalOpen(true);
