@@ -9,6 +9,7 @@ export default function Deck({
   deck,
   isModalOpenList,
   setIsModalCreateCardOpen,
+  setCardsLearnForDecks,
   setIsModalOpenList,
   setIsModalOpen,
   setIdDeck,
@@ -33,6 +34,7 @@ export default function Deck({
         <ModalList
           setIsModalListCardsLearn={setIsModalListCardsLearn}
           setDeck={setDeck}
+          setCardsLearnForDecks={setCardsLearnForDecks}
           setIsModalCreateCardOpen={setIsModalCreateCardOpen}
           isModalOpenList={isModalOpenList}
           setIsModalOpenList={setIsModalOpenList}

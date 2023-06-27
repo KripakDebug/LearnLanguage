@@ -4,12 +4,14 @@ import {
   LOGIN_ROUTE,
   PROFILE_ROUTE,
   RESET_PASSWORD_ROUTE,
+  LEARN_CARD,
 } from "./utils/domenPath";
 import Login from "./page/Login/Login";
 import Profile from "./page/Profile/Profile";
 import Home from "./page/Home/Home";
 import ResetPassword from "./components/ResetPassword/ResetPassword";
 import ListCard from "./components/ListCard/ListCard";
+import LearnCard from "./components/LearnCard/LearnCard";
 
 export const publicRoutes = [
   {
@@ -36,6 +38,11 @@ export const privateRoutes = [
   {
     path: LIST_CARD,
     Component: ListCard,
+    private: true,
+  },
+  {
+    path: LEARN_CARD,
+    Component: LearnCard,
     private: true,
   },
 ];

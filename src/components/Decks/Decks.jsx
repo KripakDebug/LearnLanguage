@@ -1,16 +1,13 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./Decks.scss";
 import { informationWithFirebase } from "../../index";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { PlusCircleOutlined, RocketOutlined } from "@ant-design/icons";
 import { ListManyCardsLearn, ModalTask } from "../../utils/modals";
-import { useCollectionData } from "react-firebase-hooks/firestore";
-import LoaderComponent from "../LoaderComponent/LoaderComponent";
 import Deck from "../Deck/Deck";
 
-export default function Decks() {
-  const { auth, firestore } = useContext(informationWithFirebase);
-  const [decks, loading] = useCollectionData(firestore.collection("decks"));
+export default function Decks({ decks }) {
+  const { auth } = useContext(informationWithFirebase);
   const [user] = useAuthState(auth);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenList, setIsModalOpenList] = useState(false);
@@ -18,24 +15,54 @@ export default function Decks() {
   const [idDeck, setIdDeck] = useState(0);
   const [deck, setDeck] = useState(null);
   const [isModalListCardsLearn, setIsModalListCardsLearn] = useState(false);
+  const [cardsLearnForDecks, setCardsLearnForDecks] = useState([]);
   const [estLearningDaysForCards, setEstLearningDaysForCards] = useState("");
-  if (loading) {
-    return <LoaderComponent />;
-  }
+
+  useEffect(() => {
+    if (decks !== {}) {
+      setCardsLearnForDecks(
+        decks.reduce((accumulator, deck) => {
+          if (user.uid === deck.userId) {
+            const cards = deck.cards;
+            accumulator.push(...cards);
+          }
+          return accumulator;
+        }, [])
+      );
+    } else {
+      setCardsLearnForDecks([]);
+    }
+  }, [decks, user.uid]);
 
   return (
     <>
-      <button
-        onClick={() => setIsModalListCardsLearn(true)}
-        className={
-          estLearningDaysForCards === null ? "learn-card active" : "learn-card"
-        }
-      >
-        <RocketOutlined />
-        Learn All
-      </button>
+      {cardsLearnForDecks.length !== 0 && (
+        <button
+          onClick={() => {
+            setIsModalListCardsLearn(true);
+            setCardsLearnForDecks(
+              decks.reduce((accumulator, deck) => {
+                if (user.uid === deck.userId) {
+                  const cards = deck.cards;
+                  accumulator.push(...cards);
+                }
+                return accumulator;
+              }, [])
+            );
+          }}
+          className={
+            estLearningDaysForCards === null
+              ? "learn-card active"
+              : "learn-card"
+          }
+        >
+          <RocketOutlined />
+          Learn All
+        </button>
+      )}
       {isModalListCardsLearn && (
         <ListManyCardsLearn
+          cardsLearnForDecks={cardsLearnForDecks}
           isModalListCardsLearn={isModalListCardsLearn}
           setIsModalListCardsLearn={setIsModalListCardsLearn}
         />
@@ -45,6 +72,7 @@ export default function Decks() {
           if (user.uid === card.userId) {
             return (
               <Deck
+                setCardsLearnForDecks={setCardsLearnForDecks}
                 setIsModalListCardsLearn={setIsModalListCardsLearn}
                 setEstLearningDaysForCards={setEstLearningDaysForCards}
                 setIsModalOpenList={setIsModalOpenList}

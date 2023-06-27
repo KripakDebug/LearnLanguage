@@ -12,7 +12,7 @@ import {
 } from "@ant-design/icons";
 import uuid from "react-uuid";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { NavLink } from "react-router-dom";
+import { NavLink, Navigate, useNavigate } from "react-router-dom";
 const { confirm } = Modal;
 
 export function ModalCreateCard({
@@ -468,6 +468,7 @@ export function ModalList({
   setIsModalCreateCardOpen,
   setIsModalOpen,
   deck,
+  setCardsLearnForDecks,
   setIsModalListCardsLearn,
   setDeck,
 }) {
@@ -490,6 +491,7 @@ export function ModalList({
             <button
               onClick={() => {
                 toggleModal();
+                setCardsLearnForDecks(deck.cards);
                 setIsModalListCardsLearn(true);
               }}
             >
@@ -952,8 +954,10 @@ export function ModalChangeCard({
 
 export function ListManyCardsLearn({
   isModalListCardsLearn,
+  cardsLearnForDecks,
   setIsModalListCardsLearn,
 }) {
+  const navigate = useNavigate();
   return (
     <Modal
       footer={null}
@@ -965,16 +969,16 @@ export function ListManyCardsLearn({
     >
       <ul className="modal-list">
         <li className="list-item">
-          <button>5</button>
+          <button onClick={showDeleteConfirm}>5</button>
         </li>
         <li className="list-item">
-          <button>10</button>
+          <button onClick={showDeleteConfirm}>10</button>
         </li>
         <li className="list-item">
-          <button>15</button>
+          <button onClick={showDeleteConfirm}> 15</button>
         </li>
         <li className="list-item">
-          <button>All</button>
+          <button onClick={showDeleteConfirm}>All</button>
         </li>
         <li className="list-item">
           <button>Custom...</button>
@@ -982,6 +986,34 @@ export function ListManyCardsLearn({
       </ul>
     </Modal>
   );
+
+  function showDeleteConfirm() {
+    cardsLearnForDecks.map((card) => {
+      if (card.estIntervalDays === null) {
+        return navigate("/profile");
+      } else {
+        return confirm({
+          title: "No cards to learn",
+          icon: <ExclamationCircleFilled />,
+          content: (
+            <p>
+              You have finished today's session. (You can still proceed by
+              clicking "Learn anyway", but it will not affect the Memory Level)
+            </p>
+          ),
+          okText: "Ok",
+          okType: "danger",
+          cancelText: "Learn anyway",
+          onOk() {
+            toggleModalListCardsLearn();
+          },
+          onCancel: () => {
+            navigate("/profile");
+          },
+        });
+      }
+    });
+  }
   function toggleModalListCardsLearn() {
     setIsModalListCardsLearn((prevState) => !prevState);
   }
