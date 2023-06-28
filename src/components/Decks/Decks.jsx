@@ -3,9 +3,8 @@ import "./Decks.scss";
 import { informationWithFirebase } from "../../index";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { PlusCircleOutlined, RocketOutlined } from "@ant-design/icons";
-import { ListManyCardsLearn, ModalTask } from "../../utils/modals";
+import { ListManyCardsLearn, ModalCreateDeck } from "../../utils/modals";
 import Deck from "../Deck/Deck";
-
 export default function Decks({ decks }) {
   const { auth } = useContext(informationWithFirebase);
   const [user] = useAuthState(auth);
@@ -17,14 +16,14 @@ export default function Decks({ decks }) {
   const [isModalListCardsLearn, setIsModalListCardsLearn] = useState(false);
   const [cardsLearnForDecks, setCardsLearnForDecks] = useState([]);
   const [estLearningDaysForCards, setEstLearningDaysForCards] = useState("");
+  const [isLearnAll, setIsLearnAll] = useState(false);
 
   useEffect(() => {
     if (decks !== {}) {
       setCardsLearnForDecks(
         decks.reduce((accumulator, deck) => {
           if (user.uid === deck.userId) {
-            const cards = deck.cards;
-            accumulator.push(...cards);
+            accumulator.push(deck);
           }
           return accumulator;
         }, [])
@@ -33,18 +32,17 @@ export default function Decks({ decks }) {
       setCardsLearnForDecks([]);
     }
   }, [decks, user.uid]);
-
   return (
     <>
       {cardsLearnForDecks.length !== 0 && (
         <button
           onClick={() => {
             setIsModalListCardsLearn(true);
+            setIsLearnAll(true);
             setCardsLearnForDecks(
               decks.reduce((accumulator, deck) => {
                 if (user.uid === deck.userId) {
-                  const cards = deck.cards;
-                  accumulator.push(...cards);
+                  accumulator.push(deck);
                 }
                 return accumulator;
               }, [])
@@ -62,6 +60,7 @@ export default function Decks({ decks }) {
       )}
       {isModalListCardsLearn && (
         <ListManyCardsLearn
+          isLearnAll={isLearnAll}
           cardsLearnForDecks={cardsLearnForDecks}
           isModalListCardsLearn={isModalListCardsLearn}
           setIsModalListCardsLearn={setIsModalListCardsLearn}
@@ -72,6 +71,8 @@ export default function Decks({ decks }) {
           if (user.uid === card.userId) {
             return (
               <Deck
+                key={card.id}
+                setIsLearnAll={setIsLearnAll}
                 setCardsLearnForDecks={setCardsLearnForDecks}
                 setIsModalListCardsLearn={setIsModalListCardsLearn}
                 setEstLearningDaysForCards={setEstLearningDaysForCards}
@@ -93,7 +94,7 @@ export default function Decks({ decks }) {
           <PlusCircleOutlined /> Create New Deck
         </div>
         {isModalOpen && (
-          <ModalTask
+          <ModalCreateDeck
             setDeck={setDeck}
             setIsModalOpen={setIsModalOpen}
             isModalOpen={isModalOpen}

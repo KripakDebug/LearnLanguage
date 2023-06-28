@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import "./Profile.scss";
 import { informationWithFirebase } from "../../index";
 import moment from "moment";
@@ -11,6 +11,8 @@ import { Avatar, Dropdown, Modal, Space } from "antd";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import LoaderComponent from "../../components/LoaderComponent/LoaderComponent";
 import { openNotificationError } from "../../utils/notificationHelpers";
+import { cardsForDeckContext } from "../../App";
+import { useLocation } from "react-router-dom";
 
 export default function Profile() {
   const { firebase, firestore } = useContext(informationWithFirebase);
@@ -19,9 +21,16 @@ export default function Profile() {
   const user = firebaseUser.currentUser;
   const startDate = moment(user.metadata.creationTime);
   const today = moment();
+
   const daysPassed = today.diff(startDate, "days");
   const monthsPassed = today.diff(startDate, "months");
   const yearsPassed = today.diff(startDate, "years");
+  const { setNavbarBool } = useContext(cardsForDeckContext);
+  const location = useLocation();
+
+  useEffect(() => {
+    setNavbarBool(true);
+  }, [location]);
   if (loading) {
     return <LoaderComponent />;
   }

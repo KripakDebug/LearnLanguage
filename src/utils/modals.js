@@ -12,9 +12,9 @@ import {
 } from "@ant-design/icons";
 import uuid from "react-uuid";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { NavLink, Navigate, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { cardsForDeckContext } from "../App";
 const { confirm } = Modal;
-
 export function ModalCreateCard({
   isModalCreateCardOpen,
   setIsModalCreateCardOpen,
@@ -138,7 +138,12 @@ export function ModalCreateCard({
   }
 }
 
-export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
+export function ModalCreateDeck({
+  isModalOpen,
+  setIsModalOpen,
+  deck,
+  setDeck,
+}) {
   const {
     nameDeck,
     flashcardDeck,
@@ -465,6 +470,7 @@ export function ModalTask({ isModalOpen, setIsModalOpen, deck, setDeck }) {
 export function ModalList({
   isModalOpenList,
   setIsModalOpenList,
+  setIsLearnAll,
   setIsModalCreateCardOpen,
   setIsModalOpen,
   deck,
@@ -491,7 +497,8 @@ export function ModalList({
             <button
               onClick={() => {
                 toggleModal();
-                setCardsLearnForDecks(deck.cards);
+                setIsLearnAll(false);
+                setCardsLearnForDecks([deck]);
                 setIsModalListCardsLearn(true);
               }}
             >
@@ -955,8 +962,10 @@ export function ModalChangeCard({
 export function ListManyCardsLearn({
   isModalListCardsLearn,
   cardsLearnForDecks,
+  isLearnAll,
   setIsModalListCardsLearn,
 }) {
+  const { setCardForDeck, setNavbarBool } = useContext(cardsForDeckContext);
   const navigate = useNavigate();
   return (
     <Modal
@@ -969,16 +978,22 @@ export function ListManyCardsLearn({
     >
       <ul className="modal-list">
         <li className="list-item">
-          <button onClick={showDeleteConfirm}>5</button>
+          <button onClick={(e) => learnCardsMove(e.target.innerText)}>5</button>
         </li>
         <li className="list-item">
-          <button onClick={showDeleteConfirm}>10</button>
+          <button onClick={(e) => learnCardsMove(e.target.innerText)}>
+            10
+          </button>
         </li>
         <li className="list-item">
-          <button onClick={showDeleteConfirm}> 15</button>
+          <button onClick={(e) => learnCardsMove(e.target.innerText)}>
+            15
+          </button>
         </li>
         <li className="list-item">
-          <button onClick={showDeleteConfirm}>All</button>
+          <button onClick={(e) => learnCardsMove(e.target.innerText)}>
+            All
+          </button>
         </li>
         <li className="list-item">
           <button>Custom...</button>
@@ -987,31 +1002,37 @@ export function ListManyCardsLearn({
     </Modal>
   );
 
-  function showDeleteConfirm() {
+  function learnCardsMove(amount) {
     cardsLearnForDecks.map((card) => {
-      if (card.estIntervalDays === null) {
-        return navigate("/profile");
-      } else {
-        return confirm({
-          title: "No cards to learn",
-          icon: <ExclamationCircleFilled />,
-          content: (
-            <p>
-              You have finished today's session. (You can still proceed by
-              clicking "Learn anyway", but it will not affect the Memory Level)
-            </p>
-          ),
-          okText: "Ok",
-          okType: "danger",
-          cancelText: "Learn anyway",
-          onOk() {
-            toggleModalListCardsLearn();
-          },
-          onCancel: () => {
-            navigate("/profile");
-          },
-        });
-      }
+      card.cards.map((card) => {
+        setCardForDeck(cardsLearnForDecks);
+        if (card.estIntervalDays === null) {
+          setNavbarBool(false);
+          return navigate(`/home/learn/${amount}`);
+        } else {
+          return confirm({
+            title: "No cards to learn",
+            icon: <ExclamationCircleFilled />,
+            content: (
+              <p>
+                You have finished today's session. (You can still proceed by
+                clicking "Learn anyway", but it will not affect the Memory
+                Level)
+              </p>
+            ),
+            okText: "Ok",
+            okType: "danger",
+            cancelText: "Learn anyway",
+            onOk() {
+              toggleModalListCardsLearn();
+            },
+            onCancel: () => {
+              setNavbarBool(false);
+              navigate(`/home/practice/${amount}`);
+            },
+          });
+        }
+      });
     });
   }
   function toggleModalListCardsLearn() {
