@@ -16,13 +16,12 @@ export default function Decks({ decks }) {
   const [isModalListCardsLearn, setIsModalListCardsLearn] = useState(false);
   const [cardsLearnForDecks, setCardsLearnForDecks] = useState([]);
   const [estLearningDaysForCards, setEstLearningDaysForCards] = useState("");
-  const [isLearnAll, setIsLearnAll] = useState(false);
 
   useEffect(() => {
     if (decks !== {}) {
       setCardsLearnForDecks(
         decks.reduce((accumulator, deck) => {
-          if (user.uid === deck.userId) {
+          if (user.uid === deck.userId && deck.cards.length > 0) {
             accumulator.push(deck);
           }
           return accumulator;
@@ -38,10 +37,9 @@ export default function Decks({ decks }) {
         <button
           onClick={() => {
             setIsModalListCardsLearn(true);
-            setIsLearnAll(true);
             setCardsLearnForDecks(
               decks.reduce((accumulator, deck) => {
-                if (user.uid === deck.userId) {
+                if (user.uid === deck.userId && deck.cards.length > 0) {
                   accumulator.push(deck);
                 }
                 return accumulator;
@@ -60,7 +58,7 @@ export default function Decks({ decks }) {
       )}
       {isModalListCardsLearn && (
         <ListManyCardsLearn
-          isLearnAll={isLearnAll}
+          estLearningDaysForCards={estLearningDaysForCards}
           cardsLearnForDecks={cardsLearnForDecks}
           isModalListCardsLearn={isModalListCardsLearn}
           setIsModalListCardsLearn={setIsModalListCardsLearn}
@@ -72,7 +70,6 @@ export default function Decks({ decks }) {
             return (
               <Deck
                 key={card.id}
-                setIsLearnAll={setIsLearnAll}
                 setCardsLearnForDecks={setCardsLearnForDecks}
                 setIsModalListCardsLearn={setIsModalListCardsLearn}
                 setEstLearningDaysForCards={setEstLearningDaysForCards}

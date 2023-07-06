@@ -17,6 +17,7 @@
     "react-firebase-hooks": "^5.1.1",
     "react-router-dom": "^6.11.0",
     "react-scripts": "5.0.1",
+    "react-spring": "^9.7.2",
     "react-uuid": "^2.0.0",
     "reactfire": "^4.2.2",
     "web-vitals": "^2.1.4"

@@ -33,6 +33,12 @@ export function ModalCreateCard({
         className="modal"
         open={isModalCreateCardOpen}
         onCancel={toggleModal}
+        autoComplete="off"
+        initialValues={{
+          WORD: wordCard,
+          DEFINITION: definition,
+          EXAMPLE: example,
+        }}
       >
         <h2>Add card to {deck.nameDeck}</h2>
         <Form layout={"vertical"} onFinish={onSubmit} autoComplete="off">
@@ -470,7 +476,6 @@ export function ModalCreateDeck({
 export function ModalList({
   isModalOpenList,
   setIsModalOpenList,
-  setIsLearnAll,
   setIsModalCreateCardOpen,
   setIsModalOpen,
   deck,
@@ -497,7 +502,6 @@ export function ModalList({
             <button
               onClick={() => {
                 toggleModal();
-                setIsLearnAll(false);
                 setCardsLearnForDecks([deck]);
                 setIsModalListCardsLearn(true);
               }}
@@ -962,10 +966,9 @@ export function ModalChangeCard({
 export function ListManyCardsLearn({
   isModalListCardsLearn,
   cardsLearnForDecks,
-  isLearnAll,
   setIsModalListCardsLearn,
 }) {
-  const { setCardForDeck, setNavbarBool } = useContext(cardsForDeckContext);
+  const { setCardForDeck } = useContext(cardsForDeckContext);
   const navigate = useNavigate();
   return (
     <Modal
@@ -1003,37 +1006,39 @@ export function ListManyCardsLearn({
   );
 
   function learnCardsMove(amount) {
-    cardsLearnForDecks.map((card) => {
-      card.cards.map((card) => {
-        setCardForDeck(cardsLearnForDecks);
+    let isExecuted = false;
+    setCardForDeck(cardsLearnForDecks);
+    cardsLearnForDecks.map((deck) => {
+      return deck.cards.find((card) => {
         if (card.estIntervalDays === null) {
-          setNavbarBool(false);
-          return navigate(`/home/learn/${amount}`);
-        } else {
-          return confirm({
-            title: "No cards to learn",
-            icon: <ExclamationCircleFilled />,
-            content: (
-              <p>
-                You have finished today's session. (You can still proceed by
-                clicking "Learn anyway", but it will not affect the Memory
-                Level)
-              </p>
-            ),
-            okText: "Ok",
-            okType: "danger",
-            cancelText: "Learn anyway",
-            onOk() {
-              toggleModalListCardsLearn();
-            },
-            onCancel: () => {
-              setNavbarBool(false);
-              navigate(`/home/practice/${amount}`);
-            },
-          });
+          navigate(`/home/learn/${amount}`);
+          isExecuted = true;
+          return true;
         }
       });
     });
+
+    if (!isExecuted) {
+      confirm({
+        title: "No cards to learn",
+        icon: <ExclamationCircleFilled />,
+        content: (
+          <p>
+            You have finished today's session. (You can still proceed by
+            clicking "Learn anyway", but it will not affect the Memory Level)
+          </p>
+        ),
+        okText: "Ok",
+        okType: "danger",
+        cancelText: "Learn anyway",
+        onOk() {
+          toggleModalListCardsLearn();
+        },
+        onCancel: () => {
+          navigate(`/home/practice/${amount}`);
+        },
+      });
+    }
   }
   function toggleModalListCardsLearn() {
     setIsModalListCardsLearn((prevState) => !prevState);

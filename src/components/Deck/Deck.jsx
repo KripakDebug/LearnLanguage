@@ -12,7 +12,6 @@ export default function Deck({
   setCardsLearnForDecks,
   setIsModalOpenList,
   setIsModalOpen,
-  setIsLearnAll,
   setIdDeck,
   setIsModalListCardsLearn,
   setDeck,
@@ -35,7 +34,6 @@ export default function Deck({
         <ModalList
           setIsModalListCardsLearn={setIsModalListCardsLearn}
           setDeck={setDeck}
-          setIsLearnAll={setIsLearnAll}
           setCardsLearnForDecks={setCardsLearnForDecks}
           setIsModalCreateCardOpen={setIsModalCreateCardOpen}
           isModalOpenList={isModalOpenList}
@@ -55,16 +53,19 @@ export default function Deck({
           <div className="card-count">{card.cards.length + " cards"}</div>
           <div className="card-name">{card.nameDeck}</div>
         </div>
-        {card.cards.length === 0 ? (
-          <div className="count-lesson">0</div>
-        ) : (
-          <div className="count-lesson active">
-            {card.cards.reduce((total, card) => {
-              setEstLearningDaysForCards(card.estIntervalDays);
-              return card.estIntervalDays === null ? total + 1 : total;
-            }, 0)}
-          </div>
-        )}
+        <div>
+          {card.cards.reduce((total, card) => {
+            setEstLearningDaysForCards(card.estIntervalDays);
+            if (card.estIntervalDays !== null) {
+              return <div className="count-lesson">0</div>;
+            }
+            return (
+              <div className="count-lesson active">
+                {card.estIntervalDays === null ? total + 1 : total}
+              </div>
+            );
+          }, 0)}
+        </div>
       </Card>
     </div>
   );

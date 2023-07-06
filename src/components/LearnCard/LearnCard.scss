@@ -1,0 +1,36 @@
+.learn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  margin: 0 auto;
+}
+.learn-header {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  .learn-header-btn {
+    display: flex;
+    width: 100%;
+    margin-top: 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .line-progress-card {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    width: 95%;
+    justify-content: space-between;
+    .line-bar {
+      height: 4px;
+      width: 650px;
+      background: #000;
+      .line {
+        height: 4px;
+        background: #A6ADB4;
+      }
+    }
+  }
+}
