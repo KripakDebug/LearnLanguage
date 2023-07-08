@@ -1,16 +1,21 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import { cardsForDeckContext } from "../../App";
 import { DoubleRightOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import "./LearnCard.scss";
+import { informationWithFirebase } from "../../index";
+import { useCollectionData } from "react-firebase-hooks/firestore";
 export default function LearnCard() {
   const { amountCard } = useParams();
-  const { cardInDeck, setNavbarBool } = useContext(cardsForDeckContext);
-  const [listCard, setListCard] = useState(null);
+  const { setNavbarBool } = useContext(cardsForDeckContext);
+  const { firestore } = useContext(informationWithFirebase);
+  const [deck] = useCollectionData(firestore.collection("decks"));
   useEffect(() => {
     setNavbarBool(false);
-  }, []);
+    console.log(deck);
+  }, [deck, setNavbarBool]);
+
   return (
     <div className="learn">
       <div className="learn-header">

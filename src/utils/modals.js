@@ -968,7 +968,6 @@ export function ListManyCardsLearn({
   cardsLearnForDecks,
   setIsModalListCardsLearn,
 }) {
-  const { setCardForDeck } = useContext(cardsForDeckContext);
   const navigate = useNavigate();
   return (
     <Modal
@@ -1007,7 +1006,6 @@ export function ListManyCardsLearn({
 
   function learnCardsMove(amount) {
     let isExecuted = false;
-    setCardForDeck(cardsLearnForDecks);
     cardsLearnForDecks.map((deck) => {
       return deck.cards.find((card) => {
         if (card.estIntervalDays === null) {

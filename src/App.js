@@ -11,11 +11,8 @@ export const cardsForDeckContext = createContext(null);
 function App() {
   const { auth } = useContext(informationWithFirebase);
   const [user, loading] = useAuthState(auth);
-  const [cardInDeck, setCardInDeck] = useState(null);
   const [isNavbarShow, setIsNavbarShow] = useState(true);
-  const setCardForDeck = (value) => {
-    setCardInDeck(value);
-  };
+
   const setNavbarBool = (value) => {
     setIsNavbarShow(value);
   };
@@ -25,9 +22,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <cardsForDeckContext.Provider
-        value={{ cardInDeck, setCardForDeck, setNavbarBool }}
-      >
+      <cardsForDeckContext.Provider value={{ setNavbarBool }}>
         <div className="wrapper">
           {user && isNavbarShow ? <NavBar /> : ""}
           <AppRouter />
