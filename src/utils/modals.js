@@ -13,7 +13,6 @@ import {
 import uuid from "react-uuid";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { NavLink, useNavigate } from "react-router-dom";
-import { cardsForDeckContext } from "../App";
 const { confirm } = Modal;
 export function ModalCreateCard({
   isModalCreateCardOpen,
@@ -968,40 +967,79 @@ export function ListManyCardsLearn({
   cardsLearnForDecks,
   setIsModalListCardsLearn,
 }) {
+  const [countOfWordsLearn, setCountOfWordsLaarn] = useState(20);
+  const [isCustomWordsCountPopupEnabled, setIsCustomWordsCountPopupEnabled] =
+    useState(false);
   const navigate = useNavigate();
   return (
-    <Modal
-      footer={null}
-      closable={null}
-      className="modal"
-      title="How many cards to learn?"
-      open={isModalListCardsLearn}
-      onCancel={toggleModalListCardsLearn}
-    >
-      <ul className="modal-list">
-        <li className="list-item">
-          <button onClick={(e) => learnCardsMove(e.target.innerText)}>5</button>
-        </li>
-        <li className="list-item">
-          <button onClick={(e) => learnCardsMove(e.target.innerText)}>
-            10
-          </button>
-        </li>
-        <li className="list-item">
-          <button onClick={(e) => learnCardsMove(e.target.innerText)}>
-            15
-          </button>
-        </li>
-        <li className="list-item">
-          <button onClick={(e) => learnCardsMove(e.target.innerText)}>
-            All
-          </button>
-        </li>
-        <li className="list-item">
-          <button>Custom...</button>
-        </li>
-      </ul>
-    </Modal>
+    <>
+      <Modal
+        footer={null}
+        closable={null}
+        className="modal"
+        title="How many cards to learn?"
+        open={isModalListCardsLearn}
+        onCancel={toggleModalListCardsLearn}
+      >
+        <ul className="modal-list">
+          <li className="list-item">
+            <button onClick={(e) => learnCardsMove(e.target.innerText)}>
+              5
+            </button>
+          </li>
+          <li className="list-item">
+            <button onClick={(e) => learnCardsMove(e.target.innerText)}>
+              10
+            </button>
+          </li>
+          <li className="list-item">
+            <button onClick={(e) => learnCardsMove(e.target.innerText)}>
+              15
+            </button>
+          </li>
+          <li className="list-item">
+            <button onClick={(e) => learnCardsMove(e.target.innerText)}>
+              All
+            </button>
+          </li>
+          <li className="list-item">
+            <button
+              onClick={() => {
+                setIsCustomWordsCountPopupEnabled(true);
+              }}
+            >
+              Custom...
+            </button>
+          </li>
+        </ul>
+      </Modal>
+      {isCustomWordsCountPopupEnabled && (
+        <Modal
+          footer={null}
+          closable={null}
+          className="modal"
+          title="Input the amount of cards"
+          open={isCustomWordsCountPopupEnabled}
+          onCancel={toggleModalCustomWordsCountPopup}
+        >
+          <Input
+            onChange={(e) => setCountOfWordsLaarn(e.target.value)}
+            value={countOfWordsLearn}
+            className="count-learn-card"
+          />
+          <Button
+            block
+            disabled={!Number(countOfWordsLearn) || countOfWordsLearn < 0}
+            onClick={() => {
+              toggleModalListCardsLearn();
+              learnCardsMove(countOfWordsLearn);
+            }}
+          >
+            Start
+          </Button>
+        </Modal>
+      )}
+    </>
   );
 
   function learnCardsMove(amount) {
@@ -1040,6 +1078,10 @@ export function ListManyCardsLearn({
   }
   function toggleModalListCardsLearn() {
     setIsModalListCardsLearn((prevState) => !prevState);
+  }
+  function toggleModalCustomWordsCountPopup() {
+    toggleModalListCardsLearn();
+    setIsCustomWordsCountPopupEnabled((prevState) => !prevState);
   }
 }
 

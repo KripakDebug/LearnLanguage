@@ -13,7 +13,6 @@ import Home from "./page/Home/Home";
 import ResetPassword from "./components/ResetPassword/ResetPassword";
 import ListCard from "./components/ListCard/ListCard";
 import LearnCard from "./components/LearnCard/LearnCard";
-import PracticeCard from "./components/PracticeCard/PracticeCard";
 
 export const publicRoutes = [
   {
@@ -49,7 +48,7 @@ export const privateRoutes = [
   },
   {
     path: PRACTICE_CARD,
-    Component: PracticeCard,
+    Component: LearnCard,
     private: true,
   },
 ];

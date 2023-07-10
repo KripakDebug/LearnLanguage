@@ -13,7 +13,6 @@ export default function LearnCard() {
   const [deck] = useCollectionData(firestore.collection("decks"));
   useEffect(() => {
     setNavbarBool(false);
-    console.log(deck);
   }, [deck, setNavbarBool]);
 
   return (
