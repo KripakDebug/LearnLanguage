@@ -1044,15 +1044,21 @@ export function ListManyCardsLearn({
 
   function learnCardsMove(amount) {
     let isExecuted = false;
-    cardsLearnForDecks.map((deck) => {
-      return deck.cards.find((card) => {
-        if (card.estIntervalDays === null) {
-          navigate(`/home/learn/${amount}`);
-          isExecuted = true;
-          return true;
-        }
+    if (cardsLearnForDecks.length === 1) {
+      cardsLearnForDecks.map((deck) => {
+        return deck.cards.find((card) => {
+          if (!card.estIntervalDays) {
+            navigate(`/home/learn/${deck.id}/${amount}`);
+            isExecuted = true;
+            return true;
+          }
+        });
       });
-    });
+    } else {
+      navigate(`/home/learn/all/${amount}`);
+      isExecuted = true;
+      return true;
+    }
 
     if (!isExecuted) {
       confirm({
@@ -1071,7 +1077,13 @@ export function ListManyCardsLearn({
           toggleModalListCardsLearn();
         },
         onCancel: () => {
-          navigate(`/home/practice/${amount}`);
+          if (cardsLearnForDecks.length === 1) {
+            cardsLearnForDecks.map((deck) => {
+              navigate(`/home/practice/${deck.id}/${amount}`);
+            });
+          } else {
+            navigate(`/home/practice/all/${amount}`);
+          }
         },
       });
     }

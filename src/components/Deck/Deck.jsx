@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ModalCreateCard, ModalList } from "../../utils/modals";
 import { Card } from "antd";
 import { informationWithFirebase } from "../../index";
@@ -19,6 +19,18 @@ export default function Deck({
   idDeck,
 }) {
   const { firestore } = useContext(informationWithFirebase);
+  const [totalCountCardsForDeck, setTotalCountForDeck] = useState(null);
+  useEffect(() => {
+    setTotalCountForDeck(
+      card.cards.reduce((prevTotal, card) => {
+        setEstLearningDaysForCards(card.estIntervalDays);
+        if (card.estIntervalDays !== null) {
+          return 0;
+        }
+        return card.estIntervalDays === null ? prevTotal + 1 : prevTotal;
+      }, 0)
+    );
+  }, [card.cards, setEstLearningDaysForCards]);
   return (
     <div className="deck">
       {card.id === idDeck && isModalCreateCardOpen && (
@@ -54,17 +66,15 @@ export default function Deck({
           <div className="card-name">{card.nameDeck}</div>
         </div>
         <div>
-          {card.cards.reduce((total, card) => {
-            setEstLearningDaysForCards(card.estIntervalDays);
-            if (card.estIntervalDays !== null) {
-              return <div className="count-lesson">0</div>;
+          <div
+            className={
+              totalCountCardsForDeck === 0
+                ? "count-lesson"
+                : "count-lesson active"
             }
-            return (
-              <div className="count-lesson active">
-                {card.estIntervalDays === null ? total + 1 : total}
-              </div>
-            );
-          }, 0)}
+          >
+            {totalCountCardsForDeck}
+          </div>
         </div>
       </Card>
     </div>
