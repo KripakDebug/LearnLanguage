@@ -967,7 +967,7 @@ export function ListManyCardsLearn({
   cardsLearnForDecks,
   setIsModalListCardsLearn,
 }) {
-  const [countOfWordsLearn, setCountOfWordsLaarn] = useState(20);
+  const [countOfWordsLearn, setCountOfWordsLearn] = useState(20);
   const [isCustomWordsCountPopupEnabled, setIsCustomWordsCountPopupEnabled] =
     useState(false);
   const navigate = useNavigate();
@@ -1023,7 +1023,7 @@ export function ListManyCardsLearn({
           onCancel={toggleModalCustomWordsCountPopup}
         >
           <Input
-            onChange={(e) => setCountOfWordsLaarn(e.target.value)}
+            onChange={(e) => setCountOfWordsLearn(e.target.value)}
             value={countOfWordsLearn}
             className="count-learn-card"
           />
@@ -1055,9 +1055,16 @@ export function ListManyCardsLearn({
         });
       });
     } else {
-      navigate(`/home/learn/all/${amount}`);
-      isExecuted = true;
-      return true;
+      cardsLearnForDecks.some((deck) => {
+        const foundCard = deck.cards.find((card) => {
+          if (!card.estIntervalDays) {
+            navigate(`/home/learn/all/${amount}`);
+            isExecuted = true;
+            return true;
+          }
+        });
+        return foundCard;
+      });
     }
 
     if (!isExecuted) {

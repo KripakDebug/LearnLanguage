@@ -22,12 +22,12 @@ export default function Deck({
   const [totalCountCardsForDeck, setTotalCountForDeck] = useState(null);
   useEffect(() => {
     setTotalCountForDeck(
-      card.cards.reduce((prevTotal, card) => {
-        setEstLearningDaysForCards(card.estIntervalDays);
-        if (card.estIntervalDays !== null) {
-          return 0;
+      card.cards.reduce((prevTotal, currentCard) => {
+        if (currentCard.estIntervalDays !== null) {
+          return prevTotal;
         }
-        return card.estIntervalDays === null ? prevTotal + 1 : prevTotal;
+        setEstLearningDaysForCards(currentCard.estIntervalDays);
+        return prevTotal + 1;
       }, 0)
     );
   }, [card.cards, setEstLearningDaysForCards]);
