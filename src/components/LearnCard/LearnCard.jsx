@@ -13,7 +13,7 @@ export default function LearnCard() {
   const { auth, firestore } = useContext(informationWithFirebase);
   const [user, loading] = useAuthState(auth);
   const location = useLocation();
-  const currentPath = location.pathname;
+  const currentPath = window.location.pathname.split("/");
   const [deck] = useCollectionData(
     firestore.collection("decks").where("userId", "==", user.uid)
   );
@@ -21,7 +21,11 @@ export default function LearnCard() {
   useEffect(() => {
     setNavbarBool(false);
     const filterCardsByInterval = (cards) => {
-      return cards.filter((card) => card.estIntervalDays === null);
+      return cards.filter((card) =>
+        card.estIntervalDays === null || currentPath[2] === "practice"
+          ? card
+          : ""
+      );
     };
 
     if (Array.isArray(deck)) {
@@ -42,6 +46,7 @@ export default function LearnCard() {
       setCards(limitedCards);
     }
   }, [amountCard, card, deck, setNavbarBool]);
+  console.log(cards);
   return (
     <div className="container">
       <div className="learn">
