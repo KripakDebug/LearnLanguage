@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { NavLink, useLocation, useParams } from "react-router-dom";
 import { cardsForDeckContext } from "../../App";
 import { DoubleRightOutlined } from "@ant-design/icons";
@@ -6,17 +6,42 @@ import "./LearnCard.scss";
 import { informationWithFirebase } from "../../index";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import CardLearn from "../CardLearn/CardLearn";
+import { useAuthState } from "react-firebase-hooks/auth";
 export default function LearnCard() {
-  const { amountCard } = useParams();
+  const { card, amountCard } = useParams();
   const { setNavbarBool } = useContext(cardsForDeckContext);
-  const { firestore } = useContext(informationWithFirebase);
+  const { auth, firestore } = useContext(informationWithFirebase);
+  const [user, loading] = useAuthState(auth);
   const location = useLocation();
   const currentPath = location.pathname;
-  const [deck] = useCollectionData(firestore.collection("decks"));
+  const [deck] = useCollectionData(
+    firestore.collection("decks").where("userId", "==", user.uid)
+  );
+  const [cards, setCards] = useState([]);
   useEffect(() => {
     setNavbarBool(false);
-  }, [deck, setNavbarBool]);
+    const filterCardsByInterval = (cards) => {
+      return cards.filter((card) => card.estIntervalDays === null);
+    };
 
+    if (Array.isArray(deck)) {
+      let filteredCards = [];
+
+      if (card === "all") {
+        deck.forEach((deck) => {
+          filteredCards.push(...filterCardsByInterval(deck.cards));
+        });
+      } else {
+        const filteredDeck = deck.find((deck) => deck.id === card);
+        if (filteredDeck) {
+          filteredCards = filterCardsByInterval(filteredDeck.cards);
+        }
+      }
+
+      const limitedCards = filteredCards.slice(0, Number(amountCard));
+      setCards(limitedCards);
+    }
+  }, [amountCard, card, deck, setNavbarBool]);
   return (
     <div className="container">
       <div className="learn">
@@ -33,7 +58,7 @@ export default function LearnCard() {
             <div className="line-bar">
               <progress className="line"></progress>
             </div>
-            <div className="amount-card">0 / </div>
+            <div className="amount-card">0 / {cards.length}</div>
           </div>
         </div>
         <CardLearn deck={deck} />
