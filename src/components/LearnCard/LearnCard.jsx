@@ -17,6 +17,7 @@ export default function LearnCard() {
     firestore.collection("decks").where("userId", "==", user.uid)
   );
   const [cards, setCards] = useState([]);
+  const [lineCardsProgress, setLineCardsProgress] = useState(1);
   useEffect(() => {
     setNavbarBool(false);
     const filterCardsByInterval = (cards) => {
@@ -59,9 +60,16 @@ export default function LearnCard() {
           </div>
           <div className="line-progress-card">
             <div className="line-bar">
-              <progress className="line"></progress>
+              <progress
+                style={{
+                  width: `${(lineCardsProgress / cards.length) * 100}%`,
+                }}
+                className="line"
+              ></progress>
             </div>
-            <div className="amount-card">0 / {cards.length}</div>
+            <div className="amount-card">
+              {lineCardsProgress} / {cards.length}
+            </div>
           </div>
         </div>
         <CardLearn deck={deck} />
