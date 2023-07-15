@@ -18,14 +18,24 @@ export default function LearnCard() {
   );
   const [cards, setCards] = useState([]);
   const [lineCardsProgress, setLineCardsProgress] = useState(1);
+  const [cardsLearn, setCardsLearn] = useState([]);
   useEffect(() => {
     setNavbarBool(false);
-    const filterCardsByInterval = (cards) => {
-      return cards.filter(
-        (card) =>
+    const filterCardsByInterval = (cards, deck) => {
+      return cards.reduce((filtered, card) => {
+        if (
           card.estIntervalDays === null ||
           (currentPath[2] === "practice" && card)
-      );
+        ) {
+          filtered.push({
+            card: card,
+            flashcard: deck.flashcardDeck,
+            flashcardReverse: deck.flashcardReverseDeck,
+            typing: deck.typingDeck,
+          });
+        }
+        return filtered;
+      }, []);
     };
 
     if (Array.isArray(deck)) {
@@ -33,12 +43,15 @@ export default function LearnCard() {
 
       if (card === "all") {
         deck.forEach((deck) => {
-          filteredCards.push(...filterCardsByInterval(deck.cards));
+          filteredCards.push(...filterCardsByInterval(deck.cards, deck));
         });
       } else {
         const filteredDeck = deck.find((deck) => deck.id === card);
         if (filteredDeck) {
-          filteredCards = filterCardsByInterval(filteredDeck.cards);
+          filteredCards = filterCardsByInterval(
+            filteredDeck.cards,
+            filteredDeck
+          );
         }
       }
 
@@ -72,7 +85,7 @@ export default function LearnCard() {
             </div>
           </div>
         </div>
-        <CardLearn deck={deck} />
+        <CardLearn cards={cards} />
       </div>
     </div>
   );
