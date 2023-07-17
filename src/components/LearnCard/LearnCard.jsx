@@ -51,12 +51,12 @@ export default function LearnCard() {
   return (
     <div className="container">
       <div className="learn">
-        <div className="learn-header">
-          <div className="learn-header-btn">
+        <div className="learn__header">
+          <div className="learn__header-btn">
             <div className="return-page">
               <NavLink to="/home">Home </NavLink>/ Learning
             </div>
-            <button type="default" className="learn-finish">
+            <button type="default" className="learn__finish">
               <DoubleRightOutlined /> Finish
             </button>
           </div>
@@ -73,9 +73,10 @@ export default function LearnCard() {
               {lineCardsProgress} / {cards.length}
             </div>
           </div>
+          <div className="learn__deck-name">{cards[0]?.deckName}</div>
         </div>
         <CardLearn
-          cards={cards}
+          card={cards[0]}
           setCardsLearn={setCardsLearn}
           setLineCardsProgress={setLineCardsProgress}
         />
