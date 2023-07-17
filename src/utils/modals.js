@@ -122,7 +122,6 @@ export function ModalCreateCard({
             lastTested: null,
             nextTest: null,
             testCnt: 0,
-            deckName: deck.nameDeck,
             estIntervalDays: null,
             failCnt: 0,
           };

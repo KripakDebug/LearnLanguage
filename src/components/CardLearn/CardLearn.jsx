@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FormOutlined } from "@ant-design/icons";
 
 export default function CardLearn({ cards }) {
+  useEffect(() => {
+    cards.map((card) => {
+      console.log(card);
+    });
+  }, [cards]);
   return (
     <>
       <div className="card-learn">

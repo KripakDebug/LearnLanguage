@@ -32,6 +32,7 @@ export default function LearnCard() {
             flashcard: deck.flashcardDeck,
             flashcardReverse: deck.flashcardReverseDeck,
             typing: deck.typingDeck,
+            deckName: deck.nameDeck,
           });
         }
         return filtered;
@@ -85,7 +86,11 @@ export default function LearnCard() {
             </div>
           </div>
         </div>
-        <CardLearn cards={cards} />
+        <CardLearn
+          cards={cards}
+          setCardsLearn={setCardsLearn}
+          setLineCardsProgress={setLineCardsProgress}
+        />
       </div>
     </div>
   );
