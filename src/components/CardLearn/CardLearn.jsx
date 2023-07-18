@@ -16,13 +16,35 @@ export default function CardLearn({
   return (
     <>
       <div className="card-learn">
+        <div className="learn-failed">
+          {progressLearnCard === 3 && (
+            <div className={isFailLearnCard ? "icon failed" : "icon succeed"}>
+              {isFailLearnCard ? (
+                <CloseOutlined />
+              ) : (
+                <div className="circle"></div>
+              )}
+            </div>
+          )}
+        </div>
         {progressLearnChangeMarking()}
         <button className="card-change">
           <FormOutlined />
         </button>
       </div>
       <div className="learn-progress">
-        <div className="message-learn">Guess the answer</div>
+        <div className="message-learn">
+          {progressLearnCard === 1
+            ? "Guess the answer"
+            : progressLearnCard === 2
+            ? "Did you remember correctly?"
+            : progressLearnCard === 3 &&
+              `Interval days is expanded to ${
+                isFailLearnCard
+                  ? card?.card.estIntervalDays === null && "1"
+                  : "2"
+              }`}
+        </div>
         {progressLearnCard === 1 ? (
           <button
             onClick={() => setProgressLearnCard((prevState) => prevState + 1)}
@@ -85,6 +107,48 @@ export default function CardLearn({
               <div className="word">{card?.card.wordCard}</div>
               <hr />
               <div className="back">{card?.card.definition}</div>
+            </div>
+          );
+        }
+      }
+    } else if (card?.flashcardReverse) {
+      switch (progressLearnCard) {
+        case 1: {
+          return <div className="back">{card?.card.definition}</div>;
+        }
+        case 2: {
+          return <div className="word">{card?.card.wordCard}</div>;
+        }
+        case 3: {
+          return (
+            <div className="container-word">
+              <div className="back">{card?.card.definition}</div>
+              <hr />
+              <div className="word">{card?.card.wordCard}</div>
+            </div>
+          );
+        }
+      }
+    } else if (card?.typing) {
+      switch (progressLearnCard) {
+        case 1: {
+          return <div className="back">{card?.card.definition}</div>;
+        }
+        case 2: {
+          return (
+            <div className="typing-word">
+              {card?.card.wordCard.split("").map((word) => {
+                return <span className="letter"></span>;
+              })}
+            </div>
+          );
+        }
+        case 3: {
+          return (
+            <div className="container-word">
+              <div className="back">{card?.card.definition}</div>
+              <hr />
+              <div className="word">{card?.card.wordCard}</div>
             </div>
           );
         }
