@@ -91,7 +91,6 @@ export default function CardLearn({
       </div>
     </>
   );
-
   function progressLearnChangeMarking() {
     if (card?.flashcard) {
       switch (progressLearnCard) {

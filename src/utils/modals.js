@@ -162,7 +162,9 @@ export function ModalCreateDeck({
   const { auth, firestore } = useContext(informationWithFirebase);
   const [user] = useAuthState(auth);
   const [name, setName] = useState(nameDeck || "");
-  const [isFlashcard, setIsFlashcard] = useState(flashcardDeck || true);
+  const [isFlashcard, setIsFlashcard] = useState(
+    flashcardDeck === undefined ? true : flashcardDeck
+  );
   const [isFlashcardReverse, setIsFlashcardReverse] = useState(
     !!flashcardReverseDeck
   );
