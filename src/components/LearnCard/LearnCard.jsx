@@ -6,6 +6,7 @@ import "./LearnCard.scss";
 import { informationWithFirebase } from "../../index";
 import CardLearn from "../CardLearn/CardLearn";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { Progress } from "antd";
 export default function LearnCard() {
   const { card, amountCard } = useParams();
   const { setNavbarBool } = useContext(cardsForDeckContext);
@@ -74,14 +75,14 @@ export default function LearnCard() {
             </button>
           </div>
           <div className="line-progress-card">
-            <div className="line-bar">
-              <progress
-                style={{
-                  width: `${(lineCardsProgress / cards.length) * 100}%`,
-                }}
-                className="line"
-              ></progress>
-            </div>
+            <Progress
+              type="line"
+              showInfo={false}
+              strokeColor={"white"}
+              trailColor={"rgb(196, 196, 196)"}
+              strokeWidth={"5px"}
+              percent={(lineCardsProgress / cards.length) * 100}
+            />
             <div className="amount-card">
               {lineCardsProgress} / {cards.length}
             </div>

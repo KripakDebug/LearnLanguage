@@ -45,22 +45,11 @@
     .line-progress-card {
       display: flex;
       align-items: center;
+      flex-direction: column;
       margin-top: 20px;
-      width: 95%;
-      justify-content: space-between;
-      .line-bar {
-        height: 5px;
-        position: relative;
-        width: 650px;
-        border-radius: 5px;
-        background: #ffffff;
-        .line {
-          height: inherit;
-          width: 90%;
-          position: absolute;
-          background: #A6ADB4;
-        }
-      }
+      width: 100%;
+      margin-bottom: 15px;
+      justify-content: center;
     }
 
   }
@@ -132,11 +121,10 @@
   .typing-word {
     display: flex;
     .letter {
-      margin: 0px 2px;
-      display: flex;
-      border-bottom: 1px solid #001529;
-      height: 10px;
-      width: 10px;
+      font-family: monospace;
+      letter-spacing: 4px;
+      font-size: 16px;
+      color: rgb(120, 120, 120);
     }
   }
   .succeed {

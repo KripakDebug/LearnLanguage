@@ -90,7 +90,7 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
 
   function setLetterToWord(e) {
     window.addEventListener("keydown", (event) => {
-      e.target.innerText = event.key;
+      e.target.textContent = event.key;
     });
   }
   function progressLearnChangeMarking() {
@@ -140,10 +140,9 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
             <div className="typing-word">
               {card?.card.wordCard.split("").map((word) => {
                 return (
-                  <span
-                    onClick={(e) => setLetterToWord(e)}
-                    className="letter"
-                  ></span>
+                  <span onChange={(e) => setLetterToWord(e)} className="letter">
+                    _
+                  </span>
                 );
               })}
             </div>
