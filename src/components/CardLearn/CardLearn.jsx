@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ArrowRightOutlined,
   CloseOutlined,
   FormOutlined,
   UndoOutlined,
 } from "@ant-design/icons";
+import uuid from "react-uuid";
 
 export default function CardLearn({ card, nextCardConfigurationWillBe }) {
   const [progressLearnCard, setProgressLearnCard] = useState(1);
   const [isFailLearnCard, setIsFailLearnCard] = useState(false);
+  const [wordForLetter, setWordForLetter] = useState([]);
+  useEffect(() => {
+    document.addEventListener("keydown", setLetterToWord);
+    return () => {
+      document.removeEventListener("keydown", setLetterToWord);
+    };
+  }, []);
+
   return (
     <>
       <div className="card-learn">
@@ -89,10 +98,36 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
   );
 
   function setLetterToWord(e) {
-    window.addEventListener("keydown", (event) => {
-      e.target.textContent = event.key;
-    });
+    const letters = document.getElementsByClassName("letter");
+    if (e.key.length === 1 && e.key !== " ") {
+      for (let i = 0; i < letters.length; i++) {
+        const letter = letters[i];
+        const nextLetter = letters[i + 1];
+        if (letter.textContent === "_") {
+          letter.textContent = e.key;
+          letter.classList.remove("next-letter");
+          if (nextLetter !== undefined) {
+            nextLetter.classList.add("next-letter");
+          }
+          break;
+        }
+      }
+    } else if (e.key === "Backspace") {
+      for (let i = letters.length - 1; i >= 0; i--) {
+        const letter = letters[i];
+        const nextLetter = letters[i + 1];
+        if (letter.textContent !== "_") {
+          letter.classList.add("next-letter");
+          if (nextLetter !== undefined) {
+            nextLetter.classList.remove("next-letter");
+          }
+          letter.textContent = "_";
+          break;
+        }
+      }
+    }
   }
+
   function progressLearnChangeMarking() {
     if (nextCardConfigurationWillBe === "flashcard") {
       switch (progressLearnCard) {
@@ -138,9 +173,13 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
         case 2: {
           return (
             <div className="typing-word">
-              {card?.card.wordCard.split("").map((word) => {
+              {card?.card.wordCard.split("").map((word, index) => {
+                const isFirstLetter = index === 0;
                 return (
-                  <span onChange={(e) => setLetterToWord(e)} className="letter">
+                  <span
+                    key={uuid()}
+                    className={`letter ${isFirstLetter ? "next-letter" : ""}`}
+                  >
                     _
                   </span>
                 );

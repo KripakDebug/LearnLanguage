@@ -126,6 +126,10 @@
       font-size: 16px;
       color: rgb(120, 120, 120);
     }
+    .next-letter {
+        animation: 1s linear 0s infinite normal none running animatedLetterNext;
+
+    }
   }
   .succeed {
     background-color: rgb(185, 237, 130);
@@ -159,4 +163,21 @@
     position: relative;
     color: rgb(45, 169, 157);
   }
+}
+
+
+@keyframes animatedLetterNext {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  51% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+
 }
