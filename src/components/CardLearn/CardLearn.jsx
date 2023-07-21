@@ -6,11 +6,7 @@ import {
   UndoOutlined,
 } from "@ant-design/icons";
 
-export default function CardLearn({
-  card,
-  setCardsLearn,
-  setLineCardsProgress,
-}) {
+export default function CardLearn({ card, nextCardConfigurationWillBe }) {
   const [progressLearnCard, setProgressLearnCard] = useState(1);
   const [isFailLearnCard, setIsFailLearnCard] = useState(false);
   return (
@@ -91,8 +87,14 @@ export default function CardLearn({
       </div>
     </>
   );
+
+  function setLetterToWord(e) {
+    window.addEventListener("keydown", (event) => {
+      e.target.innerText = event.key;
+    });
+  }
   function progressLearnChangeMarking() {
-    if (card?.flashcard) {
+    if (nextCardConfigurationWillBe === "flashcard") {
       switch (progressLearnCard) {
         case 1: {
           return <div className="word">{card?.card.wordCard}</div>;
@@ -110,7 +112,7 @@ export default function CardLearn({
           );
         }
       }
-    } else if (card?.flashcardReverse) {
+    } else if (nextCardConfigurationWillBe === "flashcardReverse") {
       switch (progressLearnCard) {
         case 1: {
           return <div className="back">{card?.card.definition}</div>;
@@ -128,7 +130,7 @@ export default function CardLearn({
           );
         }
       }
-    } else if (card?.typing) {
+    } else if (nextCardConfigurationWillBe === "typing") {
       switch (progressLearnCard) {
         case 1: {
           return <div className="back">{card?.card.definition}</div>;
@@ -137,7 +139,12 @@ export default function CardLearn({
           return (
             <div className="typing-word">
               {card?.card.wordCard.split("").map((word) => {
-                return <span className="letter"></span>;
+                return (
+                  <span
+                    onClick={(e) => setLetterToWord(e)}
+                    className="letter"
+                  ></span>
+                );
               })}
             </div>
           );

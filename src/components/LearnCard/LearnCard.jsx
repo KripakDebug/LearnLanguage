@@ -14,8 +14,8 @@ export default function LearnCard() {
   const currentPath = window.location.pathname.split("/");
   const [cards, setCards] = useState([]);
   const [lineCardsProgress, setLineCardsProgress] = useState(1);
-  const [cardsLearn, setCardsLearn] = useState([]);
-  const [nextCardConfigurationWillBe, setNextCardConfigurationWillBe] = useState(null);
+  const [nextCardConfigurationWillBe, setNextCardConfigurationWillBe] =
+    useState(null);
 
   useEffect(() => {
     setNavbarBool(false);
@@ -53,11 +53,13 @@ export default function LearnCard() {
 
   useEffect(() => {
     const avaliableConfigs = [];
-    cards[0]?.flashcard && avaliableConfigs.push('flashcard');
-    cards[0]?.flashcardReverse && avaliableConfigs.push('flashcardReverse');
-    cards[0]?.typing && avaliableConfigs.push('typing');
-    setNextCardConfigurationWillBe(avaliableConfigs[Math.floor((Math.random() * avaliableConfigs.length))])
-  }, [cards])
+    cards[0]?.flashcard && avaliableConfigs.push("flashcard");
+    cards[0]?.flashcardReverse && avaliableConfigs.push("flashcardReverse");
+    cards[0]?.typing && avaliableConfigs.push("typing");
+    setNextCardConfigurationWillBe(
+      avaliableConfigs[Math.floor(Math.random() * avaliableConfigs.length)]
+    );
+  }, [cards]);
 
   return (
     <div className="container">
@@ -88,8 +90,7 @@ export default function LearnCard() {
         </div>
         <CardLearn
           card={cards[0]}
-          setCardsLearn={setCardsLearn}
-          setLineCardsProgress={setLineCardsProgress}
+          nextCardConfigurationWillBe={nextCardConfigurationWillBe}
         />
       </div>
     </div>
