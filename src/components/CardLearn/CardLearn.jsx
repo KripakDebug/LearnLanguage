@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ArrowRightOutlined,
   CloseOutlined,
@@ -6,18 +6,10 @@ import {
   UndoOutlined,
 } from "@ant-design/icons";
 import uuid from "react-uuid";
-
 export default function CardLearn({ card, nextCardConfigurationWillBe }) {
   const [progressLearnCard, setProgressLearnCard] = useState(1);
   const [isFailLearnCard, setIsFailLearnCard] = useState(false);
   const [wordForLetter, setWordForLetter] = useState([]);
-  useEffect(() => {
-    document.addEventListener("keydown", setLetterToWord);
-    return () => {
-      document.removeEventListener("keydown", setLetterToWord);
-    };
-  }, []);
-
   return (
     <>
       <div className="card-learn">
@@ -43,8 +35,13 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
             ? "Guess the answer"
             : progressLearnCard === 2
             ? "Did you remember correctly?"
-            : progressLearnCard === 3 &&
-              `Interval days is expanded to ${
+            : progressLearnCard === 3
+            ? `Interval days is expanded to ${
+                isFailLearnCard
+                  ? card?.card.estIntervalDays === null && "1"
+                  : "2"
+              }`
+            : `Interval days is expanded to ${
                 isFailLearnCard
                   ? card?.card.estIntervalDays === null && "1"
                   : "2"
@@ -86,6 +83,18 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
         {progressLearnCard === 3 && (
           <button
             onClick={() => {
+              card?.card?.example !== ""
+                ? setProgressLearnCard((prevState) => prevState + 1)
+                : changeCardForDeck();
+            }}
+            className="learn-check"
+          >
+            <ArrowRightOutlined />
+          </button>
+        )}
+        {progressLearnCard === 4 && (
+          <button
+            onClick={() => {
               changeCardForDeck();
             }}
             className="learn-check"
@@ -96,37 +105,6 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
       </div>
     </>
   );
-
-  function setLetterToWord(e) {
-    const letters = document.getElementsByClassName("letter");
-    if (e.key.length === 1 && e.key !== " ") {
-      for (let i = 0; i < letters.length; i++) {
-        const letter = letters[i];
-        const nextLetter = letters[i + 1];
-        if (letter.textContent === "_") {
-          letter.textContent = e.key;
-          letter.classList.remove("next-letter");
-          if (nextLetter !== undefined) {
-            nextLetter.classList.add("next-letter");
-          }
-          break;
-        }
-      }
-    } else if (e.key === "Backspace") {
-      for (let i = letters.length - 1; i >= 0; i--) {
-        const letter = letters[i];
-        const nextLetter = letters[i + 1];
-        if (letter.textContent !== "_") {
-          letter.classList.add("next-letter");
-          if (nextLetter !== undefined) {
-            nextLetter.classList.remove("next-letter");
-          }
-          letter.textContent = "_";
-          break;
-        }
-      }
-    }
-  }
 
   function progressLearnChangeMarking() {
     if (nextCardConfigurationWillBe === "flashcard") {
@@ -146,6 +124,9 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
             </div>
           );
         }
+        case 4: {
+          return <div className="word">{card?.card.example}</div>;
+        }
       }
     } else if (nextCardConfigurationWillBe === "flashcardReverse") {
       switch (progressLearnCard) {
@@ -164,6 +145,9 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
             </div>
           );
         }
+        case 4: {
+          return <div className="word">{card?.card.example}</div>;
+        }
       }
     } else if (nextCardConfigurationWillBe === "typing") {
       switch (progressLearnCard) {
@@ -173,14 +157,17 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
         case 2: {
           return (
             <div className="typing-word">
+              <input
+                type="text"
+                className="typing"
+                autoFocus
+                maxLength={card?.card.wordCard.split("").length}
+                onChange={(e) => setWordForLetter(e.target.value.split(""))}
+              />
               {card?.card.wordCard.split("").map((word, index) => {
-                const isFirstLetter = index === 0;
                 return (
-                  <span
-                    key={uuid()}
-                    className={`letter ${isFirstLetter ? "next-letter" : ""}`}
-                  >
-                    _
+                  <span key={uuid()} className="letter">
+                    {wordForLetter[index] || "_"}
                   </span>
                 );
               })}
@@ -195,6 +182,9 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
               <div className="word">{card?.card.wordCard}</div>
             </div>
           );
+        }
+        case 4: {
+          return <div className="word">{card?.card.example}</div>;
         }
       }
     }
