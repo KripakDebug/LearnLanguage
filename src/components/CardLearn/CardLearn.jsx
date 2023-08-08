@@ -7,15 +7,21 @@ import {
 } from "@ant-design/icons";
 import uuid from "react-uuid";
 import { informationWithFirebase } from "../../index";
+import { useNavigate } from "react-router-dom";
+import FinallyLearn from "../../page/FinallyLearn/FinallyLearn";
 export default function CardLearn({
   card,
   nextCardConfigurationWillBe,
   setCards,
+  currentPath,
+  cards,
   setLineCardsProgress,
 }) {
   const [progressLearnCard, setProgressLearnCard] = useState(1);
   const [isFailLearnCard, setIsFailLearnCard] = useState(false);
   const [wordForLetter, setWordForLetter] = useState([]);
+  const [filteredCardsLearn, setFilteredCardsLearn] = useState([]);
+  const navigate = useNavigate();
   const { firestore } = useContext(informationWithFirebase);
   return (
     <>
@@ -219,39 +225,52 @@ export default function CardLearn({
   }
 
   function changeCardForDeck() {
-    firestore
-      .collection("decks")
-      .where("id", "==", card?.idDeck)
-      .get()
-      .then((data) => {
-        data.docs.map((doc) => {
-          const cards = doc.data().cards;
-          const updatedCards = cards.map((item) => {
-            if (item.idCard === card?.card?.idCard) {
-              const newNextTest = new Date();
-              const newEstIntervalDays = isFailLearnCard
-                ? item.estIntervalDays === null
-                  ? 1
-                  : item.estIntervalDays - 1
-                : 2;
-              return {
-                ...item,
-                estIntervalDays: newEstIntervalDays,
-                lastTested: new Date(),
-                testCnt: isFailLearnCard ? item.testCnt : item.testCnt + 1,
-                failCnt: isFailLearnCard ? item.failCnt + 1 : item.failCnt,
-                nextTest: newNextTest.setDate(
-                  newNextTest.getDate() + item.estIntervalDays
-                ),
-              };
+    setFilteredCardsLearn((prevState) => [...prevState, card]);
+    if (currentPath[2] === "practice") {
+      if (cards.slice(1).every((card) => card === "")) {
+        navigate("/finally-learn", { state: filteredCardsLearn });
+      }
+      setLineCardsProgress((prevState) => prevState + 1);
+      setCards((prevState) => [...prevState.slice(1), ""]);
+      setProgressLearnCard(1);
+    } else {
+      firestore
+        .collection("decks")
+        .where("id", "==", card?.idDeck)
+        .get()
+        .then((data) => {
+          data.docs.map((doc) => {
+            const cards = doc.data().cards;
+            const updatedCards = cards.map((item) => {
+              if (item.idCard === card?.card?.idCard) {
+                const newNextTest = new Date();
+                const newEstIntervalDays = isFailLearnCard
+                  ? item.estIntervalDays === null
+                    ? 1
+                    : item.estIntervalDays - 1
+                  : 2;
+                return {
+                  ...item,
+                  estIntervalDays: newEstIntervalDays,
+                  lastTested: new Date(),
+                  testCnt: isFailLearnCard ? item.testCnt : item.testCnt + 1,
+                  failCnt: isFailLearnCard ? item.failCnt + 1 : item.failCnt,
+                  nextTest: newNextTest.setDate(
+                    newNextTest.getDate() + item.estIntervalDays
+                  ),
+                };
+              }
+              return item;
+            });
+            if (cards.slice(1).every((card) => card === "")) {
+              navigate("/finally-learn", { state: filteredCardsLearn });
             }
-            return item;
+            setCards((prevState) => [...prevState.slice(1), ""]);
+            setLineCardsProgress((prevState) => prevState + 1);
+            setProgressLearnCard(1);
+            doc.ref.update({ cards: updatedCards });
           });
-          setLineCardsProgress((prevState) => prevState + 1);
-          setCards((prevState) => prevState.slice(1));
-          setProgressLearnCard(1);
-          doc.ref.update({ cards: updatedCards });
         });
-      });
+    }
   }
 }

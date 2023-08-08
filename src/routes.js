@@ -6,6 +6,7 @@ import {
   RESET_PASSWORD_ROUTE,
   LEARN_CARD,
   PRACTICE_CARD,
+  FINALLY_LEARN,
 } from "./utils/domenPath";
 import Login from "./page/Login/Login";
 import Profile from "./page/Profile/Profile";
@@ -13,6 +14,7 @@ import Home from "./page/Home/Home";
 import ResetPassword from "./components/ResetPassword/ResetPassword";
 import ListCard from "./components/ListCard/ListCard";
 import LearnCard from "./components/LearnCard/LearnCard";
+import FinallyLearn from "./page/FinallyLearn/FinallyLearn";
 
 export const publicRoutes = [
   {
@@ -49,6 +51,11 @@ export const privateRoutes = [
   {
     path: PRACTICE_CARD,
     Component: LearnCard,
+    private: true,
+  },
+  {
+    path: FINALLY_LEARN,
+    Component: FinallyLearn,
     private: true,
   },
 ];

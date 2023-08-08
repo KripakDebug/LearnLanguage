@@ -91,6 +91,8 @@ export default function LearnCard() {
         </div>
         <CardLearn
           card={cards[0]}
+          currentPath={currentPath}
+          cards={cards}
           setLineCardsProgress={setLineCardsProgress}
           setCards={setCards}
           nextCardConfigurationWillBe={nextCardConfigurationWillBe}
