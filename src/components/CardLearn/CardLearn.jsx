@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   ArrowRightOutlined,
   CloseOutlined,
@@ -6,10 +6,17 @@ import {
   UndoOutlined,
 } from "@ant-design/icons";
 import uuid from "react-uuid";
-export default function CardLearn({ card, nextCardConfigurationWillBe }) {
+import { informationWithFirebase } from "../../index";
+export default function CardLearn({
+  card,
+  nextCardConfigurationWillBe,
+  setCards,
+  setLineCardsProgress,
+}) {
   const [progressLearnCard, setProgressLearnCard] = useState(1);
   const [isFailLearnCard, setIsFailLearnCard] = useState(false);
   const [wordForLetter, setWordForLetter] = useState([]);
+  const { firestore } = useContext(informationWithFirebase);
   return (
     <>
       <div className="card-learn">
@@ -32,9 +39,13 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
       <div className="learn-progress">
         <div className="message-learn">
           {progressLearnCard === 1
-            ? "Guess the answer"
+            ? nextCardConfigurationWillBe === "typing"
+              ? "Type the answer"
+              : "Guess the answer"
             : progressLearnCard === 2
-            ? "Did you remember correctly?"
+            ? nextCardConfigurationWillBe === "typing"
+              ? "Type the answer"
+              : "Did you remember correctly?"
             : progressLearnCard === 3
             ? `Interval days is expanded to ${
                 isFailLearnCard
@@ -52,10 +63,27 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
             onClick={() => setProgressLearnCard((prevState) => prevState + 1)}
             className="learn-check"
           >
-            <UndoOutlined />
+            {nextCardConfigurationWillBe === "typing" ? (
+              <ArrowRightOutlined />
+            ) : (
+              <UndoOutlined />
+            )}
           </button>
         ) : (
-          progressLearnCard === 2 && (
+          progressLearnCard === 2 &&
+          (nextCardConfigurationWillBe === "typing" ? (
+            <button
+              onClick={() => {
+                wordForLetter.join("") !== card?.card.wordCard
+                  ? setIsFailLearnCard(true)
+                  : setIsFailLearnCard(false);
+                setProgressLearnCard(3);
+              }}
+              className="learn-check"
+            >
+              <ArrowRightOutlined />
+            </button>
+          ) : (
             <div>
               <button
                 onClick={() => {
@@ -78,7 +106,7 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
                 <div className="circle"></div>
               </button>
             </div>
-          )
+          ))
         )}
         {progressLearnCard === 3 && (
           <button
@@ -177,9 +205,9 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
         case 3: {
           return (
             <div className="container-word">
-              <div className="back">{card?.card.definition}</div>
-              <hr />
               <div className="word">{card?.card.wordCard}</div>
+              <hr />
+              <div className="back">{card?.card.definition}</div>
             </div>
           );
         }
@@ -190,5 +218,40 @@ export default function CardLearn({ card, nextCardConfigurationWillBe }) {
     }
   }
 
-  function changeCardForDeck() {}
+  function changeCardForDeck() {
+    firestore
+      .collection("decks")
+      .where("id", "==", card?.idDeck)
+      .get()
+      .then((data) => {
+        data.docs.map((doc) => {
+          const cards = doc.data().cards;
+          const updatedCards = cards.map((item) => {
+            if (item.idCard === card?.card?.idCard) {
+              const newNextTest = new Date();
+              const newEstIntervalDays = isFailLearnCard
+                ? item.estIntervalDays === null
+                  ? 1
+                  : item.estIntervalDays - 1
+                : 2;
+              return {
+                ...item,
+                estIntervalDays: newEstIntervalDays,
+                lastTested: new Date(),
+                testCnt: isFailLearnCard ? item.testCnt : item.testCnt + 1,
+                failCnt: isFailLearnCard ? item.failCnt + 1 : item.failCnt,
+                nextTest: newNextTest.setDate(
+                  newNextTest.getDate() + item.estIntervalDays
+                ),
+              };
+            }
+            return item;
+          });
+          setLineCardsProgress((prevState) => prevState + 1);
+          setCards((prevState) => prevState.slice(1));
+          setProgressLearnCard(1);
+          doc.ref.update({ cards: updatedCards });
+        });
+      });
+  }
 }

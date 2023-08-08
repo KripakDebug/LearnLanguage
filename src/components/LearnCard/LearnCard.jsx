@@ -91,6 +91,8 @@ export default function LearnCard() {
         </div>
         <CardLearn
           card={cards[0]}
+          setLineCardsProgress={setLineCardsProgress}
+          setCards={setCards}
           nextCardConfigurationWillBe={nextCardConfigurationWillBe}
         />
       </div>
@@ -109,6 +111,7 @@ export default function LearnCard() {
           flashcardReverse: deck.flashcardReverseDeck,
           typing: deck.typingDeck,
           deckName: deck.nameDeck,
+          idDeck: deck.id,
         });
       }
       return filtered;
