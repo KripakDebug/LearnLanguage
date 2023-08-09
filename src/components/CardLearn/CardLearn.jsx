@@ -7,21 +7,17 @@ import {
 } from "@ant-design/icons";
 import uuid from "react-uuid";
 import { informationWithFirebase } from "../../index";
-import { useNavigate } from "react-router-dom";
-import FinallyLearn from "../../page/FinallyLearn/FinallyLearn";
 export default function CardLearn({
   card,
   nextCardConfigurationWillBe,
   setCards,
   currentPath,
-  cards,
+  setFilteredCardsLearn,
   setLineCardsProgress,
 }) {
   const [progressLearnCard, setProgressLearnCard] = useState(1);
   const [isFailLearnCard, setIsFailLearnCard] = useState(false);
   const [wordForLetter, setWordForLetter] = useState([]);
-  const [filteredCardsLearn, setFilteredCardsLearn] = useState([]);
-  const navigate = useNavigate();
   const { firestore } = useContext(informationWithFirebase);
   return (
     <>
@@ -144,49 +140,49 @@ export default function CardLearn({
     if (nextCardConfigurationWillBe === "flashcard") {
       switch (progressLearnCard) {
         case 1: {
-          return <div className="word">{card?.card.wordCard}</div>;
+          return <div className="word">{card?.card?.wordCard}</div>;
         }
         case 2: {
-          return <div className="back">{card?.card.definition}</div>;
+          return <div className="back">{card?.card?.definition}</div>;
         }
         case 3: {
           return (
             <div className="container-word">
-              <div className="word">{card?.card.wordCard}</div>
+              <div className="word">{card?.card?.wordCard}</div>
               <hr />
-              <div className="back">{card?.card.definition}</div>
+              <div className="back">{card?.card?.definition}</div>
             </div>
           );
         }
         case 4: {
-          return <div className="word">{card?.card.example}</div>;
+          return <div className="word">{card?.card?.example}</div>;
         }
       }
     } else if (nextCardConfigurationWillBe === "flashcardReverse") {
       switch (progressLearnCard) {
         case 1: {
-          return <div className="back">{card?.card.definition}</div>;
+          return <div className="back">{card?.card?.definition}</div>;
         }
         case 2: {
-          return <div className="word">{card?.card.wordCard}</div>;
+          return <div className="word">{card?.card?.wordCard}</div>;
         }
         case 3: {
           return (
             <div className="container-word">
-              <div className="back">{card?.card.definition}</div>
+              <div className="back">{card?.card?.definition}</div>
               <hr />
-              <div className="word">{card?.card.wordCard}</div>
+              <div className="word">{card?.card?.wordCard}</div>
             </div>
           );
         }
         case 4: {
-          return <div className="word">{card?.card.example}</div>;
+          return <div className="word">{card?.card?.example}</div>;
         }
       }
     } else if (nextCardConfigurationWillBe === "typing") {
       switch (progressLearnCard) {
         case 1: {
-          return <div className="back">{card?.card.definition}</div>;
+          return <div className="back">{card?.card?.definition}</div>;
         }
         case 2: {
           return (
@@ -195,10 +191,10 @@ export default function CardLearn({
                 type="text"
                 className="typing"
                 autoFocus
-                maxLength={card?.card.wordCard.split("").length}
+                maxLength={card?.card?.wordCard.split("").length}
                 onChange={(e) => setWordForLetter(e.target.value.split(""))}
               />
-              {card?.card.wordCard.split("").map((word, index) => {
+              {card?.card?.wordCard.split("").map((word, index) => {
                 return (
                   <span key={uuid()} className="letter">
                     {wordForLetter[index] || "_"}
@@ -211,14 +207,14 @@ export default function CardLearn({
         case 3: {
           return (
             <div className="container-word">
-              <div className="word">{card?.card.wordCard}</div>
+              <div className="word">{card?.card?.wordCard}</div>
               <hr />
-              <div className="back">{card?.card.definition}</div>
+              <div className="back">{card?.card?.definition}</div>
             </div>
           );
         }
         case 4: {
-          return <div className="word">{card?.card.example}</div>;
+          return <div className="word">{card?.card?.example}</div>;
         }
       }
     }
@@ -227,11 +223,8 @@ export default function CardLearn({
   function changeCardForDeck() {
     setFilteredCardsLearn((prevState) => [...prevState, card]);
     if (currentPath[2] === "practice") {
-      if (cards.slice(1).every((card) => card === "")) {
-        navigate("/finally-learn", { state: filteredCardsLearn });
-      }
-      setLineCardsProgress((prevState) => prevState + 1);
       setCards((prevState) => [...prevState.slice(1), ""]);
+      setLineCardsProgress((prevState) => prevState + 1);
       setProgressLearnCard(1);
     } else {
       firestore
@@ -262,9 +255,6 @@ export default function CardLearn({
               }
               return item;
             });
-            if (cards.slice(1).every((card) => card === "")) {
-              navigate("/finally-learn", { state: filteredCardsLearn });
-            }
             setCards((prevState) => [...prevState.slice(1), ""]);
             setLineCardsProgress((prevState) => prevState + 1);
             setProgressLearnCard(1);
