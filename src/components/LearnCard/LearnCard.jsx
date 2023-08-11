@@ -113,10 +113,16 @@ export default function LearnCard() {
 
   function filterCardsByInterval(cards, deck) {
     return cards.reduce((filtered, card) => {
-      if (
-        card.estIntervalDays === null ||
-        (currentPath[2] === "practice" && card)
-      ) {
+      if (card.nextTest === null || card.nextTest <= new Date()) {
+        filtered.push({
+          card: card,
+          flashcard: deck.flashcardDeck,
+          flashcardReverse: deck.flashcardReverseDeck,
+          typing: deck.typingDeck,
+          deckName: deck.nameDeck,
+          idDeck: deck.id,
+        });
+      } else if (currentPath[2] === "practice") {
         filtered.push({
           card: card,
           flashcard: deck.flashcardDeck,
@@ -126,6 +132,7 @@ export default function LearnCard() {
           idDeck: deck.id,
         });
       }
+
       return filtered;
     }, []);
   }

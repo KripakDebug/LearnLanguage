@@ -23,11 +23,15 @@ export default function Deck({
   useEffect(() => {
     setTotalCountForDeck(
       card.cards.reduce((prevTotal, currentCard) => {
-        if (currentCard.estIntervalDays !== null) {
+        if (currentCard.nextTest <= new Date().getTime()) {
+          setEstLearningDaysForCards(currentCard.nextTest);
+          return prevTotal + 1;
+        } else if (currentCard.nextTest === null) {
+          setEstLearningDaysForCards(currentCard.nextTest);
+          return prevTotal + 1;
+        } else {
           return prevTotal;
         }
-        setEstLearningDaysForCards(currentCard.estIntervalDays);
-        return prevTotal + 1;
       }, 0)
     );
   }, [card.cards, setEstLearningDaysForCards]);

@@ -236,21 +236,47 @@ export default function CardLearn({
             const cards = doc.data().cards;
             const updatedCards = cards.map((item) => {
               if (item.idCard === card?.card?.idCard) {
-                const newNextTest = new Date();
-                const newEstIntervalDays = isFailLearnCard
-                  ? item.estIntervalDays === null
-                    ? 1
-                    : item.estIntervalDays - 1
-                  : 2;
+                const intervalDaysSequence = [
+                  2, 9, 14, 20, 27, 35, 44, 54, 65, 72, 86, 92,
+                ];
+                const indexOfCurrentValue = intervalDaysSequence.indexOf(
+                  item.estIntervalDays
+                );
+                let newEstIntervalDays;
+                if (isFailLearnCard) {
+                  newEstIntervalDays = item.estIntervalDays - 1;
+                } else if (indexOfCurrentValue === -1) {
+                  const lastValue =
+                    intervalDaysSequence[intervalDaysSequence.length - 1];
+                  newEstIntervalDays = lastValue + 6;
+                } else if (
+                  indexOfCurrentValue ===
+                  intervalDaysSequence.length - 1
+                ) {
+                  newEstIntervalDays = item.estIntervalDays + 6;
+                } else {
+                  newEstIntervalDays =
+                    intervalDaysSequence[indexOfCurrentValue + 1];
+                }
+
+                const newNextTest =
+                  item.nextTest === null
+                    ? new Date(
+                        new Date().getTime() +
+                          (isFailLearnCard ? 1 : 2) * 24 * 60 * 60 * 1000
+                      )
+                    : new Date(
+                        item.nextTest.getTime() +
+                          newEstIntervalDays * 24 * 60 * 60 * 1000
+                      );
+
                 return {
                   ...item,
                   estIntervalDays: newEstIntervalDays,
-                  lastTested: new Date(),
+                  lastTested: new Date().getTime(),
                   testCnt: isFailLearnCard ? item.testCnt : item.testCnt + 1,
                   failCnt: isFailLearnCard ? item.failCnt + 1 : item.failCnt,
-                  nextTest: newNextTest.setDate(
-                    newNextTest.getDate() + item.estIntervalDays
-                  ),
+                  nextTest: newNextTest.getTime(),
                 };
               }
               return item;

@@ -16,7 +16,6 @@ export default function Decks({ decks }) {
   const [isModalListCardsLearn, setIsModalListCardsLearn] = useState(false);
   const [cardsLearnForDecks, setCardsLearnForDecks] = useState([]);
   const [estLearningDaysForCards, setEstLearningDaysForCards] = useState("");
-
   useEffect(() => {
     if (decks !== {}) {
       setCardsLearnForDecks(
@@ -47,7 +46,8 @@ export default function Decks({ decks }) {
             );
           }}
           className={
-            estLearningDaysForCards === null
+            estLearningDaysForCards === null ||
+            estLearningDaysForCards <= new Date()
               ? "learn-card active"
               : "learn-card"
           }

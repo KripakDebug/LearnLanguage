@@ -1049,8 +1049,10 @@ export function ListManyCardsLearn({
     if (cardsLearnForDecks.length === 1) {
       cardsLearnForDecks.map((deck) => {
         return deck.cards.find((card) => {
-          if (!card.estIntervalDays) {
-            navigate(`/home/learn/${deck.id}/${amount}`);
+          if (card.nextTest <= new Date() || card.nextTest === null) {
+            navigate(
+              `/home/learn/${deck.id}/${amount === "All" ? 1000 : amount}`
+            );
             isExecuted = true;
             return true;
           }
@@ -1059,8 +1061,8 @@ export function ListManyCardsLearn({
     } else {
       cardsLearnForDecks.some((deck) => {
         const foundCard = deck.cards.find((card) => {
-          if (!card.estIntervalDays) {
-            navigate(`/home/learn/all/${amount}`);
+          if (card.nextTest <= new Date() || card.nextTest === null) {
+            navigate(`/home/learn/all/${amount === "All" ? 1000 : amount}`);
             isExecuted = true;
             return true;
           }
@@ -1088,10 +1090,12 @@ export function ListManyCardsLearn({
         onCancel: () => {
           if (cardsLearnForDecks.length === 1) {
             cardsLearnForDecks.map((deck) => {
-              navigate(`/home/practice/${deck.id}/${amount}`);
+              navigate(
+                `/home/practice/${deck.id}/${amount === "All" ? 1000 : amount}`
+              );
             });
           } else {
-            navigate(`/home/practice/all/${amount}`);
+            navigate(`/home/practice/all/${amount === "All" ? 1000 : amount}`);
           }
         },
       });
