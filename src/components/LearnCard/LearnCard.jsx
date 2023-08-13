@@ -15,10 +15,8 @@ export default function LearnCard() {
   const currentPath = window.location.pathname.split("/");
   const [cards, setCards] = useState([]);
   const [lineCardsProgress, setLineCardsProgress] = useState(1);
-  const [filteredCardsLearn, setFilteredCardsLearn] = useState([]);
   const [nextCardConfigurationWillBe, setNextCardConfigurationWillBe] =
     useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     setNavbarBool(false);
@@ -64,13 +62,6 @@ export default function LearnCard() {
     );
   }, [cards]);
 
-  useEffect(() => {
-    if (cards.every((card) => card === "") && cards.length !== 0) {
-      navigate("/finally-learn");
-      localStorage.setItem("myDataKey", JSON.stringify(filteredCardsLearn));
-    }
-  }, [cards, filteredCardsLearn, navigate]);
-
   return (
     <div className="container">
       <div className="learn">
@@ -104,7 +95,6 @@ export default function LearnCard() {
           cards={cards}
           setLineCardsProgress={setLineCardsProgress}
           setCards={setCards}
-          setFilteredCardsLearn={setFilteredCardsLearn}
           nextCardConfigurationWillBe={nextCardConfigurationWillBe}
         />
       </div>

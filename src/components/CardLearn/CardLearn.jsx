@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   ArrowRightOutlined,
   CloseOutlined,
@@ -7,18 +7,27 @@ import {
 } from "@ant-design/icons";
 import uuid from "react-uuid";
 import { informationWithFirebase } from "../../index";
+import { useNavigate } from "react-router-dom";
 export default function CardLearn({
   card,
+  cards,
   nextCardConfigurationWillBe,
   setCards,
   currentPath,
-  setFilteredCardsLearn,
   setLineCardsProgress,
 }) {
   const [progressLearnCard, setProgressLearnCard] = useState(1);
   const [isFailLearnCard, setIsFailLearnCard] = useState(false);
   const [wordForLetter, setWordForLetter] = useState([]);
+  const [filteredCardsLearn, setFilteredCardsLearn] = useState([]);
   const { firestore } = useContext(informationWithFirebase);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (cards.every((card) => card === "") && cards.length !== 0) {
+      navigate("/finally-learn");
+      localStorage.setItem("myDataKey", JSON.stringify(filteredCardsLearn));
+    }
+  }, [filteredCardsLearn, navigate, cards]);
   return (
     <>
       <div className="card-learn">
@@ -236,15 +245,16 @@ export default function CardLearn({
             const cards = doc.data().cards;
             const updatedCards = cards.map((item) => {
               if (item.idCard === card?.card?.idCard) {
-                const intervalDaysSequence = [
-                  2, 9, 14, 20, 27, 35, 44, 54, 65, 72, 86, 92,
-                ];
+                const intervalDaysSequence = [2, 4, 7, 15, 30, 60, 120, 240];
                 const indexOfCurrentValue = intervalDaysSequence.indexOf(
                   item.estIntervalDays
                 );
                 let newEstIntervalDays;
-                if (isFailLearnCard) {
-                  newEstIntervalDays = item.estIntervalDays - 1;
+
+                if (item.estIntervalDays === null) {
+                  newEstIntervalDays = isFailLearnCard ? 1 : 2;
+                } else if (isFailLearnCard) {
+                  newEstIntervalDays = 1;
                 } else if (indexOfCurrentValue === -1) {
                   const lastValue =
                     intervalDaysSequence[intervalDaysSequence.length - 1];
@@ -258,7 +268,6 @@ export default function CardLearn({
                   newEstIntervalDays =
                     intervalDaysSequence[indexOfCurrentValue + 1];
                 }
-
                 const newNextTest =
                   item.nextTest === null
                     ? new Date(
@@ -266,8 +275,7 @@ export default function CardLearn({
                           (isFailLearnCard ? 1 : 2) * 24 * 60 * 60 * 1000
                       )
                     : new Date(
-                        item.nextTest.getTime() +
-                          newEstIntervalDays * 24 * 60 * 60 * 1000
+                        item.nextTest + newEstIntervalDays * 24 * 60 * 60 * 1000
                       );
 
                 return {
