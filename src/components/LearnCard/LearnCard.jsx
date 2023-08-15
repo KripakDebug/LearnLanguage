@@ -14,6 +14,9 @@ export default function LearnCard() {
   const [user] = useAuthState(auth);
   const currentPath = window.location.pathname.split("/");
   const [cards, setCards] = useState([]);
+  const [decks, setDecks] = useState([]);
+  const [cardsToChangeCard, setCardsToChangeCard] = useState(null);
+  const [isModalChangeCard, setIsModalChangeCard] = useState(false);
   const [lineCardsProgress, setLineCardsProgress] = useState(1);
   const [nextCardConfigurationWillBe, setNextCardConfigurationWillBe] =
     useState(null);
@@ -28,8 +31,11 @@ export default function LearnCard() {
         .get();
 
       const decks = decksFirestore.docs.map((doc) => doc.data());
-
+      setDecks(decks);
       let filteredCards = [];
+      decks.forEach((deck) => {
+        setCardsToChangeCard(deck.cards);
+      });
 
       if (card === "all") {
         decks.forEach((deck) => {
@@ -50,7 +56,7 @@ export default function LearnCard() {
     };
 
     getFirestoreDecksAndPushToCards();
-  }, []);
+  }, [isModalChangeCard]);
 
   useEffect(() => {
     const avaliableConfigs = [];
@@ -61,7 +67,6 @@ export default function LearnCard() {
       avaliableConfigs[Math.floor(Math.random() * avaliableConfigs.length)]
     );
   }, [cards]);
-
   return (
     <div className="container">
       <div className="learn">
@@ -92,7 +97,12 @@ export default function LearnCard() {
         <CardLearn
           card={cards[0]}
           currentPath={currentPath}
+          cardsToChangeCard={cardsToChangeCard}
           cards={cards}
+          decks={decks}
+          setIsModalChangeCard={setIsModalChangeCard}
+          isModalChangeCard={isModalChangeCard}
+          userId={user.uid}
           setLineCardsProgress={setLineCardsProgress}
           setCards={setCards}
           nextCardConfigurationWillBe={nextCardConfigurationWillBe}

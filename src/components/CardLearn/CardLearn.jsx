@@ -8,13 +8,19 @@ import {
 import uuid from "react-uuid";
 import { informationWithFirebase } from "../../index";
 import { useNavigate } from "react-router-dom";
+import { ModalChangeCard } from "../../utils/modals";
 export default function CardLearn({
   card,
-  cards,
+  cardsToChangeCard,
   nextCardConfigurationWillBe,
   setCards,
   currentPath,
+  cards,
+  isModalChangeCard,
+  setIsModalChangeCard,
+  userId,
   setLineCardsProgress,
+  decks,
 }) {
   const [progressLearnCard, setProgressLearnCard] = useState(1);
   const [isFailLearnCard, setIsFailLearnCard] = useState(false);
@@ -23,11 +29,14 @@ export default function CardLearn({
   const { firestore } = useContext(informationWithFirebase);
   const navigate = useNavigate();
   useEffect(() => {
+    if (progressLearnCard === 3) {
+      setWordForLetter([]);
+    }
     if (cards.every((card) => card === "") && cards.length !== 0) {
       navigate("/finally-learn");
       localStorage.setItem("myDataKey", JSON.stringify(filteredCardsLearn));
     }
-  }, [filteredCardsLearn, navigate, cards]);
+  }, [filteredCardsLearn, navigate, cards, progressLearnCard]);
   return (
     <>
       <div className="card-learn">
@@ -43,9 +52,24 @@ export default function CardLearn({
           )}
         </div>
         {progressLearnChangeMarking()}
-        <button className="card-change">
+        <button
+          className="card-change"
+          onClick={() => setIsModalChangeCard((prevState) => !prevState)}
+        >
           <FormOutlined />
         </button>
+        {isModalChangeCard && (
+          <ModalChangeCard
+            deck={decks}
+            userId={userId}
+            cards={cardsToChangeCard.find(
+              (item) => item.idCard === card?.card?.idCard
+            )}
+            cardId={card?.card?.idCard}
+            isModalChangeCard={isModalChangeCard}
+            setIsModalChangeCard={setIsModalChangeCard}
+          />
+        )}
       </div>
       <div className="learn-progress">
         <div className="message-learn">
@@ -60,13 +84,17 @@ export default function CardLearn({
             : progressLearnCard === 3
             ? `Interval days is expanded to ${
                 isFailLearnCard
-                  ? card?.card.estIntervalDays === null && "1"
-                  : "2"
+                  ? card?.card?.estIntervalDays === null
+                    ? "1"
+                    : "2"
+                  : card?.card?.estIntervalDays
               }`
             : `Interval days is expanded to ${
                 isFailLearnCard
-                  ? card?.card.estIntervalDays === null && "1"
-                  : "2"
+                  ? card?.card?.estIntervalDays === null
+                    ? "1"
+                    : "2"
+                  : card?.card?.estIntervalDays
               }`}
         </div>
         {progressLearnCard === 1 ? (

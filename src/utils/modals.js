@@ -776,6 +776,8 @@ export function ModalChangeCard({
   cardId,
   setIsModalOpenListChangeCard,
   isShowModalChangeCard,
+  isModalChangeCard,
+  setIsModalChangeCard,
   userId,
 }) {
   const { wordCard, definition, example } = cards || {};
@@ -819,7 +821,7 @@ export function ModalChangeCard({
       <Modal
         footer={null}
         className="modal"
-        open={isShowModalChangeCard}
+        open={isShowModalChangeCard || isModalChangeCard}
         onCancel={toggleModal}
       >
         <Form
@@ -958,8 +960,12 @@ export function ModalChangeCard({
   }
 
   function toggleModal() {
-    setIsShowModalChangeCard((prevState) => !prevState);
-    setIsModalOpenListChangeCard(false);
+    if (setIsShowModalChangeCard === undefined) {
+      setIsModalChangeCard((prevState) => !prevState);
+    } else {
+      setIsShowModalChangeCard((prevState) => !prevState);
+      setIsModalOpenListChangeCard(false);
+    }
     setListDeckNames(null);
   }
 }
