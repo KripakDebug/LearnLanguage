@@ -98,7 +98,6 @@ export default function Profile() {
                 : "days"}
             </p>
           </div>
-          <div className="item-lesson"></div>
           <div className="item-lesson">
             <div>LEARNING</div>
             <span>{totalCards}</span>

@@ -34,7 +34,7 @@ export default function CardLearn({
     }
     if (cards.every((card) => card === "") && cards.length !== 0) {
       navigate("/finally-learn");
-      localStorage.setItem("myDataKey", JSON.stringify(filteredCardsLearn));
+      sessionStorage.setItem("myDataKey", JSON.stringify(filteredCardsLearn));
     }
   }, [filteredCardsLearn, navigate, cards, progressLearnCard]);
   return (

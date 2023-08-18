@@ -22,7 +22,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <cardsForDeckContext.Provider value={{ setNavbarBool }}>
+      <cardsForDeckContext.Provider value={{ setNavbarBool, isNavbarShow }}>
         <div className="wrapper">
           {user && isNavbarShow ? <NavBar /> : ""}
           <AppRouter />
