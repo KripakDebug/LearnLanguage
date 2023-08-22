@@ -122,7 +122,7 @@ export function ModalCreateCard({
             lastTested: null,
             nextTest: null,
             testCnt: 0,
-            estIntervalDays: null,
+            estIntervalDays: 0,
             failCnt: 0,
           };
 
@@ -486,7 +486,7 @@ export function ModalList({
 }) {
   const { cards } = deck;
   const cardsEstIntervalDays = cards.find((item) => {
-    return item.estIntervalDays === null || item.estIntervalDays > 0;
+    return item.estIntervalDays === 0 || item.estIntervalDays > 0;
   });
 
   return (

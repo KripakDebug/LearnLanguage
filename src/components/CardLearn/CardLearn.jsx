@@ -84,14 +84,14 @@ export default function CardLearn({
             : progressLearnCard === 3
             ? `Interval days is expanded to ${
                 isFailLearnCard
-                  ? card?.card?.estIntervalDays === null
+                  ? card?.card?.estIntervalDays === 0
                     ? "1"
                     : "2"
                   : card?.card?.estIntervalDays
               }`
             : `Interval days is expanded to ${
                 isFailLearnCard
-                  ? card?.card?.estIntervalDays === null
+                  ? card?.card?.estIntervalDays === 0
                     ? "1"
                     : "2"
                   : card?.card?.estIntervalDays
@@ -279,7 +279,7 @@ export default function CardLearn({
                 );
                 let newEstIntervalDays;
 
-                if (item.estIntervalDays === null) {
+                if (item.estIntervalDays === 0) {
                   newEstIntervalDays = isFailLearnCard ? 1 : 2;
                 } else if (isFailLearnCard) {
                   newEstIntervalDays = 1;

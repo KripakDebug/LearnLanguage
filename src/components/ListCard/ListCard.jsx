@@ -96,9 +96,7 @@ export default function ListCard() {
                 <div className="definition">{item.definition}</div>
               </div>
               <div className="card-interval">
-                <div className="interval">
-                  {!!item.estIntervalDays && item.estIntervalDays}
-                </div>
+                <div className="interval">{item.estIntervalDays}</div>
               </div>
               <div className="card-level">
                 <div className="level">

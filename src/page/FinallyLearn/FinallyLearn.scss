@@ -12,3 +12,29 @@
   text-align: center;
   flex-direction: column;
 }
+.list-cards {
+  display: grid;
+  margin-bottom: 10px;
+  grid-template-columns: minmax(50px, 1.33fr) minmax(50px, 1.33fr) minmax(50px, 1.33fr);
+}
+.level {
+  justify-content: center;
+  display: flex;
+  align-items: flex-end;
+
+  div{
+    width: 5px;
+    background-color: rgb(212, 212, 212);
+    margin: 0px 1px;
+    height: 8px;
+    &:nth-child(2) {
+      height: 12px;
+    }
+    &:nth-child(3) {
+      height: 16px;
+    }
+  }
+  .level-color{
+    background-color: rgb(235, 131, 112);
+  }
+}
