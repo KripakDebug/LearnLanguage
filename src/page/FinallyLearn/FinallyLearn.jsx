@@ -3,40 +3,18 @@ import { Breadcrumb, Button } from "antd";
 import { NavLink, useBlocker, useNavigate } from "react-router-dom";
 import "./FinallyLearn.scss";
 import { cardsForDeckContext } from "../../App";
-import { informationWithFirebase } from "../../index";
 export default function FinallyLearn() {
   const navigate = useNavigate();
-  const { firestore } = useContext(informationWithFirebase);
   const { isNavbarShow } = useContext(cardsForDeckContext);
-  const [estIntervalDaysForCardNew, setEstIntervalDaysForCardNew] = useState(
-    []
-  );
   const [isRedirectAccessed, setIsRedirectAccessed] = useState(false);
+
   useBlocker(
     () => "Hello from useBlocker -- are you sure you want to leave?",
     !(isNavbarShow || isRedirectAccessed)
   );
+
   const savedData = JSON.parse(sessionStorage.getItem("myDataKey"));
-  useEffect(() => {
-    savedData.map((item) => {
-      firestore
-        .collection("decks")
-        .where("id", "==", item.idDeck)
-        .get()
-        .then((data) => {
-          data.docs.map((doc) => {
-            const cards = doc.data().cards;
-            cards.map((card) => {
-              if (card.id === item.card.id) {
-                setEstIntervalDaysForCardNew((prevState) => [
-                  card.estIntervalDays,
-                ]);
-              }
-            });
-          });
-        });
-    });
-  }, []);
+
   if (isNavbarShow) {
     navigate("/home");
     return;
@@ -69,9 +47,7 @@ export default function FinallyLearn() {
           return (
             <div className="list-cards">
               <div>{item.card.wordCard}</div>
-              <div>
-                {item.card.estIntervalDays} => {estIntervalDaysForCardNew}
-              </div>
+              <div>{item.card.estIntervalDays}</div>
               <div>
                 <div className="level">
                   <div

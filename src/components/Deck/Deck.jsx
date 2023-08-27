@@ -35,6 +35,12 @@ export default function Deck({
       }, 0)
     );
   }, [card.cards, setEstLearningDaysForCards]);
+  const today = new Date();
+
+  const futureTests = card.cards.filter(
+    (card) => new Date(card.nextTest) > today
+  );
+  futureTests.sort((a, b) => new Date(a.nextTest) - new Date(b.nextTest));
   return (
     <div className="deck">
       {card.id === idDeck && isModalCreateCardOpen && (
@@ -70,6 +76,13 @@ export default function Deck({
           <div className="card-name">{card.nameDeck}</div>
         </div>
         <div>
+          <div>
+            {futureTests.length > 0 && (
+              <div className="date-review">
+                Review in {formatTimeDifference(futureTests[0].nextTest)}
+              </div>
+            )}
+          </div>
           <div
             className={
               totalCountCardsForDeck === 0
@@ -83,6 +96,25 @@ export default function Deck({
       </Card>
     </div>
   );
+
+  function formatTimeDifference(date) {
+    const timeDifference = new Date(date) - today;
+    const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    const monthsDifference = Math.floor(daysDifference / 30);
+
+    if (monthsDifference === 1) {
+      return "1 month";
+    } else if (monthsDifference > 1) {
+      return `${monthsDifference} months`;
+    } else if (daysDifference === 1) {
+      return "1 day";
+    } else if (daysDifference > 1) {
+      return `${daysDifference} days`;
+    } else {
+      return "today";
+    }
+  }
+
   function getItemFirestore(id) {
     firestore
       .collection("decks")
