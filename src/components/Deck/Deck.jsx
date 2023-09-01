@@ -26,9 +26,6 @@ export default function Deck({
         if (currentCard.nextTest <= new Date().getTime()) {
           setEstLearningDaysForCards(currentCard.nextTest);
           return prevTotal + 1;
-        } else if (currentCard.nextTest === null) {
-          setEstLearningDaysForCards(currentCard.nextTest);
-          return prevTotal + 1;
         } else {
           return prevTotal;
         }
@@ -36,11 +33,9 @@ export default function Deck({
     );
   }, [card.cards, setEstLearningDaysForCards]);
   const today = new Date();
-
-  const futureTests = card.cards.filter(
-    (card) => new Date(card.nextTest) > today
-  );
-  futureTests.sort((a, b) => new Date(a.nextTest) - new Date(b.nextTest));
+  const sortCardsNextLearn = card.cards.sort((card, nextCard) => {
+    return card.nextTest - nextCard.nextTest;
+  });
   return (
     <div className="deck">
       {card.id === idDeck && isModalCreateCardOpen && (
@@ -77,11 +72,9 @@ export default function Deck({
         </div>
         <div>
           <div>
-            {futureTests.length > 0 && (
-              <div className="date-review">
-                Review in {formatTimeDifference(futureTests[0].nextTest)}
-              </div>
-            )}
+            <div className="date-review">
+              {formatTimeDifference(sortCardsNextLearn)}
+            </div>
           </div>
           <div
             className={
@@ -98,20 +91,23 @@ export default function Deck({
   );
 
   function formatTimeDifference(date) {
-    const timeDifference = new Date(date) - today;
+    const timeDifference = new Date(date[0]?.nextTest) - today;
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    const monthsDifference = Math.floor(daysDifference / 30);
 
-    if (monthsDifference === 1) {
-      return "1 month";
-    } else if (monthsDifference > 1) {
-      return `${monthsDifference} months`;
-    } else if (daysDifference === 1) {
-      return "1 day";
-    } else if (daysDifference > 1) {
-      return `${daysDifference} days`;
-    } else {
-      return "today";
+    const hoursDifference = Math.floor(
+      (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+
+    if (daysDifference > 0) {
+      if (daysDifference === 1) {
+        return `Review in ${daysDifference} day ${hoursDifference} hours`;
+      }
+      return `Review in ${daysDifference} days ${hoursDifference} hours`;
+    } else if (hoursDifference > 0) {
+      if (hoursDifference === 1) {
+        return "Review in 1 hour";
+      }
+      return `Review in ${hoursDifference} hours`;
     }
   }
 

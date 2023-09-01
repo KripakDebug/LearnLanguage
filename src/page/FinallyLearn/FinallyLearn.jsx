@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Breadcrumb, Button } from "antd";
 import { NavLink, useBlocker, useNavigate } from "react-router-dom";
 import "./FinallyLearn.scss";
 import { cardsForDeckContext } from "../../App";
+import moment from "moment";
 export default function FinallyLearn() {
   const navigate = useNavigate();
   const { isNavbarShow } = useContext(cardsForDeckContext);
@@ -12,14 +13,15 @@ export default function FinallyLearn() {
     () => "Hello from useBlocker -- are you sure you want to leave?",
     !(isNavbarShow || isRedirectAccessed)
   );
-
-  const savedData = JSON.parse(sessionStorage.getItem("myDataKey"));
-
+  const filteredCard = JSON.parse(sessionStorage.getItem("myDataKey"));
+  const newCardEstIntervalDay = JSON.parse(
+    sessionStorage.getItem("estIntervalDayForCards")
+  );
+  console.log(filteredCard, newCardEstIntervalDay);
   if (isNavbarShow) {
     navigate("/home");
     return;
   }
-
   return (
     <div className="finally-learn">
       <Breadcrumb
@@ -37,17 +39,22 @@ export default function FinallyLearn() {
         ]}
       />
       <div className="result-learn">
-        <div className="title">You have learnt {savedData.length} cards</div>
+        <div className="title">You have learnt {filteredCard.length} cards</div>
         <div className="list-cards">
           <div>Front</div>
           <div>Interval Days</div>
           <div>Memory Level</div>
         </div>
-        {savedData.map((item) => {
+        {filteredCard.map((item) => {
+          const a = moment(new Date());
+          const b = moment(item.card.nextTest);
           return (
             <div className="list-cards">
               <div>{item.card.wordCard}</div>
-              <div>{item.card.estIntervalDays}</div>
+              <div>
+                {item.card.estIntervalDays} =>{" "}
+                {Math.ceil(b.diff(a, "days", true))}
+              </div>
               <div>
                 <div className="level">
                   <div

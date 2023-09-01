@@ -115,7 +115,7 @@ export default function LearnCard() {
     return cards.reduce((filtered, card) => {
       if (card.nextTest === null || card.nextTest <= new Date()) {
         filtered.push({
-          card: card,
+          card,
           flashcard: deck.flashcardDeck,
           flashcardReverse: deck.flashcardReverseDeck,
           typing: deck.typingDeck,
@@ -124,7 +124,7 @@ export default function LearnCard() {
         });
       } else if (currentPath[2] === "practice") {
         filtered.push({
-          card: card,
+          card,
           flashcard: deck.flashcardDeck,
           flashcardReverse: deck.flashcardReverseDeck,
           typing: deck.typingDeck,

@@ -120,7 +120,7 @@ export function ModalCreateCard({
             example: example === "" ? "" : example,
             createAt: firebase.firestore.Timestamp.fromDate(new Date()),
             lastTested: null,
-            nextTest: null,
+            nextTest: new Date().getTime(),
             testCnt: 0,
             estIntervalDays: 0,
             failCnt: 0,

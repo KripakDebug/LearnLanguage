@@ -296,16 +296,9 @@ export default function CardLearn({
                   newEstIntervalDays =
                     intervalDaysSequence[indexOfCurrentValue + 1];
                 }
-                const newNextTest =
-                  item.nextTest === null
-                    ? new Date(
-                        new Date().getTime() +
-                          (isFailLearnCard ? 1 : 2) * 24 * 60 * 60 * 1000
-                      )
-                    : new Date(
-                        item.nextTest + newEstIntervalDays * 24 * 60 * 60 * 1000
-                      );
-
+                const newNextTest = new Date(
+                  item.nextTest + newEstIntervalDays * 24 * 60 * 60 * 1000
+                );
                 return {
                   ...item,
                   estIntervalDays: newEstIntervalDays,
