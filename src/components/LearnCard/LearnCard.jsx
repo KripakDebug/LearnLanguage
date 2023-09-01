@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import { cardsForDeckContext } from "../../App";
 import { DoubleRightOutlined } from "@ant-design/icons";
 import "./LearnCard.scss";
@@ -14,6 +14,7 @@ export default function LearnCard() {
   const [user] = useAuthState(auth);
   const currentPath = window.location.pathname.split("/");
   const [cards, setCards] = useState([]);
+  const [isFailLearnCard, setIsFailLearnCard] = useState(false);
   const [decks, setDecks] = useState([]);
   const [cardsToChangeCard, setCardsToChangeCard] = useState(null);
   const [isModalChangeCard, setIsModalChangeCard] = useState(false);
@@ -56,7 +57,15 @@ export default function LearnCard() {
     };
 
     getFirestoreDecksAndPushToCards();
-  }, [isModalChangeCard]);
+  }, [
+    amountCard,
+    card,
+    filterCardsByInterval,
+    firestore,
+    isModalChangeCard,
+    setNavbarBool,
+    user.uid,
+  ]);
 
   useEffect(() => {
     const avaliableConfigs = [];
@@ -99,6 +108,8 @@ export default function LearnCard() {
           currentPath={currentPath}
           cardsToChangeCard={cardsToChangeCard}
           cards={cards}
+          setIsFailLearnCard={setIsFailLearnCard}
+          isFailLearnCard={isFailLearnCard}
           decks={decks}
           setIsModalChangeCard={setIsModalChangeCard}
           isModalChangeCard={isModalChangeCard}
@@ -116,6 +127,7 @@ export default function LearnCard() {
       if (card.nextTest === null || card.nextTest <= new Date()) {
         filtered.push({
           card,
+          isFailLearnCard,
           flashcard: deck.flashcardDeck,
           flashcardReverse: deck.flashcardReverseDeck,
           typing: deck.typingDeck,
@@ -125,6 +137,7 @@ export default function LearnCard() {
       } else if (currentPath[2] === "practice") {
         filtered.push({
           card,
+          isFailLearnCard,
           flashcard: deck.flashcardDeck,
           flashcardReverse: deck.flashcardReverseDeck,
           typing: deck.typingDeck,

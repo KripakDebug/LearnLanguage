@@ -14,10 +14,6 @@ export default function FinallyLearn() {
     !(isNavbarShow || isRedirectAccessed)
   );
   const filteredCard = JSON.parse(sessionStorage.getItem("myDataKey"));
-  const newCardEstIntervalDay = JSON.parse(
-    sessionStorage.getItem("estIntervalDayForCards")
-  );
-  console.log(filteredCard, newCardEstIntervalDay);
   if (isNavbarShow) {
     navigate("/home");
     return;
@@ -53,7 +49,11 @@ export default function FinallyLearn() {
               <div>{item.card.wordCard}</div>
               <div>
                 {item.card.estIntervalDays} =>{" "}
-                {Math.ceil(b.diff(a, "days", true))}
+                {item.card.estIntervalDays === 0
+                  ? item.isFailLearnCard
+                    ? 1
+                    : 2
+                  : Math.ceil(b.diff(a, "days", true))}
               </div>
               <div>
                 <div className="level">

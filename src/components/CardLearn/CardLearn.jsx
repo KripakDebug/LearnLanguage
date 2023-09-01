@@ -14,6 +14,8 @@ export default function CardLearn({
   cardsToChangeCard,
   nextCardConfigurationWillBe,
   setCards,
+  isFailLearnCard,
+  setIsFailLearnCard,
   currentPath,
   cards,
   isModalChangeCard,
@@ -23,7 +25,6 @@ export default function CardLearn({
   decks,
 }) {
   const [progressLearnCard, setProgressLearnCard] = useState(1);
-  const [isFailLearnCard, setIsFailLearnCard] = useState(false);
   const [wordForLetter, setWordForLetter] = useState([]);
   const [filteredCardsLearn, setFilteredCardsLearn] = useState([]);
   const { firestore } = useContext(informationWithFirebase);
@@ -36,7 +37,7 @@ export default function CardLearn({
       navigate("/finally-learn");
       sessionStorage.setItem("myDataKey", JSON.stringify(filteredCardsLearn));
     }
-  }, [filteredCardsLearn, navigate, cards, progressLearnCard]);
+  }, [filteredCardsLearn, navigate, cards, progressLearnCard, isFailLearnCard]);
   return (
     <>
       <div className="card-learn">
