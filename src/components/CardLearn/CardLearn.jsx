@@ -16,6 +16,8 @@ export default function CardLearn({
   setCards,
   isFailLearnCard,
   setIsFailLearnCard,
+  setFilteredCardsLearn,
+  filteredCardsLearn,
   currentPath,
   cards,
   isModalChangeCard,
@@ -26,7 +28,6 @@ export default function CardLearn({
 }) {
   const [progressLearnCard, setProgressLearnCard] = useState(1);
   const [wordForLetter, setWordForLetter] = useState([]);
-  const [filteredCardsLearn, setFilteredCardsLearn] = useState([]);
   const { firestore } = useContext(informationWithFirebase);
   const navigate = useNavigate();
   useEffect(() => {

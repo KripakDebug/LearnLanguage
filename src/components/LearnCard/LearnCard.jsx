@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { cardsForDeckContext } from "../../App";
 import { DoubleRightOutlined } from "@ant-design/icons";
 import "./LearnCard.scss";
@@ -16,11 +16,13 @@ export default function LearnCard() {
   const [cards, setCards] = useState([]);
   const [isFailLearnCard, setIsFailLearnCard] = useState(false);
   const [decks, setDecks] = useState([]);
+  const [filteredCardsLearn, setFilteredCardsLearn] = useState([]);
   const [cardsToChangeCard, setCardsToChangeCard] = useState(null);
   const [isModalChangeCard, setIsModalChangeCard] = useState(false);
   const [lineCardsProgress, setLineCardsProgress] = useState(1);
   const [nextCardConfigurationWillBe, setNextCardConfigurationWillBe] =
     useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setNavbarBool(false);
@@ -57,15 +59,7 @@ export default function LearnCard() {
     };
 
     getFirestoreDecksAndPushToCards();
-  }, [
-    amountCard,
-    card,
-    filterCardsByInterval,
-    firestore,
-    isModalChangeCard,
-    setNavbarBool,
-    user.uid,
-  ]);
+  }, [isModalChangeCard]);
 
   useEffect(() => {
     const avaliableConfigs = [];
@@ -84,7 +78,17 @@ export default function LearnCard() {
             <div className="return-page">
               <NavLink to="/home">Home </NavLink>/ Learning
             </div>
-            <button type="default" className="learn__finish">
+            <button
+              type="default"
+              className="learn__finish"
+              onClick={() => {
+                navigate("/finally-learn");
+                sessionStorage.setItem(
+                  "myDataKey",
+                  JSON.stringify(filteredCardsLearn)
+                );
+              }}
+            >
               <DoubleRightOutlined /> Finish
             </button>
           </div>
@@ -109,6 +113,8 @@ export default function LearnCard() {
           cardsToChangeCard={cardsToChangeCard}
           cards={cards}
           setIsFailLearnCard={setIsFailLearnCard}
+          setFilteredCardsLearn={setFilteredCardsLearn}
+          filteredCardsLearn={filteredCardsLearn}
           isFailLearnCard={isFailLearnCard}
           decks={decks}
           setIsModalChangeCard={setIsModalChangeCard}
