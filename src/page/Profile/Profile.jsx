@@ -34,10 +34,13 @@ export default function Profile() {
   if (loading) {
     return <LoaderComponent />;
   }
-  const totalCards = cards.reduce(
-    (count, card) => count + card.cards.length,
-    0
-  );
+  const totalCards = cards.reduce((count, card) => {
+    if (card.userId === user.uid) {
+      return count + card.cards.length;
+    } else {
+      return count;
+    }
+  }, 0);
   let timePassed = daysPassed + (daysPassed === 1 ? " day ago" : " days ago");
   if (yearsPassed >= 1) {
     timePassed = yearsPassed + (yearsPassed === 1 ? " year ago" : " years ago");
