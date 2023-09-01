@@ -78,7 +78,7 @@ export default function FinallyLearn() {
           );
         })}
         <NavLink onClick={onRedirectHandler} to="/home" className="btn-back">
-          <Button type="default">Primary Button</Button>
+          <Button type="default">Back To Home</Button>
         </NavLink>
       </div>
     </div>

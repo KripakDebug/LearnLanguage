@@ -42,10 +42,16 @@ export default function LearnCard() {
 
       if (card === "all") {
         decks.forEach((deck) => {
+          if (deck.cards === []) {
+            navigate("/home");
+          }
           filteredCards.push(...filterCardsByInterval(deck.cards, deck));
         });
       } else {
         const filteredDeck = decks.find((deck) => deck.id === card);
+        if (filteredDeck.cards === []) {
+          navigate("/home");
+        }
         if (filteredDeck) {
           filteredCards = filterCardsByInterval(
             filteredDeck.cards,
