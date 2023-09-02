@@ -15,7 +15,8 @@ function Home() {
 
   useEffect(() => {
     setNavbarBool(true);
-  }, [location]);
+  }, [location, setNavbarBool]);
+  
   return (
     <div className="wrap-lessons">
       <div className="title">Weekly Report</div>

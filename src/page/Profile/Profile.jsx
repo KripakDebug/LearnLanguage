@@ -87,18 +87,10 @@ export default function Profile() {
           <div className="item-lesson">
             <div>ACCESSED</div>
             <span>
-              {monthsPassed >= 1
-                ? monthsPassed
-                : yearsPassed >= 1
-                ? yearsPassed
-                : daysPassed}
+              {monthsPassed >= 1 ? monthsPassed : yearsPassed >= 1 ? yearsPassed : daysPassed}
             </span>
             <p>
-              {monthsPassed >= 1
-                ? "months"
-                : yearsPassed >= 1
-                ? "years"
-                : "days"}
+              {monthsPassed >= 1 ? "months" : yearsPassed >= 1 ? "years" : "days"}
             </p>
           </div>
           <div className="item-lesson">

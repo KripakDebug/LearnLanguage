@@ -13,9 +13,10 @@ function App() {
   const [user, loading] = useAuthState(auth);
   const [isNavbarShow, setIsNavbarShow] = useState(true);
 
-  const setNavbarBool = (value) => {
+  function setNavbarBool(value) {
     setIsNavbarShow(value);
-  };
+  }
+
   if (loading) {
     return <Loader />;
   }

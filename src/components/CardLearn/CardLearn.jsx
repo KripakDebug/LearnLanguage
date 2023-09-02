@@ -54,6 +54,7 @@ export default function CardLearn({
           )}
         </div>
         {progressLearnChangeMarking()}
+
         <button
           className="card-change"
           onClick={() => setIsModalChangeCard((prevState) => !prevState)}
@@ -68,7 +69,7 @@ export default function CardLearn({
               (item) => item.idCard === card?.card?.idCard
             )}
             cardId={card?.card?.idCard}
-            isModalChangeCard={isModalChangeCard}
+            isModalShouldBeOpen={isModalChangeCard}
             setIsModalChangeCard={setIsModalChangeCard}
           />
         )}
@@ -283,16 +284,7 @@ export default function CardLearn({
 
                 if (item.estIntervalDays === 0) {
                   newEstIntervalDays = isFailLearnCard ? 1 : 2;
-                } else if (isFailLearnCard) {
-                  newEstIntervalDays = 1;
                 } else if (indexOfCurrentValue === -1) {
-                  const lastValue =
-                    intervalDaysSequence[intervalDaysSequence.length - 1];
-                  newEstIntervalDays = lastValue + 6;
-                } else if (
-                  indexOfCurrentValue ===
-                  intervalDaysSequence.length - 1
-                ) {
                   newEstIntervalDays = item.estIntervalDays + 6;
                 } else {
                   newEstIntervalDays =

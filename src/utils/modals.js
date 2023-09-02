@@ -600,7 +600,7 @@ export function ModalListChangeCard({
         {isShowModalChangeCard && (
           <ModalChangeCard
             setIsShowModalChangeCard={setIsShowModalChangeCard}
-            isShowModalChangeCard={isShowModalChangeCard}
+            isModalShouldBeOpen={isShowModalChangeCard}
             cards={cards.find((item) => item.idCard === cardId)}
             userId={userId}
             deck={deck}
@@ -775,8 +775,7 @@ export function ModalChangeCard({
   deck,
   cardId,
   setIsModalOpenListChangeCard,
-  isShowModalChangeCard,
-  isModalChangeCard,
+  isModalShouldBeOpen,
   setIsModalChangeCard,
   userId,
 }) {
@@ -789,6 +788,7 @@ export function ModalChangeCard({
   const [listDeckNames, setListDeckNames] = useState([]);
   const [previousDeckName, setPreviousDeckName] = useState("");
   const [card, setCard] = useState(null);
+
   useEffect(() => {
     const filteredDeckNames = [];
 
@@ -821,7 +821,7 @@ export function ModalChangeCard({
       <Modal
         footer={null}
         className="modal"
-        open={isShowModalChangeCard || isModalChangeCard}
+        open={isModalShouldBeOpen}
         onCancel={toggleModal}
       >
         <Form

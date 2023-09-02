@@ -18,6 +18,7 @@ export default function FinallyLearn() {
     navigate("/home");
     return;
   }
+
   return (
     <div className="finally-learn">
       <Breadcrumb

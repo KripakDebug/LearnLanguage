@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Button, Form, Input } from "antd";
 import { GoogleOutlined } from "@ant-design/icons";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import {openNotification} from "../../utils/notificationHelpers";
 
-function FormRegister({ loginWithGoogle, auth, openNotification }) {
+function FormRegister({ loginWithGoogle, auth }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (

@@ -3,8 +3,10 @@ import { Button, Form, Input } from "antd";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { GoogleOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
+import {openNotification} from "../../utils/notificationHelpers";
+import {RESET_PASSWORD_ROUTE} from "../../utils/domenPath";
 
-function FormLogin({ auth, openNotification, loginWithGoogle }) {
+function FormLogin({ auth, loginWithGoogle }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   return (
@@ -61,7 +63,7 @@ function FormLogin({ auth, openNotification, loginWithGoogle }) {
             Login
           </Button>
         </Form.Item>
-        <NavLink className="reset-password" to={"/resetpassword"}>
+        <NavLink className="reset-password" to={RESET_PASSWORD_ROUTE}>
           Forgot Password
         </NavLink>
       </Form>
